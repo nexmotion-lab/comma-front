@@ -1,0 +1,7 @@
+{
+  "name": "COMMA",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue-vite"
+}
