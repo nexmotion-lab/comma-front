@@ -1,0 +1,531 @@
+<script lang="ts">
+import { defineComponent, ref, onMounted, computed, reactive } from 'vue'
+import axios from 'axios'
+import GreenButton from '@/components/GreenButton.vue'
+import BaseView from '@/components/common/BaseView.vue'
+import BaseButton from '@/components/common/BaseButton.vue'
+import BaseBottomBar from '@/components/common/BaseBottomBar.vue'
+import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
+import 'swiper/swiper-bundle.min.css'
+
+interface PsyTest {
+  psy_test_no: number
+  title: string
+  content: string
+  target: string
+  time: string
+}
+
+export default defineComponent({
+  name: 'CenterPsyTest',
+  components: {
+    BaseView,
+    BaseBottomBar,
+    GreenButton,
+    BaseButton,
+    Swiper,
+    SwiperSlide
+  },
+  setup() {
+    const modal1 = ref<any>(null)
+    const modal2 = ref<any>(null)
+    const psyTests = ref<PsyTest[]>([])
+    const selectedTest = ref<PsyTest | null>(null) // 선택된 테스트 정보를 저장할 상태 추가
+    const bannerMessages = ref<string[]>([
+      '학생상담센터의 심리검사는 모두 무료!',
+      '대표적인 심리검사는 MBTI입니다',
+      '심리검사 종류로는 성격 성향 검사가 있습니다'
+    ])
+
+    const activeSlideIndex = ref(0)
+
+    // Swiper에서 슬라이드 변경 이벤트를 처리하는 함수
+    const onSlideChange = (swiper: any) => {
+      activeSlideIndex.value = swiper.realIndex
+    }
+
+    const testPairs = computed(() => {
+      const pairs = []
+      for (let i = 0; i < psyTests.value.length; i += 2) {
+        pairs.push(psyTests.value.slice(i, i + 2))
+      }
+      return pairs
+    })
+
+    const swiperOptions = reactive({
+      slidesPerView: 1,
+      spaceBetween: 30,
+      loop: true,
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true
+      }
+    })
+
+    onMounted(async () => {
+      try {
+        const response = await axios.get<PsyTest[]>('http://192.168.0.154:8086/api/v1/psytest/')
+        psyTests.value = response.data // API 응답을 직접 할당
+        console.log(psyTests.value)
+      } catch (error) {
+        console.error('Failed to fetch psytest:', error)
+        alert('Failed to fetch psytest')
+      }
+    })
+
+    const navigate = (path: string) => {
+      window.location.href = path
+    }
+    const openModal1 = () => {
+      if (modal1.value) {
+        modal1.value.present()
+      }
+    }
+    const openModal2 = (test: PsyTest) => {
+      selectedTest.value = test // 선택된 테스트 정보를 설정
+      if (modal2.value) {
+        modal2.value.present()
+      }
+    }
+    const dismiss1 = () => {
+      if (modal1.value) {
+        modal1.value.dismiss()
+      }
+    }
+    const dismiss2 = () => {
+      if (modal2.value) {
+        modal2.value.dismiss()
+      }
+    }
+
+    //텍스트를 원하는 길이로 자르는 함수 추가
+    const wrapText = (text: string, maxLineLength: number): string => {
+      const words = text.split(' ')
+      let lineLength = 0
+      let result = ''
+
+      for (const word of words) {
+        if (lineLength + word.length + 1 > maxLineLength) {
+          result += '\n'
+          lineLength = 0
+        }
+        result += (lineLength === 0 ? '' : ' ') + word
+        lineLength += word.length
+      }
+      return result
+    }
+
+    return {
+      modal1,
+      openModal1,
+      dismiss1,
+      modal2,
+      openModal2,
+      dismiss2,
+      psyTests,
+      navigate,
+      testPairs,
+      swiperOptions,
+      activeSlideIndex,
+      onSlideChange,
+      bannerMessages,
+      selectedTest,
+      wrapText
+    }
+  },
+  data() {
+    return {
+      textInput: '' // 입력된 텍스트를 저장할 데이터 변수
+    }
+  }
+})
+</script>
+
+<!-- 상담센터 심리검사 페이지 -->
+<template>
+  <BaseView />
+  <div class="header">
+    <div class="nav-bar">
+      <BaseButton @click="navigate('CenterPsyInfo')">심리정보</BaseButton>
+      <GreenButton>심리검사</GreenButton>
+      <BaseButton @click="navigate('CenterPsyCenter')">상담센터</BaseButton>
+    </div>
+  </div>
+
+  <div class="info-button">
+    <div class="info-icon" @click="openModal1">i</div>
+  </div>
+
+  <!-- comment start -->
+  <div class="comment-section">
+    <swiper :options="swiperOptions" @slideChange="onSlideChange">
+      <swiper-slide v-for="(message, index) in bannerMessages" :key="index" class="comment-box">
+        <div class="comment-content">{{ message }}</div>
+      </swiper-slide>
+    </swiper>
+    <!-- slider-indicator를 swiper 외부로 이동 -->
+    <div class="slider-indicator">
+      <span
+        class="dot"
+        v-for="index in bannerMessages.length"
+        :key="index"
+        :class="{ active: activeSlideIndex === index - 1 }"
+      ></span>
+    </div>
+  </div>
+  <!-- comment end -->
+
+  <!-- test-type start -->
+  <div class="test-type-section">
+    <div class="test-type-box">
+      <div class="test-type-title">성격 성향 검사</div>
+    </div>
+  </div>
+  <!-- test-type end -->
+
+  <div class="test-list">
+    <div v-for="(pair, index) in testPairs" :key="index" class="test-pair">
+      <div class="test-item" @click="openModal2(test)" v-for="test in pair" :key="test.psy_test_no">
+        <div class="test-title">
+          {{ wrapText(test.title, 15) }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ion-modal id="example-modal" ref="modal1">
+    <div class="test-modal-wrapper">
+      <ion-list lines="none">
+        <ion-item>
+          <ion-label>
+            <h2><strong>Info.</strong></h2>
+            <ion-icon name="close" class="modal-close" @click="dismiss2"></ion-icon>
+          </ion-label>
+        </ion-item>
+        <ion-item class="test-ref-detail">
+          <ion-img class="profile-image" src="/public/sahmyook.png"></ion-img>
+          <ion-label class="test-ref">
+            <p>
+              이 표시가 들어간 심리검사들은 삼육대학교 상담센터에서 신청 시 무료로 받을 수 있는
+              검사입니다.
+            </p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </div>
+  </ion-modal>
+
+  <ion-modal id="example-modal" ref="modal2">
+    <div class="test-modal-wrapper" v-if="selectedTest">
+      <div class="test-modal-header">
+        <h1>{{ selectedTest.title }}</h1>
+        <ion-icon name="close" class="modal-close" @click="dismiss2"></ion-icon>
+      </div>
+      <div class="test-modal-subtitle">오락가락하는 내 기분 나도 모르겠다고?</div>
+      <ion-list lines="none">
+        <ion-item>
+          <ion-label class="test-modal-description">
+            <p>
+              {{ selectedTest.content }}
+            </p>
+          </ion-label>
+        </ion-item>
+        <div class="test-section-wrapper">
+          <ion-item class="test-section">
+            <ion-label class="test-section-title">
+              <span>검사 대상</span>
+            </ion-label>
+            <ion-label class="test-section-value">
+              <p>{{ selectedTest.target }}</p>
+            </ion-label>
+          </ion-item>
+          <ion-item class="test-section">
+            <ion-label class="test-section-title">
+              <span>소요 시간</span>
+            </ion-label>
+            <ion-label class="test-section-value">
+              <div>{{ selectedTest.time }}</div>
+            </ion-label>
+          </ion-item>
+        </div>
+      </ion-list>
+    </div>
+  </ion-modal>
+
+  <BaseBottomBar></BaseBottomBar>
+</template>
+
+<style scoped>
+/* Header Section */
+.header {
+  height: 10%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  position: relative;
+}
+
+.nav-bar {
+  display: flex;
+  justify-content: center; /* 수평 가운데 정렬 */
+  align-items: center; /* 수직 가운데 정렬 */
+}
+
+/* Info Button */
+.info-button {
+  display: flex;
+  justify-content: flex-end; /* 오른쪽 정렬 */
+  margin: 0 15px 0 15px; /* 여백 조정 */
+}
+
+.info-icon {
+  display: flex; /* Flexbox 레이아웃 사용 */
+  border-radius: 50%;
+  background-color: lightgray;
+  color: white;
+  width: 25px;
+  height: 25px; /* 버튼 높이 추가 */
+  align-items: center;
+  justify-content: center;
+  font-style: italic; /* 기울임꼴 적용 */
+  font-weight: bold; /* 굵게 적용 */
+  font-size: 18px; /* 폰트 크기 조정 */
+  cursor: pointer; /* 마우스 커서 포인터로 변경 */
+}
+
+.info-icon:hover {
+  background-color: gray; /* 호버 시 배경색 변경 */
+}
+.comment-section {
+  margin: 0 15px 15px 15px;
+  position: relative; /* relative로 변경하여 자식 요소인 slider-indicator 위치 조정 */
+}
+
+.comment-box {
+  color: black;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 10vh;
+  border-radius: 35px;
+  background-color: rgb(138, 221, 138);
+  z-index: 1; /* z-index 추가 */
+}
+
+.slider-indicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  bottom: -20px; /* 인디케이터를 박스 밖으로 이동 */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2; /* z-index 추가 */
+}
+.comment-content {
+  margin-bottom: 10px; /* 아래 여백 추가 */
+}
+
+.dot {
+  height: 12px; /* 크기 */
+  width: 12px; /* 크기 */
+  margin: 0 5px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  transition:
+    background-color 0.3s,
+    border 0.3s,
+    transform 0.3s; /* 테두리 및 변환 추가 */
+}
+
+.dot.active {
+  background-color: #4caf50;
+  border: 2px solid white; /* 테두리 추가 */
+  transform: scale(1.2); /* 크기 확대 */
+}
+
+@media (max-width: 768px) {
+  .slider-indicator {
+    bottom: 10px;
+  }
+}
+
+/* Test Type Section */
+.test-type-section {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  margin: 10px 0 10px 0;
+}
+
+.test-type-box {
+  border-radius: 15px;
+  padding: 5px;
+  background-color: #a3e2b8ff;
+  width: 55%;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.test-type-title {
+  color: black;
+  font-weight: bold;
+}
+
+/* Test List */
+.test-list {
+  overflow-y: scroll; /* 세로 스크롤 활성화 */
+  max-height: 60vh; /* 블록의 최대 높이 설정 */
+  margin: 0px 5px 0px;
+}
+
+.test-pair {
+  display: flex;
+  justify-content: center;
+}
+
+.test-item {
+  border: 6px solid green;
+  border-radius: 10px;
+  margin: 10px;
+  width: 150px;
+  height: 145px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  font-weight: 700;
+  flex: 1;
+  padding: 10px;
+  white-space: pre-line;
+}
+
+.test-title {
+  color: black;
+  font-size: 20px;
+  font-weight: 650;
+  text-align: center; /* 가운데 정렬 */
+  padding: 10px; /* 적절한 패딩 추가 */
+  white-space: normal; /* 줄 바꿈 허용 */
+  overflow-wrap: break-word; /* 단어 단위로 개행 */
+  word-break: break-all; /* 긴 단어 자르기 */
+}
+
+/* Modal */
+
+.profile-image {
+  display: inline-block;
+  height: 40px;
+  width: 50px;
+  margin-right: 15px;
+}
+
+.test-ref p {
+  font-size: 14px;
+
+  color: #00796b;
+}
+
+.test-ref-detail {
+  margin-bottom: 15px;
+}
+
+ion-modal#example-modal {
+  --width: 80%;
+  --min-width: 250px;
+  --height: fit-content;
+  --border-radius: 6px;
+  --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
+  --border-radius: 10px;
+}
+
+.test-modal-wrapper {
+  padding: 8px;
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border: 1px solid #a3e2b8ff; /* border-color 속성을 border로 변경 */
+  margin: 10px;
+}
+
+.test-modal-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.test-modal-header h1 {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 10px;
+  padding-right: 30px;
+  flex: 1; /* flex-grow를 사용하여 h1을 가운데 정렬 */
+}
+
+.modal-close {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #00796b;
+}
+
+.test-modal-subtitle {
+  font-size: 13px;
+  text-align: center;
+  color: #999;
+  margin-bottom: 20px;
+}
+
+.test-modal-description {
+  margin-bottom: 40px;
+}
+.test-modal-description p {
+  font-size: 15px;
+  color: black;
+}
+.test-section {
+  display: flex; /* Flexbox를 사용하여 아이템들을 수평으로 정렬 */
+  justify-content: space-between; /* 요소들 사이에 공간을 최대로 배분 */
+  align-items: center; /* 세로 중앙 정렬 */
+  margin: 10px 0 10px 0;
+  padding: 10px 0px 10px 0;
+}
+.test-section-title {
+  flex: 5;
+}
+.test-section-title span {
+  padding: 4px 8px 4px 8px;
+  text-align: center;
+  color: black;
+  font-weight: 500;
+  font-size: 15px;
+  background-color: #aff4c6;
+  border: 0.3rem solid #65bf8c;
+  border-radius: 50px;
+}
+.test-section-value {
+  flex: 8;
+  text-align: right;
+}
+.test-section-value p,
+.test-section-value div {
+  color: black;
+  font-size: 14px;
+}
+
+.modal-close {
+  font-size: 24px;
+  cursor: pointer;
+  color: #00796b;
+}
+</style>
