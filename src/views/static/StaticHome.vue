@@ -60,32 +60,21 @@
       <div class="more-modal-content">
         <p>{{ selectedYear }}년 {{ selectedMonth }}월 (닉네임)가 많이 선택한 감정들을 정리해봤어!</p>
         <div class="emotion-summary">
-          <div class="emotion-item">
-            <span>1. 아주 신나는 4회</span>
-            <div class="emotion-bar" style="background-color: #fdd835;"></div>
-          </div>
-          <div class="emotion-item">
-            <span>2. 만족스러운 2회</span>
-            <div class="emotion-bar" style="background-color: #8bc34a;"></div>
-          </div>
-          <div class="emotion-item">
-            <span>3. 행복한 1회</span>
-            <div class="emotion-bar" style="background-color: #fdd835;"></div>
+          <div class="emotion-item" v-for="(emotion, index) in emotions" :key="index">
+            <span>{{ index + 1 }}. {{ emotion.name }} {{ emotion.count }}회</span>
+            <div class="emotion-bar" :style="{ backgroundColor: emotion.color }"></div>
           </div>
         </div>
         <button @click="showNewMoreModal = false" class="back-button">← 돌아가기</button>
       </div>
     </div>
     <div class="chart-wrapper">
-      <EmotionChart @bubble-click="handleBubbleClick" />
+      <EmotionChart :year="selectedYear" :month="selectedMonth" @bubble-click="handleBubbleClick" />
     </div>
     <div class="emotion-list">
       <p>이번 달 (닉네임)가 가장 많이 선택한 감정은...</p>
       <ol>
-        <li>아주 신나는 4회</li>
-        <li>만족스러운 2회</li>
-        <li>행복한 1회</li>
-        <li>즐거운 1회</li>
+        <li v-for="(emotion, index) in emotions" :key="index">{{ emotion.name }} {{ emotion.count }}회</li>
       </ol>
       <button class="more-button" @click="showNewMoreModal = true">더 보기 →</button>
     </div>
@@ -94,7 +83,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, onMounted, watch } from "vue";
+import axios from 'axios';
 import EmotionChart from "@/components/EmotionChart.vue";
 import BaseView from '@/components/common/BaseView.vue';
 import BaseBottomBar from '@/components/common/BaseBottomBar.vue';
@@ -113,14 +103,45 @@ export default defineComponent({
     const years = ref(["2020", "2021", "2022", "2023", "2024", "2025"]);
     const months = ref(["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]);
     const selectedYear = ref("2024");
-    const selectedMonth = ref("03");
-    const selectedDate = ref("2024.03. 감정지도");
+    const selectedMonth = ref("06");
+    const selectedDate = ref("2024.06. 감정지도");
     const selectedEmotion = ref("");
-    const emotions = ref([
-      { name: "대인관계", count: 6, color: "#fdd835" },
-      { name: "일", count: 4, color: "#8bc34a" },
-      { name: "학업", count: 3, color: "#fdd835" },
-    ]);
+    const emotions = ref([] as { name: string; count: number }[]);
+
+    const fetchEmotions = async () => {
+      try {
+        const yearMonth = `${selectedYear.value}-${selectedMonth.value}`;
+        const response = await axios.get('http://192.168.0.154:8092/api/v1/statistics', {
+          params: {
+            yearMonth,
+          },
+          headers: {
+            'X-User-Id': '4',
+          },
+        });
+
+        const data = response.data;
+        const fetchedEmotions = Object.keys(data).map(key => {
+          // 키에서 name 값을 추출하고 괄호를 제거
+          const nameMatch = key.match(/name=([^,)]+)/);
+          const name = nameMatch ? nameMatch[1] : 'Unknown';
+          const count = data[key];
+          return { name, count };
+        });
+        console.log(fetchedEmotions);
+        emotions.value = fetchedEmotions;
+      } catch (error) {
+        console.error('Error fetching emotions:', error);
+      }
+    };
+
+    onMounted(() => {
+      fetchEmotions();
+    });
+
+    watch([selectedYear, selectedMonth], () => {
+      fetchEmotions();
+    });
 
     const selectYear = (year: string) => {
       selectedYear.value = year;
