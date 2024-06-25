@@ -12,12 +12,12 @@ import DateBox from "@/components/DateBox.vue";
 import SpeechBubble from "@/components/icons/SpeechBubble.vue";
 import TagComponent from "@/components/icons/TagComponent.vue";
 import FeelBlock from "@/components/icons/FeelBlock.vue";
-import DiaryOne from "@/views/DiaryOne.vue";
-import DiaryTwo from "@/views/DiaryTwo.vue";
-import DiaryThree from "@/views/DiaryThree.vue";
-import DiaryFour from "@/views/DiaryFour.vue";
-import DiaryFive from "@/views/DiaryFive.vue";
-import DiarySix from "@/views/DiarySix.vue";
+import DiaryOne from "@/views/diary/DiaryOne.vue";
+import DiaryTwo from "@/views/diary/DiaryTwo.vue";
+import DiaryThree from "@/views/diary/DiaryThree.vue";
+import DiaryFour from "@/views/diary/DiaryFour.vue";
+import DiaryFive from "@/views/diary/DiaryFive.vue";
+import DiarySix from "@/views/diary/DiarySix.vue";
 import MainView from "@/views/MainView.vue";
 
 const routes: Array<RouteRecordRaw> = [

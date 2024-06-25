@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import BaseView from '@/components/common/BaseView.vue'
-import BaseButton from '../components/common/BaseButton.vue'
+import BaseButton from '../../components/common/BaseButton.vue'
 import BaseBottomBar from '@/components/common/BaseBottomBar.vue'
 import DateBox from '@/components/DateBox.vue'
 import SpeechBubble from '@/components/icons/SpeechBubble.vue'
