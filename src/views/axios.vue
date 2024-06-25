@@ -23,7 +23,7 @@ export default defineComponent({
   methods: {
     async fetchEmotions() {
       try {
-        const response = await axios.get('http://192.168.0.154:8092/api/v1/statistics', {
+        const response = await axios.get('http://192.168.0.154:8092/api/v1/statistics/emotion', {
           params: {
             yearMonth: '2024-06',
           },

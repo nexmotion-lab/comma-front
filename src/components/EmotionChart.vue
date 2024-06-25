@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref, computed } from "vue";
+import { defineComponent, onMounted, ref, watch } from "vue";
 import axios from 'axios';
 import { useStore } from 'vuex';
 import {
@@ -24,19 +24,31 @@ ChartJS.register(Title, Tooltip, Legend, PointElement, CategoryScale, LinearScal
 
 export default defineComponent({
   name: "EmotionChart",
+  props: {
+    selectedYear: {
+      type: String,
+      required: true
+    },
+    selectedMonth: {
+      type: String,
+      required: true
+    }
+  },
   emits: ['bubble-click'],
-  setup(_, { emit }) {
+  setup(props, { emit }) {
     const chartCanvas = ref<HTMLCanvasElement | null>(null);
     const store = useStore();
+    let chartInstance: ChartJS | null = null;
 
     // API로 불러온 감정 데이터를 저장할 상태
     const emotions = ref([] as any[]);
 
     const fetchEmotions = async () => {
       try {
-        const response = await axios.get('http://192.168.0.154:8092/api/v1/statistics', {
+        const yearMonth = `${props.selectedYear}-${props.selectedMonth}`;
+        const response = await axios.get('http://192.168.0.154:8092/api/v1/statistics/emotion', {
           params: {
-            yearMonth: '2024-06',
+            yearMonth,
           },
           headers: {
             'X-User-Id': '4',
@@ -58,25 +70,21 @@ export default defineComponent({
       }
     };
 
-    onMounted(async () => {
-      await fetchEmotions();
-
-      const filteredEmotionData = computed(() => {
-        return store.state.emotionTags.filter(tag => emotions.value.includes(tag.name)).map(tag => ({
-          x: tag.xvalue,
-          y: tag.yvalue,
-          r: 20, // You can adjust the radius as needed
-          label: tag.name,
-          backgroundColor: tag.color,
-        }));
-      });
+    const createChart = () => {
+      const filteredEmotionData = store.state.emotionTags.filter(tag => emotions.value.includes(tag.name)).map(tag => ({
+        x: tag.xvalue,
+        y: tag.yvalue,
+        r: 20, // You can adjust the radius as needed
+        label: tag.name,
+        backgroundColor: tag.color,
+      }));
 
       const data = {
         datasets: [
           {
             label: 'Emotion Data',
-            data: filteredEmotionData.value,
-            backgroundColor: filteredEmotionData.value.map(tag => tag.backgroundColor),
+            data: filteredEmotionData,
+            backgroundColor: filteredEmotionData.map(tag => tag.backgroundColor),
             borderColor: "transparent",
             borderWidth: 0,
           },
@@ -157,12 +165,25 @@ export default defineComponent({
       };
 
       if (chartCanvas.value) {
-        new ChartJS(chartCanvas.value, {
+        if (chartInstance) {
+          chartInstance.destroy();
+        }
+        chartInstance = new ChartJS(chartCanvas.value, {
           type: 'bubble',
           data: data,
           options: options,
         });
       }
+    };
+
+    onMounted(async () => {
+      await fetchEmotions();
+      createChart();
+    });
+
+    watch([() => props.selectedYear, () => props.selectedMonth], async () => {
+      await fetchEmotions();
+      createChart();
     });
 
     return {

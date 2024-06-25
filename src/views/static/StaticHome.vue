@@ -69,7 +69,11 @@
       </div>
     </div>
     <div class="chart-wrapper">
-      <EmotionChart :year="selectedYear" :month="selectedMonth" @bubble-click="handleBubbleClick" />
+      <EmotionChart 
+        @bubble-click="handleBubbleClick"
+        :selectedYear="selectedYear"
+        :selectedMonth="selectedMonth"
+      />
     </div>
     <div class="emotion-list">
       <p>이번 달 (닉네임)가 가장 많이 선택한 감정은...</p>
@@ -111,7 +115,7 @@ export default defineComponent({
     const fetchEmotions = async () => {
       try {
         const yearMonth = `${selectedYear.value}-${selectedMonth.value}`;
-        const response = await axios.get('http://192.168.0.154:8092/api/v1/statistics', {
+        const response = await axios.get('http://192.168.0.154:8092/api/v1/statistics/emotion', {
           params: {
             yearMonth,
           },
