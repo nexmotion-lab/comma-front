@@ -58,11 +58,14 @@ export default defineComponent({
         const data = response.data;
         const names = Object.keys(data).map(key => {
           const nameMatch = key.match(/name=([^,)]+)/);
-          return nameMatch ? nameMatch[1] : 'Unknown';
+          return {
+            name: nameMatch ? nameMatch[1] : 'Unknown',
+            count: data[key] // 감정 태그의 카운트 값을 함께 저장
+          };
         });
         
         // Vuex 스토어에 감정 데이터 설정
-        store.commit('setEmotionTags', names);
+        store.commit('setEmotionTags', names.map(tag => tag.name));
         emotions.value = names;
 
       } catch (error) {
@@ -71,13 +74,16 @@ export default defineComponent({
     };
 
     const createChart = () => {
-      const filteredEmotionData = store.state.emotionTags.filter(tag => emotions.value.includes(tag.name)).map(tag => ({
-        x: tag.xvalue,
-        y: tag.yvalue,
-        r: 20, // You can adjust the radius as needed
-        label: tag.name,
-        backgroundColor: tag.color,
-      }));
+      const filteredEmotionData = store.state.emotionTags.filter(tag => emotions.value.some(e => e.name === tag.name)).map(tag => {
+        const emotion = emotions.value.find(e => e.name === tag.name);
+        return {
+          x: tag.xvalue,
+          y: tag.yvalue,
+          r: emotion ? emotion.count * 10 : 20, // count 값에 10을 곱하여 반영
+          label: tag.name,
+          backgroundColor: tag.color,
+        };
+      });
 
       const data = {
         datasets: [

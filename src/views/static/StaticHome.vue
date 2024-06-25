@@ -48,9 +48,9 @@
       <div class="more-modal-content">
         <p>{{ selectedYear }}년 {{ selectedMonth }}월 (닉네임)가 (키워드)와 함께 자주 쓴 사건 태그들이야!</p>
         <div class="emotion-summary">
-          <div class="emotion-item" v-for="(emotion, index) in emotions" :key="index">
-            <span>{{ index + 1 }}. {{ emotion.name }} {{ emotion.count }}회</span>
-            <div class="emotion-bar" :style="{ backgroundColor: emotion.color }"></div>
+          <div class="emotion-item" v-for="(event, index) in eventData" :key="index">
+            <span>{{ index + 1 }}. {{ event.name }}</span>
+            <div class="emotion-bar" :style="{ backgroundColor: event.color }"></div>
           </div>
         </div>
         <button @click="showMoreModal = false" class="back-button">← 돌아가기</button>
@@ -111,6 +111,7 @@ export default defineComponent({
     const selectedDate = ref("2024.06. 감정지도");
     const selectedEmotion = ref("");
     const emotions = ref([] as { name: string; count: number }[]);
+    const eventData = ref([] as { name: string; color: string }[]); // 이벤트 데이터를 저장할 상태
 
     const fetchEmotions = async () => {
       try {
@@ -136,6 +137,33 @@ export default defineComponent({
         emotions.value = fetchedEmotions;
       } catch (error) {
         console.error('Error fetching emotions:', error);
+      }
+    };
+
+    const fetchEvents = async () => {
+      try {
+        const yearMonth = `${selectedYear.value}-${selectedMonth.value}`;
+        const response = await axios.get('http://192.168.0.154:8092/api/v1/statistics/event', {
+          params: {
+            yearMonth,
+          },
+          headers: {
+            'X-User-Id': '4',
+          },
+        });
+
+        const data = response.data;
+        const fetchedEvents = Object.keys(data).map(key => {
+          // 키에서 name 값을 추출하고 괄호를 제거
+          const nameMatch = key.match(/name=([^,)]+)/);
+          const name = nameMatch ? nameMatch[1] : 'Unknown';
+          const color = '#ffcc00'; // 기본 색상 설정 또는 데이터에서 가져오기
+          return { name, color };
+        });
+        console.log(fetchedEvents);
+        eventData.value = fetchedEvents;
+      } catch (error) {
+        console.error('Error fetching events:', error);
       }
     };
 
@@ -167,6 +195,7 @@ export default defineComponent({
     const handleBubbleClick = (emotion: string) => {
       selectedEmotion.value = emotion;
       showMoreModal.value = true;
+      fetchEvents(); // 모달이 열릴 때 이벤트 데이터를 가져옵니다.
     };
 
     return {
@@ -180,6 +209,7 @@ export default defineComponent({
       selectedDate,
       selectedEmotion,
       emotions,
+      eventData, // 이벤트 데이터 추가
       selectYear,
       selectMonth,
       confirmDate,
