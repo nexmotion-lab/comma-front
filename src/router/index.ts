@@ -19,6 +19,7 @@ import DiaryFour from "@/views/DiaryFour.vue";
 import DiaryFive from "@/views/DiaryFive.vue";
 import DiarySix from "@/views/DiarySix.vue";
 import MainView from "@/views/MainView.vue";
+import StaticHome from '@/views/static/StaticHome.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -46,6 +47,11 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/Tab3Page.vue')
       }
     ]
+  },
+  {
+    path: '/statichome',
+    name: 'StaticHome',
+    component: StaticHome
   },
   {
     path: '/calendar',
