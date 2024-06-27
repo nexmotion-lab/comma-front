@@ -128,7 +128,7 @@ export default defineComponent({
       <BaseRoundButton class="menu" @click="$router.push('/diary/event')">사건</BaseRoundButton>
       <BaseRoundButton class="menu" @click="$router.push('/diary/thinking')">생각</BaseRoundButton>
       <BaseRoundButton class="menu" @click="$router.push('/diary/emotion')">감정</BaseRoundButton>
-      <BaseRoundButton class="menu no-margin" @click="$router.push('/diary/core')">핵심</BaseRoundButton>
+      <BaseRoundButton class="menu no-right-margin" @click="$router.push('/diary/core')">핵심</BaseRoundButton>
     </div>
     <div class="ment-wrap">
       <SpeechBubble class="ment">오늘 하루가 궁금해!<br>
@@ -141,7 +141,7 @@ export default defineComponent({
       <input class="search-tag" placeholder="태그 검색">
       <ion-img class="sea" src="/public/search.png"></ion-img>
     </div>
-    <div class="">
+    <div>
       <div class="tag-wrap">
         <Tag v-for="(item, key, index) in defaultTags"
              :key="item['tag_id']"
@@ -182,8 +182,8 @@ export default defineComponent({
     margin-right: 10px;
   }
 
-  .no-margin {
-    margin: 0px;
+  .no-right-margin {
+    margin-right: 0px;
   }
 
   .ment-wrap {
@@ -244,8 +244,10 @@ export default defineComponent({
   }
 
   .add-btn {
-    background-color: white;
-    border: 2px solid var(--main-color);
+    --background: white;
+    --border-color: var(--main-color);
+    --border-style: solid;
+    --border-width: 2px;
     padding: 8px 10px;
   }
 </style>

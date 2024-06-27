@@ -95,12 +95,16 @@ export default new Vuex.Store<State>({
             { xvalue: 5, yvalue: -3, emotion_tag_no: 78, name: '만족스러운', color: '#4D8258' },
             { xvalue: 5, yvalue: -2, emotion_tag_no: 79, name: '기대지않은', color: '#4D7D58' },
             { xvalue: 5, yvalue: -1, emotion_tag_no: 80, name: '덜렁이는', color: '#577F60' }
-        ] as EmotionTag[]
+        ] as EmotionTag[],
+        selectedEmotions: []
     },
     mutations: {
     },
     actions: {
     },
     getters: {
+        getEmotionTags: (state: State) => {
+            return state.emotionTags
+        }
     }
 });

@@ -31,10 +31,10 @@ export default defineComponent({
     <BaseRoundButton class="menu" @click="$router.push('/diary/event')">사건</BaseRoundButton>
     <BaseRoundButton class="menu" @click="$router.push('/diary/thinking')">생각</BaseRoundButton>
     <BaseRoundButton class="menu" @click="$router.push('/diary/emotion')">감정</BaseRoundButton>
-    <BaseRoundButton class="menu no-margin" @click="$router.push('/diary/core')">핵심</BaseRoundButton>
+    <BaseRoundButton class="menu no-right-margin" @click="$router.push('/diary/core')">핵심</BaseRoundButton>
   </div>
   <div class="ment-wrap">
-    <SpeechBubble class="ment">선택한 감정중 어떤 감정이<br>
+    <SpeechBubble class="ment">어떤 감정이<br>
       제일 기억에 남아?</SpeechBubble>
     <ion-img class="nuguri" src="/public/nuguri.png"></ion-img>
   </div>
@@ -74,15 +74,15 @@ export default defineComponent({
   margin-right: 10px;
 }
 
-.no-margin {
-  margin: 0px;
+.no-right-margin {
+  margin-right: 0px;
 }
 
 .description {
   background-color: rgba(144, 238, 144, 0.45);
-  border: 0.5px solid black;
+  padding: 5px 0px;
   text-align: center;
-  border-radius: 20px;
+  border-radius: 15px 15px 0px 0px;
 }
 
 .ment-wrap {
@@ -93,7 +93,7 @@ export default defineComponent({
 
 .ment {
   margin-left: 3%;
-  width: 60%;
+  width: 70vw;
 }
 
 .nuguri {
@@ -113,9 +113,8 @@ tag {
 }
 
 .content-wrap {
-  margin: 5px;
-  padding: 5px;
-  height: 63vh;
-  border-radius: 1rem;
+  margin: 0px 10px;
+  height: 50vh;
+  border-radius: 15px;
 }
 </style>

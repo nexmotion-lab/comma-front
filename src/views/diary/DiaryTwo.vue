@@ -36,7 +36,7 @@ export default defineComponent({
     <BaseRoundButton class="menu" @click="$router.push('/diary/event')">사건</BaseRoundButton>
     <BaseRoundButton class="menu" @click="$router.push('/diary/thinking')">생각</BaseRoundButton>
     <BaseRoundButton class="menu" @click="$router.push('/diary/emotion')">감정</BaseRoundButton>
-    <BaseRoundButton class="menu no-margin" @click="$router.push('/diary/core')">핵심</BaseRoundButton>
+    <BaseRoundButton class="menu no-right-margin" @click="$router.push('/diary/core')">핵심</BaseRoundButton>
   </div>
   <div class="ment-wrap">
     <SpeechBubble class="ment">오늘 하루가 궁금해!<br>
@@ -84,8 +84,8 @@ export default defineComponent({
     margin-right: 10px;
   }
 
-  .no-margin {
-    margin: 0px;
+  .no-right-margin {
+    margin-right: 0px;
   }
 
   .content-wrap {
@@ -111,7 +111,7 @@ export default defineComponent({
 
   .ment {
     margin-left: 3%;
-    width: 60%;
+    width: 70vw;
   }
 
   .nuguri {
