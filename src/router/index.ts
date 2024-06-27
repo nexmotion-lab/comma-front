@@ -21,6 +21,7 @@ import DiarySix from "@/views/DiarySix.vue";
 import MainView from "@/views/MainView.vue";
 import StaticHome from '@/views/static/StaticHome.vue'
 import Axios from '@/views/axios.vue'
+import SettingView from '@/views/SettingView.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -53,6 +54,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/statichome',
     name: 'StaticHome',
     component: StaticHome
+  },
+  {
+    path: '/setting',
+    name: 'Setting',
+    component: SettingView
   },
   {
     path: '/axios',
