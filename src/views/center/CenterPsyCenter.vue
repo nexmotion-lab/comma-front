@@ -1,14 +1,11 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted, reactive } from 'vue'
-import GreenButton from '@/components/GreenButton.vue'
 import axios from 'axios'
-// import { useRouter } from 'vue-router'
 import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
 import 'swiper/css'
-import BaseView from '@/components/common/BaseView.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
-import BaseBottomBar from '@/components/common/BaseBottomBar.vue'
 import 'vue-router/dist/vue-router'
+import {IonPage} from "@ionic/vue";
 
 interface CenterInfo {
   psy_center_no: number
@@ -26,12 +23,10 @@ interface CenterInfo {
 export default defineComponent({
   name: 'CenterPsyCenter',
   components: {
-    BaseView,
     BaseButton,
-    BaseBottomBar,
-    GreenButton,
     Swiper,
-    SwiperSlide
+    SwiperSlide,
+    IonPage
   },
   setup() {
     // const router = useRouter()
@@ -66,9 +61,6 @@ export default defineComponent({
       }
     })
 
-    const navigate = (path: string) => {
-      window.location.href = path
-    }
 
     const goApply = (link: string | null, name: string) => {
       if (!link) {
@@ -78,28 +70,19 @@ export default defineComponent({
       }
     }
 
-    return { centerInfo, swiperOptions, activeSlideIndex, onSlideChange, goApply, navigate }
+    return { centerInfo, swiperOptions, activeSlideIndex, onSlideChange, goApply }
   }
 })
 </script>
 <!-- 상담센터 센터 정보 페이지 -->
 <template>
-  <BaseView />
-  <!-- header start -->
-  <div class="header">
-    <div class="nav-bar">
-      <BaseButton @click="navigate('CenterPsyInfo')">심리정보</BaseButton>
-      <BaseButton @click="navigate('CenterPsyTest')">심리검사</BaseButton>
-      <GreenButton>상담센터</GreenButton>
-    </div>
-  </div>
-  <!-- header end -->
-
+  <ion-page>
+    <ion-content :scroll-y="false">
   <!-- centerInfo start -->
   <div v-if="centerInfo.length === 0">
     <h2>정보가 없습니다.</h2>
   </div>
-
+<div class="mm">
   <swiper :options="swiperOptions" @slideChange="onSlideChange">
     <swiper-slide v-for="info in centerInfo" :key="info.psy_center_no">
       <div class="content-wrapper">
@@ -143,6 +126,7 @@ export default defineComponent({
       </div>
     </swiper-slide>
   </swiper>
+</div>
   <!-- centerInfo end -->
 
   <div class="slider-indicator">
@@ -153,29 +137,21 @@ export default defineComponent({
       :class="{ active: activeSlideIndex === index }"
     ></span>
   </div>
-
-  <BaseBottomBar> </BaseBottomBar>
+    </ion-content>
+  </ion-page>
 </template>
 
 <style scoped>
-.header {
-  height: 10%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 10px;
+ion-content{
+  --background: #f0fff7 ;
 }
 
-.nav-bar {
-  display: flex;
-  justify-content: center; /* 수평 가운데 정렬 */
-  align-items: center; /* 수직 가운데 정렬 */
-}
+
 
 .content-wrapper {
   position: relative; /* 상대적 위치 설정 */
   letter-spacing: 0.6px;
-  height: 50%;
+  height: 74vh;
   background-color: white;
   color: black;
   border-radius: 20px;
@@ -309,9 +285,6 @@ hr {
 @media (max-width: 768px) {
   .slider-indicator {
     margin-top: 15px; /* 작은 화면에서는 위치를 조금 더 위로 설정 */
-  }
-  .content {
-    max-height: 500px;
   }
 }
 </style>

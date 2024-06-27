@@ -7,6 +7,8 @@ import BaseButton from '@/components/common/BaseButton.vue'
 import BaseBottomBar from '@/components/common/BaseBottomBar.vue'
 import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
 import 'swiper/swiper-bundle.min.css'
+import { IonButton, IonModal,IonIcon,IonPage } from '@ionic/vue';
+
 
 interface PsyTest {
   psy_test_no: number
@@ -19,12 +21,11 @@ interface PsyTest {
 export default defineComponent({
   name: 'CenterPsyTest',
   components: {
-    BaseView,
-    BaseBottomBar,
-    GreenButton,
-    BaseButton,
     Swiper,
-    SwiperSlide
+    SwiperSlide,
+    IonModal,
+    IonIcon,
+    IonPage,
   },
   setup() {
     const modal1 = ref<any>(null)
@@ -68,7 +69,7 @@ export default defineComponent({
         psyTests.value = response.data // API 응답을 직접 할당
         console.log(psyTests.value)
       } catch (error) {
-        console.error('Failed to fetch psytest:', error)
+        console.error('Failed to fetch psytest :', error)
         alert('Failed to fetch psytest')
       }
     })
@@ -78,13 +79,13 @@ export default defineComponent({
     }
     const openModal1 = () => {
       if (modal1.value) {
-        modal1.value.present()
+        modal1.value.$el.present()
       }
     }
     const openModal2 = (test: PsyTest) => {
       selectedTest.value = test // 선택된 테스트 정보를 설정
       if (modal2.value) {
-        modal2.value.present()
+        modal2.value.$el.present();
       }
     }
     const dismiss1 = () => {
@@ -94,7 +95,7 @@ export default defineComponent({
     }
     const dismiss2 = () => {
       if (modal2.value) {
-        modal2.value.dismiss()
+        modal2.value.$el.dismiss()
       }
     }
 
@@ -143,18 +144,36 @@ export default defineComponent({
 
 <!-- 상담센터 심리검사 페이지 -->
 <template>
-  <BaseView />
-  <div class="header">
-    <div class="nav-bar">
-      <BaseButton @click="navigate('CenterPsyInfo')">심리정보</BaseButton>
-      <GreenButton>심리검사</GreenButton>
-      <BaseButton @click="navigate('CenterPsyCenter')">상담센터</BaseButton>
-    </div>
-  </div>
-
+  <ion-page>
+    <ion-content :scroll-y="false" :fullscreen="false">
+<!-- 심리검사 모달 버튼  -->
   <div class="info-button">
     <div class="info-icon" @click="openModal1">i</div>
   </div>
+
+<!-- 심리검사 참고 모달 -->
+  <ion-modal id="example-modal" ref="modal1" >
+    <div class="test-modal-wrapper">
+      <ion-list lines="none">
+        <ion-item>
+          <ion-label>
+            <h2><strong>Info.</strong></h2>
+            <ion-icon name="close" class="modal-close" @click="dismiss2"></ion-icon>
+          </ion-label>
+        </ion-item>
+        <ion-item class="test-ref-detail">
+          <ion-img class="profile-image" src="/public/sahmyook.png"></ion-img>
+          <ion-label class="test-ref">
+            <p>
+              이 표시가 들어간 심리검사들은 삼육대학교 상담센터에서 신청 시 무료로 받을 수 있는
+              검사입니다.
+            </p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </div>
+  </ion-modal>
+
 
   <!-- comment start -->
   <div class="comment-section">
@@ -185,7 +204,7 @@ export default defineComponent({
 
   <div class="test-list">
     <div v-for="(pair, index) in testPairs" :key="index" class="test-pair">
-      <div class="test-item" @click="openModal2(test)" v-for="test in pair" :key="test.psy_test_no">
+      <div class="test-item" @click="openModal2(test)" v-for="test in pair" :key="test.psy_test_no" >
         <div class="test-title">
           {{ wrapText(test.title, 15) }}
         </div>
@@ -193,29 +212,7 @@ export default defineComponent({
     </div>
   </div>
 
-  <ion-modal id="example-modal" ref="modal1">
-    <div class="test-modal-wrapper">
-      <ion-list lines="none">
-        <ion-item>
-          <ion-label>
-            <h2><strong>Info.</strong></h2>
-            <ion-icon name="close" class="modal-close" @click="dismiss2"></ion-icon>
-          </ion-label>
-        </ion-item>
-        <ion-item class="test-ref-detail">
-          <ion-img class="profile-image" src="/public/sahmyook.png"></ion-img>
-          <ion-label class="test-ref">
-            <p>
-              이 표시가 들어간 심리검사들은 삼육대학교 상담센터에서 신청 시 무료로 받을 수 있는
-              검사입니다.
-            </p>
-          </ion-label>
-        </ion-item>
-      </ion-list>
-    </div>
-  </ion-modal>
-
-  <ion-modal id="example-modal" ref="modal2">
+  <ion-modal id="example-modal" ref="modal2" >
     <div class="test-modal-wrapper" v-if="selectedTest">
       <div class="test-modal-header">
         <h1>{{ selectedTest.title }}</h1>
@@ -251,27 +248,15 @@ export default defineComponent({
       </ion-list>
     </div>
   </ion-modal>
-
-  <BaseBottomBar></BaseBottomBar>
+    </ion-content>
+  </ion-page>
 </template>
 
 <style scoped>
-/* Header Section */
-.header {
-  height: 10%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 10px;
-  position: relative;
+ion-content{
+  --background: #f0fff7;
+  --scroll-y:false;
 }
-
-.nav-bar {
-  display: flex;
-  justify-content: center; /* 수평 가운데 정렬 */
-  align-items: center; /* 수직 가운데 정렬 */
-}
-
 /* Info Button */
 .info-button {
   display: flex;
@@ -292,10 +277,6 @@ export default defineComponent({
   font-weight: bold; /* 굵게 적용 */
   font-size: 18px; /* 폰트 크기 조정 */
   cursor: pointer; /* 마우스 커서 포인터로 변경 */
-}
-
-.info-icon:hover {
-  background-color: gray; /* 호버 시 배경색 변경 */
 }
 .comment-section {
   margin: 0 15px 15px 15px;
@@ -381,7 +362,7 @@ export default defineComponent({
 /* Test List */
 .test-list {
   overflow-y: scroll; /* 세로 스크롤 활성화 */
-  max-height: 60vh; /* 블록의 최대 높이 설정 */
+  max-height: 63vh; /* 블록의 최대 높이 설정 */
   margin: 0px 5px 0px;
 }
 
@@ -437,6 +418,7 @@ export default defineComponent({
   margin-bottom: 15px;
 }
 
+
 ion-modal#example-modal {
   --width: 80%;
   --min-width: 250px;
@@ -444,6 +426,7 @@ ion-modal#example-modal {
   --border-radius: 6px;
   --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
   --border-radius: 10px;
+  --background-color: white;
 }
 
 .test-modal-wrapper {
@@ -452,6 +435,7 @@ ion-modal#example-modal {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   border: 1px solid #a3e2b8ff; /* border-color 속성을 border로 변경 */
   margin: 10px;
+  background-color: white;
 }
 
 .test-modal-header {
@@ -501,7 +485,7 @@ ion-modal#example-modal {
   padding: 10px 0px 10px 0;
 }
 .test-section-title {
-  flex: 5;
+  flex: 6;
 }
 .test-section-title span {
   padding: 4px 8px 4px 8px;
@@ -528,4 +512,5 @@ ion-modal#example-modal {
   cursor: pointer;
   color: #00796b;
 }
+
 </style>

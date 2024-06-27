@@ -1,11 +1,9 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted, computed } from 'vue'
 import axios from 'axios'
-import BaseView from '@/components/common/BaseView.vue'
-import GreenButton from '@/components/GreenButton.vue'
 import NuguriBox from '@/components/NuguriBox.vue'
-import BaseBottomBar from '@/components/common/BaseBottomBar.vue'
-import BaseButton from '@/components/common/BaseButton.vue'
+import router from "@/router";
+import {IonPage} from "@ionic/vue";
 
 interface PsyInfo {
   psy_info_no: number
@@ -17,11 +15,8 @@ interface PsyInfo {
 export default defineComponent({
   name: 'CenterPsyInfo',
   components: {
-    BaseBottomBar,
-    BaseView,
-    BaseButton,
-    GreenButton,
-    NuguriBox
+    NuguriBox,
+    IonPage
   },
   setup() {
     const psyInfos = ref<PsyInfo[]>([])
@@ -45,22 +40,20 @@ export default defineComponent({
       }
     })
 
-    const navigate = (path: string) => {
-      window.location.href = path
-    }
-
     const navigateToDetail = (psyInfo: PsyInfo) => {
-      const queryParams = new URLSearchParams({
-        title: psyInfo.title,
-        content: psyInfo.content,
-        image: psyInfo.image
-      }).toString()
-      window.location.href = `/centerPsyInfo/detail/${psyInfo.psy_info_no}?${queryParams}`
-    }
+      router.push({
+        name: 'CenterPsyInfoDetail',
+        params: { id: psyInfo.psy_info_no },
+        query: {
+          title: psyInfo.title,
+          content: psyInfo.content,
+          image: psyInfo.image,
+        },
+      });
+    };
 
     return {
       psyInfos,
-      navigate,
       navigateToDetail,
       testPairs
     }
@@ -75,15 +68,7 @@ export default defineComponent({
 
 <!-- 상담센터 상담 정보 리스트 페이지 -->
 <template>
-  <BaseView />
-  <div class="header">
-    <div class="nav-bar">
-      <GreenButton>심리정보</GreenButton>
-      <BaseButton @click="navigate('/centerPsyTest')">심리검사</BaseButton>
-      <BaseButton @click="navigate('/centerPsyCenter')">상담센터</BaseButton>
-    </div>
-  </div>
-
+  <ion-page>
   <!-- psyInfo start -->
   <div class="psyInfo-list" v-if="testPairs.length > 0">
     <div v-for="(pair, index) in testPairs" :key="index">
@@ -94,8 +79,8 @@ export default defineComponent({
   </div>
   <div v-else>데이터를 불러오는 중입니다...</div>
   <!-- psyInfo end -->
-
-  <BaseBottomBar></BaseBottomBar>
+  </ion-page>
+<!--  <BaseBottomBar></BaseBottomBar>-->
 </template>
 
 <style scoped>
@@ -108,12 +93,13 @@ export default defineComponent({
 }
 .psyInfo-list {
   overflow-y: scroll; /* 세로 스크롤 활성화 */
-  max-height: 80%; /* 블록의 최대 높이 설정 */
+  max-height: 90%; /* 블록의 최대 높이 설정 */
   margin: 0px 5px 0px;
 }
 
 .nav-bar {
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 </style>

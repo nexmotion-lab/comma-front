@@ -19,6 +19,11 @@ import DiaryFour from "@/views/DiaryFour.vue";
 import DiaryFive from "@/views/DiaryFive.vue";
 import DiarySix from "@/views/DiarySix.vue";
 import MainView from "@/views/MainView.vue";
+import CenterPsyCenter from "@/views/center/CenterPsyCenter.vue";
+import CenterPsyTest from "@/views/center/CenterPsyTest.vue";
+import CenterPsyInfoDetail from "@/views/center/CenterPsyInfoDetail.vue";
+import CenterPsyInfo from "@/views/center/CenterPsyInfo.vue";
+import PsyCenter from "@/views/center/PsyCenter.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -45,6 +50,37 @@ const routes: Array<RouteRecordRaw> = [
         path: 'tab3',
         component: () => import('@/views/Tab3Page.vue')
       }
+    ]
+  },
+  {
+    path: '/psyCenter',
+    component: PsyCenter,
+    children:[
+      {
+        path: '',
+        redirect: '/psyCenter/psyInfo'
+      },
+      {
+        path: 'psyInfo',
+        name: 'CenterPsyInfo',
+        component: CenterPsyInfo
+      },
+      {
+        path: 'psyInfo/detail/:id',
+        name: 'CenterPsyInfoDetail',
+        component:CenterPsyInfoDetail
+      },
+      {
+        path: 'psyTest',
+        name: 'CenterPsyTest',
+        component:CenterPsyTest
+      },
+      {
+        path: 'center',
+        name: 'CenterPsyCenter',
+        component: CenterPsyCenter
+      }
+
     ]
   },
   {
@@ -136,11 +172,39 @@ const routes: Array<RouteRecordRaw> = [
     name: 'DiarySix',
     component: DiarySix,
   },
+
+  // {
+  //   path: '/centerPsyInfo',
+  //   name: 'CenterPsyInfo',
+  //   component: CenterPsyInfo
+  // },
+  // {
+  //   path: '/centerPsyInfo/detail/:id', // id 파라미터 추가
+  //   name: 'CenterPsyInfoDetail',
+  //   component: CenterPsyInfoDetail,
+  //   props: (route) => ({
+  //     id: route.params.id,
+  //     title: route.query.title,
+  //     content: route.query.content,
+  //     image: route.query.image
+  //   })
+  // },
+  // {
+  //   path: '/centerPsyTest',
+  //   name: 'CenterPsyTest',
+  //   component: CenterPsyTest
+  // },
+  // {
+  //   path: '/centerPsyCenter',
+  //   name: 'CenterPsyCenter',
+  //   component: CenterPsyCenter
+  // },
   {
     path: '/main',
     name: 'Main',
     component: MainView,
   },
+
 ]
 
 const router = createRouter({
