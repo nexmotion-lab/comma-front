@@ -49,7 +49,7 @@
         <p>{{ selectedYear }}년 {{ selectedMonth }}월 (닉네임)가 '{{ selectedEmotion }}'와 함께 자주 쓴 사건 태그들이야!</p>
         <div class="emotion-summary">
           <div class="emotion-item" v-for="(event, index) in eventData" :key="index">
-            <span>{{ index + 1 }}. {{ event.name }}</span>
+            <span>{{ index + 1 }}. {{ event.name }} {{ event.count }}회</span>
             <div class="emotion-bar" :style="{ backgroundColor: event.color }"></div>
           </div>
         </div>
@@ -112,7 +112,7 @@ export default defineComponent({
     const selectedEmotion = ref("");
     const selectedEmotionId = ref(""); // 선택된 감정의 ID를 저장할 상태
     const emotions = ref([] as { name: string; count: number }[]);
-    const eventData = ref([] as { name: string; color: string }[]); // 이벤트 데이터를 저장할 상태
+    const eventData = ref([] as { name: string; count: number; color: string }[]); // 이벤트 데이터를 저장할 상태
 
     const fetchEmotions = async () => {
       try {
@@ -159,8 +159,9 @@ export default defineComponent({
           // 키에서 name 값을 추출하고 괄호를 제거
           const nameMatch = key.match(/name=([^,)]+)/);
           const name = nameMatch ? nameMatch[1] : 'Unknown';
+          const count = data[key];
           const color = '#ffcc00'; // 기본 색상 설정 또는 데이터에서 가져오기
-          return { name, color };
+          return { name, count, color };
         });
         console.log(fetchedEvents);
         eventData.value = fetchedEvents;
