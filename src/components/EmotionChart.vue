@@ -62,7 +62,7 @@ export default defineComponent({
             name: nameMatch ? nameMatch[1] : 'Unknown',
             count: data[key], // 감정 태그의 카운트 값을 함께 저장
             id: key.match(/emotionTagNo=(\d+)/)[1], // 감정 태그 ID 추출
-            color: '#randomColor' // 색상 설정
+            color: store.state.emotionTags.find(e => e.name === nameMatch[1])?.color || '#randomColor' // 색상 설정
           };
         });
 
@@ -127,7 +127,7 @@ export default defineComponent({
             max: 6,
             grid: {
               color: (context) => (context.tick.value === 0 ? "#000000" : "transparent"),
-              lineWidth: (context) => (context.tick.value === 0 ? 2 : 0),
+              lineWidth: (context) => (context.tick.value === 0 ? 0.2 : 0),
               drawTicks: false,
             },
             ticks: {
@@ -143,7 +143,7 @@ export default defineComponent({
             max: 6,
             grid: {
               color: (context) => (context.tick.value === 0 ? "#000000" : "transparent"),
-              lineWidth: (context) => (context.tick.value === 0 ? 2 : 0),
+              lineWidth: (context) => (context.tick.value === 0 ? 0.2 : 0),
               drawTicks: false,
             },
             ticks: {

@@ -75,7 +75,7 @@
       />
     </div>
     <div class="emotion-list">
-      <p>이번 달 (닉네임)가 가장 많이 선택한 감정은...</p>
+      <p>이번 달 (닉네임)가 가장 많이 선택한 감정은?</p>
       <ol>
         <li v-for="(emotion, index) in emotions" :key="index">{{ emotion.name }} {{ emotion.count }}회</li>
       </ol>
@@ -242,55 +242,57 @@ export default defineComponent({
 <style scoped>
 .home {
   text-align: center;
-  margin: 20px;
-  padding: 10px;
+  margin: 2vh;
+  margin-top: 4vh;
+  padding: 1vh;
   background-color: #ffffff;
-  border-radius: 20px;
+  border-radius: 2vh;
 }
 
 .header {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 10px;
-  border-bottom: 2px solid #f0a500;
+  padding: 1vh;
+  border-bottom: 0.2vh solid #f0a500;
 }
 
 .header h1 {
-  font-size: 20px;
+  font-size: 2.5vh;
   color: #000000;
   cursor: pointer;
 }
 
 .chart-wrapper {
   width: 100%;
-  height: 400px;
+  height: 45vh;
   position: relative;
 }
 
 .emotion-list {
-  margin-top: 20px;
+  margin-top: 2vh;
   text-align: left;
-  padding: 0 20px;
+  padding: 0 2vh;
 }
 
 .emotion-list p {
-  font-size: 16px;
+  font-size: 2vh;
 }
 
 .emotion-list ol {
-  padding-left: 20px;
+  padding-left: 2vh;
+  font-size: 2vh;
 }
 
 .more-button {
   display: block;
-  margin: 20px auto;
-  padding: 10px 20px;
+  margin: 2vh auto;
+  padding: 1vh 2vh;
   background-color: #f0a500;
   border: none;
-  border-radius: 5px;
+  border-radius: 0.5vh;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 1.6vh;
 }
 
 .modal {
@@ -310,12 +312,12 @@ export default defineComponent({
 .more-modal-content,
 .new-more-modal-content {
   background-color: #ffffff;
-  padding: 20px;
-  border-radius: 10px;
+  padding: 2vh;
+  border-radius: 1vh;
   text-align: center;
   width: 80%;
-  max-width: 300px;
-  border: 2px solid #a0c4ff;
+  max-width: 30vh;
+  border: 0.2vh solid #a0c4ff;
   z-index: 1001;
 }
 
@@ -327,26 +329,26 @@ export default defineComponent({
 .date-picker {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 2vh;
 }
 
 .date-column {
   flex: 1;
   text-align: center;
   overflow-y: auto;
-  height: 150px;
+  height: 15vh;
 }
 
 .label-column {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
+  width: 4vh;
 }
 
 .label-column p {
   margin: 0;
-  font-size: 18px;
+  font-size: 1.8vh;
 }
 
 .date-column ul {
@@ -356,8 +358,8 @@ export default defineComponent({
 }
 
 .date-column li {
-  margin: 10px 0;
-  font-size: 18px;
+  margin: 1vh 0;
+  font-size: 1.8vh;
   cursor: pointer;
 }
 
@@ -372,12 +374,12 @@ export default defineComponent({
 }
 
 .modal-buttons button {
-  padding: 10px 20px;
+  padding: 1vh 2vh;
   background-color: #d1f7c4;
   border: none;
-  border-radius: 5px;
+  border-radius: 0.5vh;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 1.6vh;
   width: 40%;
 }
 
@@ -387,8 +389,8 @@ export default defineComponent({
 
 .more-modal-content p,
 .new-more-modal-content p {
-  font-size: 16px;
-  margin-bottom: 20px;
+  font-size: 1.6vh;
+  margin-bottom: 2vh;
 }
 
 .emotion-summary {
@@ -399,22 +401,22 @@ export default defineComponent({
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
+  margin-bottom: 1vh;
 }
 
 .emotion-bar {
-  width: 20px;
-  height: 20px;
+  width: 2vh;
+  height: 2vh;
   border-radius: 50%;
 }
 
 .back-button {
-  padding: 10px 20px;
+  padding: 1vh 2vh;
   background-color: #f0a500;
   border: none;
-  border-radius: 5px;
+  border-radius: 0.5vh;
   cursor: pointer;
-  font-size: 16px;
-  margin-top: 20px;
+  font-size: 1.6vh;
+  margin-top: 2vh;
 }
 </style>
