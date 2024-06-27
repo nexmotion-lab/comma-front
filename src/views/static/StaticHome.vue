@@ -1,9 +1,11 @@
 <template>
   <BaseView />
+
   <div class="home">
     <div class="header">
       <h1 @click="showDateModal = true">{{ selectedDate }}</h1>
     </div>
+
     <div v-if="showDateModal" class="modal">
       <div class="modal-content">
         <div class="date-picker">
@@ -44,9 +46,10 @@
         </div>
       </div>
     </div>
+
     <div v-if="showMoreModal" class="modal">
       <div class="more-modal-content">
-        <p>{{ selectedYear }}년 {{ selectedMonth }}월 (닉네임)가 '{{ selectedEmotion }}'와 함께 자주 쓴 사건 태그들이야!</p>
+        <p class="large-text">{{ selectedYear }}년 {{ selectedMonth }}월 (닉네임)가 '{{ selectedEmotion }}'와 함께 자주 쓴 사건 태그야!</p>
         <div class="emotion-summary">
           <div class="emotion-item" v-for="(event, index) in eventData" :key="index">
             <span>{{ index + 1 }}. {{ event.name }} {{ event.count }}회</span>
@@ -55,9 +58,10 @@
         <button @click="showMoreModal = false" class="back-button">← 돌아가기</button>
       </div>
     </div>
+
     <div v-if="showNewMoreModal" class="modal">
       <div class="more-modal-content">
-        <p>{{ selectedYear }}년 {{ selectedMonth }}월 (닉네임)가 많이 선택한 감정들을 정리해봤어!</p>
+        <p class="large-text">{{ selectedYear }}년 {{ selectedMonth }}월 (닉네임)가 많이 선택한 감정들을 정리해봤어!</p>
         <div class="emotion-summary">
           <div class="emotion-item" v-for="(emotion, index) in emotions" :key="index">
             <span>{{ index + 1 }}. {{ emotion.name }} {{ emotion.count }}회</span>
@@ -67,6 +71,7 @@
         <button @click="showNewMoreModal = false" class="back-button">← 돌아가기</button>
       </div>
     </div>
+
     <div class="chart-wrapper">
       <EmotionChart 
         @bubble-click="handleBubbleClick"
@@ -74,6 +79,7 @@
         :selectedMonth="selectedMonth"
       />
     </div>
+
     <div class="emotion-list">
       <p>이번 달 (닉네임)가 가장 많이 선택한 감정은?</p>
       <ol>
@@ -82,6 +88,7 @@
       <button class="more-button" @click="showNewMoreModal = true">더 보기 →</button>
     </div>
   </div>
+
   <BaseBottomBar />
 </template>
 
@@ -389,7 +396,7 @@ export default defineComponent({
 
 .more-modal-content p,
 .new-more-modal-content p {
-  font-size: 1.6vh;
+  font-size: 2vh; /* 글씨 크기 크게 조정 */
   margin-bottom: 2vh;
 }
 
@@ -402,6 +409,7 @@ export default defineComponent({
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1vh;
+  font-size: 2vh;
 }
 
 .emotion-bar {
