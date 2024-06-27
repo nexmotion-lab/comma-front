@@ -46,7 +46,7 @@
     </div>
     <div v-if="showMoreModal" class="modal">
       <div class="more-modal-content">
-        <p>{{ selectedYear }}년 {{ selectedMonth }}월 (닉네임)가 (키워드)와 함께 자주 쓴 사건 태그들이야!</p>
+        <p>{{ selectedYear }}년 {{ selectedMonth }}월 (닉네임)가 '{{ selectedEmotion }}'와 함께 자주 쓴 사건 태그들이야!</p>
         <div class="emotion-summary">
           <div class="emotion-item" v-for="(event, index) in eventData" :key="index">
             <span>{{ index + 1 }}. {{ event.name }}</span>
@@ -110,6 +110,7 @@ export default defineComponent({
     const selectedMonth = ref("06");
     const selectedDate = ref("2024.06. 감정지도");
     const selectedEmotion = ref("");
+    const selectedEmotionId = ref(""); // 선택된 감정의 ID를 저장할 상태
     const emotions = ref([] as { name: string; count: number }[]);
     const eventData = ref([] as { name: string; color: string }[]); // 이벤트 데이터를 저장할 상태
 
@@ -146,6 +147,7 @@ export default defineComponent({
         const response = await axios.get('http://192.168.0.154:8092/api/v1/statistics/event', {
           params: {
             yearMonth,
+            emotionId: selectedEmotionId.value // 선택된 감정의 ID 추가
           },
           headers: {
             'X-User-Id': '4',
@@ -192,8 +194,9 @@ export default defineComponent({
       showDateModal.value = false;
     };
 
-    const handleBubbleClick = (emotion: string) => {
+    const handleBubbleClick = (emotion: string, emotionId: number) => {
       selectedEmotion.value = emotion;
+      selectedEmotionId.value = emotionId; // 선택된 감정의 ID 저장
       showMoreModal.value = true;
       fetchEvents(); // 모달이 열릴 때 이벤트 데이터를 가져옵니다.
     };
@@ -208,6 +211,7 @@ export default defineComponent({
       selectedMonth,
       selectedDate,
       selectedEmotion,
+      selectedEmotionId, // 선택된 감정의 ID 추가
       emotions,
       eventData, // 이벤트 데이터 추가
       selectYear,

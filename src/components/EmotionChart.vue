@@ -60,12 +60,13 @@ export default defineComponent({
           const nameMatch = key.match(/name=([^,)]+)/);
           return {
             name: nameMatch ? nameMatch[1] : 'Unknown',
-            count: data[key] // 감정 태그의 카운트 값을 함께 저장
+            count: data[key], // 감정 태그의 카운트 값을 함께 저장
+            id: key.match(/emotionTagNo=(\d+)/)[1] // 감정 태그 ID 추출
           };
         });
         
         // Vuex 스토어에 감정 데이터 설정
-        store.commit('setEmotionTags', names.map(tag => tag.name));
+        store.commit('setEmotionTags', names.map(tag => ({ name: tag.name, id: tag.id })));
         emotions.value = names;
 
       } catch (error) {
@@ -82,6 +83,7 @@ export default defineComponent({
           r: emotion ? emotion.count * 10 : 20, // count 값에 10을 곱하여 반영
           label: tag.name,
           backgroundColor: tag.color,
+          id: emotion.id // 감정 태그 ID 추가
         };
       });
 
@@ -164,7 +166,8 @@ export default defineComponent({
             const element = chart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, true)[0];
             if (element) {
               const emotionLabel = chart.data.datasets[element.datasetIndex].data[element.index].label;
-              emit('bubble-click', emotionLabel);
+              const emotionId = chart.data.datasets[element.datasetIndex].data[element.index].id;
+              emit('bubble-click', emotionLabel, emotionId);
             }
           }
         }
