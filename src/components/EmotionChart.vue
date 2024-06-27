@@ -61,12 +61,13 @@ export default defineComponent({
           return {
             name: nameMatch ? nameMatch[1] : 'Unknown',
             count: data[key], // 감정 태그의 카운트 값을 함께 저장
-            id: key.match(/emotionTagNo=(\d+)/)[1] // 감정 태그 ID 추출
+            id: key.match(/emotionTagNo=(\d+)/)[1], // 감정 태그 ID 추출
+            color: '#randomColor' // 색상 설정
           };
         });
-        
+
         // Vuex 스토어에 감정 데이터 설정
-        store.commit('setEmotionTags', names.map(tag => ({ name: tag.name, id: tag.id })));
+        store.commit('setEmotionTags', names.map(tag => ({ name: tag.name, id: tag.id, color: tag.color })));
         emotions.value = names;
 
       } catch (error) {

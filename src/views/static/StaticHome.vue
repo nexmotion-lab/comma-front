@@ -12,8 +12,8 @@
               <li
                 v-for="year in years"
                 :key="year"
-                :class="{ selected: year === selectedYear }"
-                @click="selectYear(year)"
+                :class="{ selected: year === tempSelectedYear }"
+                @click="tempSelectedYear = year"
               >
                 {{ year }}
               </li>
@@ -27,8 +27,8 @@
               <li
                 v-for="month in months"
                 :key="month"
-                :class="{ selected: month === selectedMonth }"
-                @click="selectMonth(month)"
+                :class="{ selected: month === tempSelectedMonth }"
+                @click="tempSelectedMonth = month"
               >
                 {{ month }}
               </li>
@@ -50,7 +50,6 @@
         <div class="emotion-summary">
           <div class="emotion-item" v-for="(event, index) in eventData" :key="index">
             <span>{{ index + 1 }}. {{ event.name }} {{ event.count }}회</span>
-            <div class="emotion-bar" :style="{ backgroundColor: event.color }"></div>
           </div>
         </div>
         <button @click="showMoreModal = false" class="back-button">← 돌아가기</button>
@@ -62,7 +61,7 @@
         <div class="emotion-summary">
           <div class="emotion-item" v-for="(emotion, index) in emotions" :key="index">
             <span>{{ index + 1 }}. {{ emotion.name }} {{ emotion.count }}회</span>
-            <div class="emotion-bar" :style="{ backgroundColor: emotion.color }"></div>
+            <div class="emotion-bar" :style="{ backgroundColor: getEmotionColor(emotion.name) }"></div>
           </div>
         </div>
         <button @click="showNewMoreModal = false" class="back-button">← 돌아가기</button>
@@ -89,6 +88,7 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted, watch } from "vue";
 import axios from 'axios';
+import { useStore } from 'vuex';
 import EmotionChart from "@/components/EmotionChart.vue";
 import BaseView from '@/components/common/BaseView.vue';
 import BaseBottomBar from '@/components/common/BaseBottomBar.vue';
@@ -101,6 +101,7 @@ export default defineComponent({
     BaseBottomBar,
   },
   setup() {
+    const store = useStore();
     const showDateModal = ref(false);
     const showMoreModal = ref(false);
     const showNewMoreModal = ref(false);
@@ -109,6 +110,8 @@ export default defineComponent({
     const selectedYear = ref("2024");
     const selectedMonth = ref("06");
     const selectedDate = ref("2024.06. 감정지도");
+    const tempSelectedYear = ref(selectedYear.value);
+    const tempSelectedMonth = ref(selectedMonth.value);
     const selectedEmotion = ref("");
     const selectedEmotionId = ref(""); // 선택된 감정의 ID를 저장할 상태
     const emotions = ref([] as { name: string; count: number }[]);
@@ -132,7 +135,8 @@ export default defineComponent({
           const nameMatch = key.match(/name=([^,)]+)/);
           const name = nameMatch ? nameMatch[1] : 'Unknown';
           const count = data[key];
-          return { name, count };
+          const color = store.state.emotionTags.find(e => e.name === name)?.color || '#000000'; // Vuex 스토어에서 색상 가져오기
+          return { name, count, color };
         });
         console.log(fetchedEmotions);
         emotions.value = fetchedEmotions;
@@ -179,14 +183,16 @@ export default defineComponent({
     });
 
     const selectYear = (year: string) => {
-      selectedYear.value = year;
+      tempSelectedYear.value = year;
     };
 
     const selectMonth = (month: string) => {
-      selectedMonth.value = month;
+      tempSelectedMonth.value = month;
     };
 
     const confirmDate = () => {
+      selectedYear.value = tempSelectedYear.value;
+      selectedMonth.value = tempSelectedMonth.value;
       selectedDate.value = `${selectedYear.value}.${selectedMonth.value}. 감정지도`;
       showDateModal.value = false;
     };
@@ -202,6 +208,11 @@ export default defineComponent({
       fetchEvents(); // 모달이 열릴 때 이벤트 데이터를 가져옵니다.
     };
 
+    const getEmotionColor = (emotionName: string) => {
+      const emotion = store.state.emotionTags.find(e => e.name === emotionName);
+      return emotion ? emotion.color : '#000000'; // 기본 색상 설정
+    };
+
     return {
       showDateModal,
       showMoreModal,
@@ -211,6 +222,8 @@ export default defineComponent({
       selectedYear,
       selectedMonth,
       selectedDate,
+      tempSelectedYear,
+      tempSelectedMonth,
       selectedEmotion,
       selectedEmotionId, // 선택된 감정의 ID 추가
       emotions,
@@ -220,6 +233,7 @@ export default defineComponent({
       confirmDate,
       cancelDate,
       handleBubbleClick,
+      getEmotionColor // 감정 색상 가져오기 함수 추가
     };
   },
 });
