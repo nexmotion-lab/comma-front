@@ -4,12 +4,18 @@ import BaseView from "@/components/common/BaseView.vue";
 import GreenButton from "@/components/GreenButton.vue";
 import { IonRouterOutlet, IonPage } from "@ionic/vue";
 import BaseBottomBar from "@/components/common/BaseBottomBar.vue";
-import {useRouter} from "vue-router";
+import {useRouter, useRoute} from "vue-router";
+import {computed} from "vue";
 
+const route = useRoute();
 const router = useRouter();
 const navigate = (component: string) => {
   router.push({name: component});
 };
+
+const isCurrentRoute = (routeName: string) => {
+  return computed(()=> route.name === routeName);
+}
 </script>
 
 <template>
@@ -17,9 +23,9 @@ const navigate = (component: string) => {
   <ion-page>
     <div class="header">
       <div class="nav-bar">
-        <GreenButton @click="navigate('CenterPsyInfo')">심리정보</GreenButton>
-        <BaseButton @click="navigate('CenterPsyTest')">심리검사</BaseButton>
-        <BaseButton @click="navigate('CenterPsyCenter')">상담센터</BaseButton>
+        <component :is="isCurrentRoute('CenterPsyInfo').value ? GreenButton : BaseButton" @click="navigate('CenterPsyInfo')">심리정보</component>
+        <component :is="isCurrentRoute('CenterPsyTest').value ? GreenButton : BaseButton" @click="navigate('CenterPsyTest')">심리검사</component>
+        <component :is="isCurrentRoute('CenterPsyCenter').value ? GreenButton : BaseButton" @click="navigate('CenterPsyCenter')">상담센터</component>
       </div>
     </div>
       <ion-router-outlet></ion-router-outlet>
