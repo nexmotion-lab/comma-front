@@ -8,6 +8,7 @@ import BaseBottomBar from '@/components/common/BaseBottomBar.vue'
 import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
 import 'swiper/swiper-bundle.min.css'
 import { IonButton, IonModal,IonIcon,IonPage } from '@ionic/vue';
+import {closeOutline} from "ionicons/icons";
 
 
 interface PsyTest {
@@ -20,12 +21,18 @@ interface PsyTest {
 
 export default defineComponent({
   name: 'CenterPsyTest',
+  methods: {
+    closeOutline() {
+      return closeOutline
+    }
+  },
   components: {
     Swiper,
     SwiperSlide,
     IonModal,
     IonIcon,
     IonPage,
+    closeOutline
   },
   setup() {
     const modal1 = ref<any>(null)
@@ -158,8 +165,12 @@ export default defineComponent({
         <ion-item>
           <ion-label>
             <h2><strong>Info.</strong></h2>
-            <ion-icon name="close" class="modal-close" @click="dismiss2"></ion-icon>
           </ion-label>
+          <ion-icon
+              :icon="closeOutline()"
+              @click="dismiss1"
+              part="iconX"
+          ></ion-icon>
         </ion-item>
         <ion-item class="test-ref-detail">
           <ion-img class="profile-image" src="/public/sahmyook.png"></ion-img>
@@ -216,7 +227,13 @@ export default defineComponent({
     <div class="test-modal-wrapper" v-if="selectedTest">
       <div class="test-modal-header">
         <h1>{{ selectedTest.title }}</h1>
-        <ion-icon name="close" class="modal-close" @click="dismiss2"></ion-icon>
+        <ion-label class="modal2-close">
+          <ion-icon
+              :icon="closeOutline()"
+              @click="dismiss2"
+              part="iconX2"
+          ></ion-icon>
+          </ion-label>
       </div>
       <div class="test-modal-subtitle">오락가락하는 내 기분 나도 모르겠다고?</div>
       <ion-list lines="none">
@@ -265,6 +282,7 @@ ion-content{
 }
 
 .info-icon {
+  padding-right: 1vw;
   display: flex; /* Flexbox 레이아웃 사용 */
   border-radius: 50%;
   background-color: lightgray;
@@ -292,7 +310,7 @@ ion-content{
   text-align: center;
   height: 10vh;
   border-radius: 35px;
-  background-color: rgb(138, 221, 138);
+  background-color: rgb(204, 238, 204);
   z-index: 1; /* z-index 추가 */
 }
 
@@ -423,9 +441,8 @@ ion-modal#example-modal {
   --width: 80%;
   --min-width: 250px;
   --height: fit-content;
-  --border-radius: 6px;
+  --border-radius: 20px;
   --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
-  --border-radius: 10px;
   --background-color: white;
 }
 
@@ -434,7 +451,7 @@ ion-modal#example-modal {
   border-radius: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   border: 1px solid #a3e2b8ff; /* border-color 속성을 border로 변경 */
-  margin: 10px;
+  margin: 3px;
   background-color: white;
 }
 
@@ -450,16 +467,28 @@ ion-modal#example-modal {
   font-weight: bold;
   text-align: center;
   margin-bottom: 10px;
-  padding-right: 30px;
-  flex: 1; /* flex-grow를 사용하여 h1을 가운데 정렬 */
+  padding-right: 0.5vw;
+  flex: 9; /* flex-grow를 사용하여 h1을 가운데 정렬 */
 }
 
-.modal-close {
+.modal2-close{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+}
+
+ion-icon[part="iconX"] {
   position: absolute;
   right: 10px;
   top: 10px;
   font-size: 24px;
   cursor: pointer;
+  color: #00796b;
+}
+
+ion-icon[part="iconX2"] {
+  font-size: 24px;
   color: #00796b;
 }
 
@@ -505,12 +534,6 @@ ion-modal#example-modal {
 .test-section-value div {
   color: black;
   font-size: 14px;
-}
-
-.modal-close {
-  font-size: 24px;
-  cursor: pointer;
-  color: #00796b;
 }
 
 </style>

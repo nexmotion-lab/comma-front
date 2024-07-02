@@ -20,6 +20,14 @@ export default defineComponent({
   },
   setup() {
     const psyInfos = ref<PsyInfo[]>([])
+    const images = [
+      '/src/assets/center/psyInfo_nuguri1.png',
+      '/src/assets/center/psyInfo_nuguri2.png',
+      '/src/assets/center/psyInfo_nuguri3.png',
+      '/src/assets/center/psyInfo_nuguri4.png',
+      '/src/assets/center/psyInfo_nuguri5.png',
+      '/src/assets/center/psyInfo_nuguri6.png'
+    ]
 
     const testPairs = computed(() => {
       const pairs = []
@@ -40,6 +48,11 @@ export default defineComponent({
       }
     })
 
+    const getRandomImage = () => {
+      const randomIndex = Math.floor(Math.random() * images.length)
+      return images[randomIndex]
+    }
+
     const navigateToDetail = (psyInfo: PsyInfo) => {
       router.push({
         name: 'CenterPsyInfoDetail',
@@ -55,7 +68,8 @@ export default defineComponent({
     return {
       psyInfos,
       navigateToDetail,
-      testPairs
+      testPairs,
+      getRandomImage
     }
   },
   data() {
@@ -72,7 +86,7 @@ export default defineComponent({
   <!-- psyInfo start -->
   <div class="psyInfo-list" v-if="testPairs.length > 0">
     <div v-for="(pair, index) in testPairs" :key="index">
-      <NuguriBox v-for="test in pair" :key="test.psy_info_no" @click="navigateToDetail(test)">
+      <NuguriBox v-for="test in pair" :key="test.psy_info_no" :image="getRandomImage()" @click="navigateToDetail(test)">
         {{ test.title }}
       </NuguriBox>
     </div>

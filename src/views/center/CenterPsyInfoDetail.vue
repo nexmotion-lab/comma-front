@@ -56,7 +56,7 @@ export default defineComponent({
             </p>
           </div>
           <div class="content-summary-footer">
-            <img class="footer-img" src="/public/nuguri.png"/>
+            <img class="footer-img" src="/src/assets/center/teaching_nuguri.png"/>
           </div>
         </div>
       <div class="content-cf-wrapper" v-if="psyInfo.image">
@@ -171,6 +171,10 @@ export default defineComponent({
   width: 100%;
   border-bottom : 2px solid #548263;
 }
+.footer-img {
+  width: 35%; /* 필요에 따라 크기 조절 */
+  margin-left: auto;
+}
 
 .content-cf-header p {
   font-size: 16px;
@@ -189,10 +193,7 @@ export default defineComponent({
   justify-content: center; /* Center content horizontally */
   align-items: center; /* Center content vertically */
 }
-.footer-img {
-  width: 30%; /* 필요에 따라 크기 조절 */
-  margin-left: auto;
-}
+
 .content-cf-description-header p {
   font-size: 14px;
   font-weight: bold;

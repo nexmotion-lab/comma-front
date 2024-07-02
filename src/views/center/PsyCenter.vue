@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import BaseButton from "@/components/common/BaseButton.vue";
+import CenterTopButton from "@/views/center/components/CenterTopButton.vue";
 import BaseView from "@/components/common/BaseView.vue";
-import GreenButton from "@/components/GreenButton.vue";
 import { IonRouterOutlet, IonPage } from "@ionic/vue";
 import BaseBottomBar from "@/components/common/BaseBottomBar.vue";
 import {useRouter, useRoute} from "vue-router";
@@ -23,10 +22,10 @@ const isCurrentRoute = (routeName: string) => {
   <ion-page>
     <div class="header">
       <div class="nav-bar">
-        <component :is="isCurrentRoute('CenterPsyInfo').value ? GreenButton : BaseButton" @click="navigate('CenterPsyInfo')">심리정보</component>
-        <component :is="isCurrentRoute('CenterPsyTest').value ? GreenButton : BaseButton" @click="navigate('CenterPsyTest')">심리검사</component>
-        <component :is="isCurrentRoute('CenterPsyCenter').value ? GreenButton : BaseButton" @click="navigate('CenterPsyCenter')">상담센터</component>
-      </div>
+        <CenterTopButton :isActive="isCurrentRoute('CenterPsyInfo').value" @click="navigate('CenterPsyInfo')">심리정보</CenterTopButton>
+        <CenterTopButton :isActive="isCurrentRoute('CenterPsyTest').value" @click="navigate('CenterPsyTest')">심리검사</CenterTopButton>
+        <CenterTopButton :isActive="isCurrentRoute('CenterPsyCenter').value" @click="navigate('CenterPsyCenter')">상담센터</CenterTopButton>
+       </div>
     </div>
       <ion-router-outlet></ion-router-outlet>
     <BaseBottomBar></BaseBottomBar>
@@ -34,8 +33,6 @@ const isCurrentRoute = (routeName: string) => {
 </template>
 
 <style scoped>
-
-
 .header {
   height: 10%;
   width: 100%;
@@ -44,7 +41,6 @@ const isCurrentRoute = (routeName: string) => {
   align-items: center;
   position: fixed;
   margin-bottom:20%;
-
 }
 
 .nav-bar {
@@ -60,5 +56,7 @@ ion-router-outlet{
 base-bottom-bar{
   z-index:100;
 }
+
+
 
 </style>
