@@ -7,7 +7,7 @@ import DateBox from '@/components/DateBox.vue'
 import SpeechBubble from '@/components/icons/SpeechBubble.vue'
 import BaseRoundButton from '@/components/common/BaseRoundButton.vue'
 import Tag from '@/components/icons/TagComponent.vue'
-import { IonCard } from '@ionic/vue'
+import {IonCard, IonPage} from '@ionic/vue'
 
 export default defineComponent({
   name: 'DiaryFour',
@@ -19,44 +19,50 @@ export default defineComponent({
     'BaseButton' : BaseButton,
     'BaseBottomBar': BaseBottomBar,
     'DateBox': DateBox,
-    'SpeechBubble': SpeechBubble
+    'SpeechBubble': SpeechBubble,
+    'ion-page':IonPage
   }
 })
 </script>
 
 <template>
   <BaseView/>
-  <DateBox>2024/03/11</DateBox>
-  <div class="menu-wrap">
-    <BaseRoundButton class="menu" @click="$router.push('/diary/event')">사건</BaseRoundButton>
-    <BaseRoundButton class="menu" @click="$router.push('/diary/thinking')">생각</BaseRoundButton>
-    <BaseRoundButton class="menu" @click="$router.push('/diary/emotion')">감정</BaseRoundButton>
-    <BaseRoundButton class="menu no-right-margin" @click="$router.push('/diary/core')">핵심</BaseRoundButton>
-  </div>
-  <div class="ment-wrap">
-    <SpeechBubble class="ment">어떤 감정이<br>
-      제일 기억에 남아?</SpeechBubble>
-    <ion-img class="nuguri" src="/public/nuguri.png"></ion-img>
-  </div>
-  <ion-card class="content-wrap">
-    <div class="description">너의 이야기를 들려줘!</div>
-    <div class="content-wrap">
-      <div class="tag-wrap">
-        <Tag v-for="tag in emotionTags"
-             :key="tag.value"
-             :value="tag.value"
-             :label="tag.label"
-             v-model="selectedEvents"></Tag>
-      </div>
-      <div class="next-btn">
-        <BaseButton @click="submit">다음</BaseButton>
-      </div>
+  <ion-page class="custom-page">
+    <DateBox>2024/03/11</DateBox>
+    <div class="menu-wrap">
+      <BaseRoundButton class="menu" @click="$router.push('/diary/event')">사건</BaseRoundButton>
+      <BaseRoundButton class="menu" @click="$router.push('/diary/thinking')">생각</BaseRoundButton>
+      <BaseRoundButton class="menu" @click="$router.push('/diary/emotion')">감정</BaseRoundButton>
+      <BaseRoundButton class="menu no-right-margin" @click="$router.push('/diary/core')">핵심</BaseRoundButton>
     </div>
-  </ion-card>
-  <BaseBottomBar></BaseBottomBar>
+    <div class="ment-wrap">
+      <SpeechBubble class="ment">어떤 감정이<br>
+        제일 기억에 남아?</SpeechBubble>
+      <ion-img class="nuguri" src="/public/nuguri.png"></ion-img>
+    </div>
+    <ion-card class="content-wrap">
+      <div class="description">너의 이야기를 들려줘!</div>
+      <div class="content-wrap">
+        <div class="tag-wrap">
+          <Tag v-for="tag in emotionTags"
+               :key="tag.value"
+               :value="tag.value"
+               :label="tag.label"
+               v-model="selectedEvents"></Tag>
+        </div>
+        <div class="next-btn">
+          <BaseButton @click="submit">다음</BaseButton>
+        </div>
+      </div>
+    </ion-card>
+    <BaseBottomBar></BaseBottomBar>
+  </ion-page>
 </template>
 
 <style scoped>
+.custom-page{
+  justify-content: normal;
+}
 .next-btn {
   text-align: center;
 }
