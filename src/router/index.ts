@@ -173,32 +173,6 @@ const routes: Array<RouteRecordRaw> = [
     component: DiarySix,
   },
 
-  // {
-  //   path: '/centerPsyInfo',
-  //   name: 'CenterPsyInfo',
-  //   component: CenterPsyInfo
-  // },
-  // {
-  //   path: '/centerPsyInfo/detail/:id', // id 파라미터 추가
-  //   name: 'CenterPsyInfoDetail',
-  //   component: CenterPsyInfoDetail,
-  //   props: (route) => ({
-  //     id: route.params.id,
-  //     title: route.query.title,
-  //     content: route.query.content,
-  //     image: route.query.image
-  //   })
-  // },
-  // {
-  //   path: '/centerPsyTest',
-  //   name: 'CenterPsyTest',
-  //   component: CenterPsyTest
-  // },
-  // {
-  //   path: '/centerPsyCenter',
-  //   name: 'CenterPsyCenter',
-  //   component: CenterPsyCenter
-  // },
   {
     path: '/main',
     name: 'Main',
