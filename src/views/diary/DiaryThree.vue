@@ -7,7 +7,7 @@ import DateBox from '@/components/DateBox.vue'
 import SpeechBubble from '@/components/icons/SpeechBubble.vue'
 import BaseRoundButton from '@/components/common/BaseRoundButton.vue'
 import Tag from '@/components/icons/TagComponent.vue'
-import { IonCard } from '@ionic/vue'
+import {IonCard, IonPage} from '@ionic/vue'
 import {mapActions, mapState} from "vuex";
 
 export default defineComponent({
@@ -21,7 +21,8 @@ export default defineComponent({
     'BaseBottomBar': BaseBottomBar,
     'DateBox': DateBox,
     'SpeechBubble': SpeechBubble,
-    'ion-card': IonCard
+    'ion-card': IonCard,
+    'ion-page': IonPage
   },
   computed: {
     ...mapState({
@@ -45,6 +46,7 @@ export default defineComponent({
 
 <template>
   <BaseView/>
+  <ion-page class="custom-page">
   <DateBox>2024/03/11</DateBox>
   <div class="menu-wrap">
     <BaseRoundButton class="menu" @click="$router.push('/diary/event')">사건</BaseRoundButton>
@@ -75,9 +77,13 @@ export default defineComponent({
     </div>
   </ion-card>
   <BaseBottomBar></BaseBottomBar>
+  </ion-page>
 </template>
 
 <style scoped>
+.custom-page{
+  justify-content: normal;
+}
 .menu-wrap {
   display: flex;
   justify-content: space-between;

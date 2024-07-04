@@ -5,10 +5,12 @@ import BaseBottomBar from '@/components/common/BaseBottomBar.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
 import SpeechBubble from '@/components/icons/SpeechBubble.vue'
 import NicknameComponent from '@/components/icons/NicknameComponent.vue'
+import {IonPage} from "@ionic/vue";
 
 export default defineComponent({
   name: 'SelectCharacter',
   components: {
+    'ion-page':IonPage,
     'BaseView': BaseView,
     'speech-bubble': SpeechBubble,
     'BaseButton': BaseButton,
@@ -20,6 +22,7 @@ export default defineComponent({
 
 <template>
   <BaseView/>
+  <ion-page class="custom-page">
   <nickname>정찬희</nickname>
   <speech-bubble>누구랑 일기 쓸래?</speech-bubble>
   <div class="img-div">
@@ -31,21 +34,33 @@ export default defineComponent({
     <BaseButton>도레</BaseButton>
   </div>
   <BaseBottomBar></BaseBottomBar>
+  </ion-page>
 </template>
 
 <style scoped>
-  div {
-    text-align: center;
-    margin: 30px;
-  }
+.custom-page{
+  justify-content: normal;
+}
+div {
+  text-align: center;
+  margin: 30px;
+}
 
-  img {
-    width: 50%;
-  }
+img {
+  width: 70%;
+}
 
-  .img-div {
-    margin-right: 5px;
-    margin-left: 5px;
-    margin-top: 20px;
-  }
+.img-div {
+  display:flex;
+  margin-right: 0.5vw;
+  margin-left: 0.5vw;
+  margin-top: 20px;
+}
+
+.btn-wrap{
+  margin-top: 5vh;
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+}
 </style>

@@ -6,7 +6,7 @@ import BaseBottomBar from '@/components/common/BaseBottomBar.vue'
 import DateBox from '@/components/DateBox.vue'
 import SpeechBubble from '@/components/icons/SpeechBubble.vue'
 import BaseRoundButton from '@/components/common/BaseRoundButton.vue'
-import { IonCard, IonCardContent } from '@ionic/vue'
+import {IonCard, IonCardContent, IonPage} from '@ionic/vue'
 import Tag from '@/components/icons/TagComponent.vue'
 
 export default defineComponent({
@@ -19,7 +19,8 @@ export default defineComponent({
     'BaseRoundButton' : BaseRoundButton,
     'BaseBottomBar': BaseBottomBar,
     'DateBox': DateBox,
-    'SpeechBubble': SpeechBubble
+    'SpeechBubble': SpeechBubble,
+    'ion-page':IonPage
   },
   data() {
     return {
@@ -31,6 +32,7 @@ export default defineComponent({
 
 <template>
   <BaseView/>
+  <ion-page class="custom-page">
   <DateBox>2024/03/11</DateBox>
   <div class="menu-wrap">
     <BaseRoundButton class="menu" @click="$router.push('/diary/event')">사건</BaseRoundButton>
@@ -51,71 +53,76 @@ export default defineComponent({
     </div>
   </ion-card>
   <BaseBottomBar></BaseBottomBar>
+  </ion-page>
 </template>
 
 <style scoped>
-  .next-btn {
-    text-align: center;
-  }
+.custom-page{
+  justify-content: normal;
+}
 
-  .text {
-    width: 100%;
-    height: 80%;
-    border: white;
-    background-attachment: local;
-    background-image:
-      linear-gradient(to right, white 10px, transparent 10px),
-      linear-gradient(to left, white 10px, transparent 10px),
-      repeating-linear-gradient(white, white 30px, #ccc 30px, #ccc 31px, white 31px);
-    line-height: 31px;
-    padding: 8px 10px;
-  }
+.next-btn {
+  text-align: center;
+}
 
-  .menu-wrap {
-    display: flex;
-    justify-content: space-between;
-    text-align: center;
-    padding-right: 3%;
-    padding-left: 3%;
-  }
+.text {
+  width: 100%;
+  height: 80%;
+  border: white;
+  background-attachment: local;
+  background-image:
+    linear-gradient(to right, white 10px, transparent 10px),
+    linear-gradient(to left, white 10px, transparent 10px),
+    repeating-linear-gradient(white, white 30px, #ccc 30px, #ccc 31px, white 31px);
+  line-height: 31px;
+  padding: 8px 10px;
+}
 
-  .menu {
-    flex-grow: 1;
-    margin-right: 10px;
-  }
+.menu-wrap {
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
+  padding-right: 3%;
+  padding-left: 3%;
+}
 
-  .no-right-margin {
-    margin-right: 0px;
-  }
+.menu {
+  flex-grow: 1;
+  margin-right: 10px;
+}
 
-  .content-wrap {
-    margin: 0px 10px;
-    height: 50vh;
-    border-radius: 15px;
-  }
+.no-right-margin {
+  margin-right: 0px;
+}
 
-  .description {
-    background-color: rgba(144, 238, 144, 0.45);
-    padding: 5px 0px;
-    text-align: center;
-    border-radius: 15px 15px 0px 0px;
-    border-bottom: solid 0.5px gray;
-    box-shadow: 2px 2px;
-  }
+.content-wrap {
+  margin: 0px 10px;
+  height: 50vh;
+  border-radius: 15px;
+}
 
-  .ment-wrap {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+.description {
+  background-color: rgba(144, 238, 144, 0.45);
+  padding: 5px 0px;
+  text-align: center;
+  border-radius: 15px 15px 0px 0px;
+  border-bottom: solid 0.5px gray;
+  box-shadow: 2px 2px;
+}
 
-  .ment {
-    margin-left: 3%;
-    width: 70vw;
-  }
+.ment-wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-  .nuguri {
-    width: 35%;
-    margin-right: 3%;
-  }
+.ment {
+  margin-left: 3%;
+  width: 70vw;
+}
+
+.nuguri {
+  width: 35%;
+  margin-right: 3%;
+}
 </style>
