@@ -1,2 +1,49 @@
 /* For information on how to create your own theme, please see:
 http://ionicframework.com/docs/theming/ */
+
+/* comma main color(default ver) */
+/*:root {*/
+/*    --ion-color-green: #A3E2B8;*/
+/*    --ion-color-green-rgb: 163,226,184;*/
+/*    --ion-color-green-contrast: #000000;*/
+/*    --ion-color-green-contrast-rgb: 0,0,0;*/
+/*    --ion-color-green-shade: #8fc7a2;*/
+/*    --ion-color-green-tint: #ace5bf;*/
+/*}*/
+
+/*.ion-color-green {*/
+/*    --ion-color-base: var(--ion-color-green);*/
+/*    --ion-color-base-rgb: var(--ion-color-green-rgb);*/
+/*    --ion-color-contrast: var(--ion-color-green-contrast);*/
+/*    --ion-color-contrast-rgb: var(--ion-color-green-contrast-rgb);*/
+/*    --ion-color-shade: var(--ion-color-green-shade);*/
+/*    --ion-color-tint: var(--ion-color-green-tint);*/
+/*}*/
+
+/*!* comma main color (dark ver) *!*/
+/*:root {*/
+/*    --ion-color-dark-green: #548263;*/
+/*    --ion-color-dark-green-rgb: 84,130,99;*/
+/*    --ion-color-dark-green-contrast: #000000;*/
+/*    --ion-color-dark-green-contrast-rgb: 0,0,0;*/
+/*    --ion-color-dark-green-shade: #4a7257;*/
+/*    --ion-color-dark-green-tint: #658f73;*/
+/*}*/
+
+/*.ion-color-dark-green {*/
+/*    --ion-color-base: var(--ion-color-dark-green);*/
+/*    --ion-color-base-rgb: var(--ion-color-dark-green-rgb);*/
+/*    --ion-color-contrast: var(--ion-color-dark-green-contrast);*/
+/*    --ion-color-contrast-rgb: var(--ion-color-dark-green-contrast-rgb);*/
+/*    --ion-color-shade: var(--ion-color-dark-green-shade);*/
+/*    --ion-color-tint: var(--ion-color-dark-green-tint);*/
+/*}*/
+
+:root {
+    --background-color: #f0fff7;  /* 기본 배경색 */
+    --bottom-nav-bar: #DEF9EB;    /* 하단 네비게이터 바 색 */
+    --main-color: #A3E2B8;        /* 메인 색(버튼 등) */
+    --main-color-shade: #8fc7a2;
+    --main-dark-color: #548263;   /* 메인 어두운 색 */
+    --main-dark-color-shade: #4a7257;
+}
