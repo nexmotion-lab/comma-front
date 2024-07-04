@@ -138,32 +138,32 @@ export default defineComponent({
         최대 10가지를 알려줘!</SpeechBubble>
       <ion-img class="nuguri" src="/public/nuguri.png"></ion-img>
     </div>
-  <ion-card class="content-wrap">
-    <div class="description">너의 이야기를 들려줘!</div>
-    <div class="search-wrap">
-      <input class="search-tag" placeholder="태그 검색">
-      <ion-img class="sea" src="/public/search.png"></ion-img>
-    </div>
-    <div>
-      <div class="tag-wrap">
-        <Tag v-for="(item, key, index) in defaultTags"
-             :key="item['tag_id']"
-             :label="item['name']">
-        </Tag>
-        <Tag v-for="tag in eventTags"
-             :key="tag.value"
-             :value="tag.value"
-             :label="tag.label"
-             :checked="selectedEvents.includes(tag.value)"
-             @change="handleCheckboxChange(tag.value)"></Tag>
-        <BaseButton class="add-btn" @click="">+</BaseButton>
+    <ion-card class="content-wrap">
+      <div class="description">너의 이야기를 들려줘!</div>
+      <div class="search-wrap">
+        <input class="search-tag" placeholder="태그 검색">
+        <ion-img class="sea" src="/public/search.png"></ion-img>
       </div>
-      <div class="next-btn">
-        <BaseButton class="custom-button" @click="submit">다음</BaseButton>
+      <div>
+        <div class="tag-wrap">
+          <Tag v-for="(item, key, index) in defaultTags"
+               :key="item['tag_id']"
+               :label="item['name']">
+          </Tag>
+          <Tag v-for="tag in eventTags"
+               :key="tag.value"
+               :value="tag.value"
+               :label="tag.label"
+               :checked="selectedEvents.includes(tag.value)"
+               @change="handleCheckboxChange(tag.value)"></Tag>
+          <BaseButton class="add-btn" @click="">+</BaseButton>
+        </div>
+        <div class="next-btn">
+          <BaseButton class="custom-button" @click="submit">다음</BaseButton>
+        </div>
       </div>
-    </div>
-  </ion-card>
-  <BaseBottomBar></BaseBottomBar>
+    </ion-card>
+    <BaseBottomBar></BaseBottomBar>
   </ion-page>
 </template>
 
