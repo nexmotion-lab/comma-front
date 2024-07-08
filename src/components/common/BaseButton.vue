@@ -12,10 +12,13 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.btn {
-  --background: var(--main-color);
-  --background-activated: var(--main-color-shade);
-  --color: black;
-  --border-radius: 15px;
-}
+  .btn {
+    --background: var(--main-color);
+    --background-activated: var(--main-color-shade);
+    --color: black;
+    --border-radius: 20px;
+    margin: 0.5em;
+    width: 13vh;
+    height: 4vh;
+  }
 </style>

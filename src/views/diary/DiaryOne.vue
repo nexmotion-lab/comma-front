@@ -10,6 +10,7 @@ import { IonCard } from '@ionic/vue';
 import BaseRoundButton from '@/components/common/BaseRoundButton.vue';
 import axios from 'axios';
 import { mapActions, mapGetters } from 'vuex';
+import {IonPage} from "@ionic/vue";
 
 interface Tag {
   tag_id: number;
@@ -31,7 +32,8 @@ export default defineComponent({
     'BaseRoundButton': BaseRoundButton,
     'SpeechBubble': SpeechBubble,
     'DateBox': DateBox,
-    'Tag': TagComponent
+    'Tag': TagComponent,
+    'ion-page':IonPage
   },
   data() {
     const currentDate: Date = new Date();
@@ -123,6 +125,7 @@ export default defineComponent({
 
 <template>
   <BaseView/>
+  <ion-page class="custom-page">
     <DateBox>{{today}}</DateBox>
     <div class="menu-wrap">
       <BaseRoundButton class="menu" @click="$router.push('/diary/event')">사건</BaseRoundButton>
@@ -135,119 +138,129 @@ export default defineComponent({
         최대 10가지를 알려줘!</SpeechBubble>
       <ion-img class="nuguri" src="/public/nuguri.png"></ion-img>
     </div>
-  <ion-card class="content-wrap">
-    <div class="description">너의 이야기를 들려줘!</div>
-    <div class="search-wrap">
-      <input class="search-tag" placeholder="태그 검색">
-      <ion-img class="sea" src="/public/search.png"></ion-img>
-    </div>
-    <div>
-      <div class="tag-wrap">
-        <Tag v-for="(item, key, index) in defaultTags"
-             :key="item['tag_id']"
-             :label="item['name']">
-        </Tag>
-        <Tag v-for="tag in eventTags"
-             :key="tag.value"
-             :value="tag.value"
-             :label="tag.label"
-             :checked="selectedEvents.includes(tag.value)"
-             @change="handleCheckboxChange(tag.value)"></Tag>
-        <BaseButton class="add-btn" @click="">+</BaseButton>
+    <ion-card class="content-wrap">
+      <div class="description">너의 이야기를 들려줘!</div>
+      <div class="search-wrap">
+        <input class="search-tag" placeholder="태그 검색">
+        <ion-img class="sea" src="/public/search.png"></ion-img>
       </div>
-      <div class="next-btn">
-        <BaseButton @click="submit">다음</BaseButton>
+      <div>
+        <div class="tag-wrap">
+          <Tag v-for="(item, key, index) in defaultTags"
+               :key="item['tag_id']"
+               :label="item['name']">
+          </Tag>
+          <Tag v-for="tag in eventTags"
+               :key="tag.value"
+               :value="tag.value"
+               :label="tag.label"
+               :checked="selectedEvents.includes(tag.value)"
+               @change="handleCheckboxChange(tag.value)"></Tag>
+          <BaseButton class="add-btn" @click="">+</BaseButton>
+        </div>
+        <div class="next-btn">
+          <BaseButton class="custom-button" @click="submit">다음</BaseButton>
+        </div>
       </div>
-    </div>
-  </ion-card>
-  <BaseBottomBar></BaseBottomBar>
+    </ion-card>
+    <BaseBottomBar></BaseBottomBar>
+  </ion-page>
 </template>
 
 <style scoped>
-  .next-btn {
-    height: 10%;
-    text-align: center;
-  }
+.custom-page{
+  justify-content: normal;
+}
+.next-btn {
+  height: 10%;
+  text-align: center;
+}
 
-  .menu-wrap {
-    display: flex;
-    justify-content: space-between;
-    text-align: center;
-    padding-right: 3%;
-    padding-left: 3%;
-  }
+.menu-wrap {
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
+  padding-right: 3%;
+  padding-left: 3%;
+}
 
-  .menu {
-    flex-grow: 1;
-    margin-right: 10px;
-  }
+.menu {
+  flex-grow: 1;
+  margin-right: 10px;
+}
 
-  .no-right-margin {
-    margin-right: 0px;
-  }
+.no-right-margin {
+  margin-right: 0px;
+}
 
-  .ment-wrap {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+.ment-wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-  .ment {
-    margin-left: 3%;
-    width: 70vw;
-  }
+.ment {
+  margin-left: 3%;
+  width: 70vw;
+}
 
-  .nuguri {
-    width: 35%;
-    margin-right: 3%;
-  }
+.nuguri {
+  width: 35%;
+  margin-right: 3%;
+}
 
-  .content-wrap {
-    margin: 0px 10px;
-    height: 50vh;
-    border-radius: 15px;
-  }
+.content-wrap {
+  margin: 0px 10px;
+  height: 50vh;
+  border-radius: 15px;
+}
 
-  .tag-wrap {
-    height: 90%;
-    overflow-y: auto;
-    text-align: center;
-  }
+.tag-wrap {
+  height: 90%;
+  overflow-y: auto;
+  text-align: center;
+}
 
-  .search-wrap {
-  display: grid;
-  grid-auto-flow: column;
-  grid-template-columns: 0.97fr;
-  background-color: white;
-  padding-left: 10px;
-  }
+.search-wrap {
+display: grid;
+grid-auto-flow: column;
+grid-template-columns: 0.97fr;
+background-color: white;
+padding-left: 10px;
+}
 
-  .search-tag {
-    display: inline-block;
-    align-items: center;
-    border: none;
-  }
+.search-tag {
+  display: inline-block;
+  align-items: center;
+  border: none;
+}
 
-  .sea {
-    display: inline-block;
-    height: 30px;
-    margin-top: 1px;
-    float: right;
-    margin-left: auto;
-  }
+.sea {
+  display: inline-block;
+  height: 30px;
+  margin-top: 1px;
+  float: right;
+  margin-left: auto;
+}
 
-  .description {
-    background-color: rgba(144, 238, 144, 0.45);
-    padding: 5px 0px;
-    text-align: center;
-    border-radius: 15px 15px 0px 0px;
-  }
+.description {
+  background-color: rgba(144, 238, 144, 0.45);
+  padding: 5px 0px;
+  text-align: center;
+  border-radius: 15px 15px 0px 0px;
+}
 
-  .add-btn {
-    --background: white;
-    --border-color: var(--main-color);
-    --border-style: solid;
-    --border-width: 2px;
-    padding: 8px 10px;
-  }
+.add-btn {
+  --background: white;
+  --border-color: var(--main-color);
+  --border-style: solid;
+  --border-width: 2px;
+  padding: 8px 10px;
+}
+
+.custom-button{
+  width: 25vw;
+  margin:
+}
+
 </style>
