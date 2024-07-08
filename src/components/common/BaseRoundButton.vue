@@ -15,7 +15,8 @@ export default defineComponent({
 <style scoped>
 ion-button {
   --background: var(--main-color);
-  color: black;
+  --background-activated: var(--main-color-shade);
+  --color: black;
   --border-radius: 20em;
   --padding-start: 1.2em;
   --padding-end: 1.2em;

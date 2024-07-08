@@ -1,5 +1,5 @@
 <template>
-  <div class="btn"><slot>default</slot></div>
+  <ion-button class="btn"><slot>default</slot></ion-button>
 </template>
 
 <script lang="ts">
@@ -12,16 +12,10 @@ export default defineComponent({
 </script>
 
 <style scoped>
-  .btn {
-    background-color: var(--main-color);
-    color: black;
-    border-radius: 15px;
-    padding: 7px 20px;
-    margin: 0.5em;
-    width: max-content;
-  }
-
-  .btn:active {
-    background-color: var(--main-dark-color);
-  }
+.btn {
+  --background: var(--main-color);
+  --background-activated: var(--main-color-shade);
+  --color: black;
+  --border-radius: 15px;
+}
 </style>
