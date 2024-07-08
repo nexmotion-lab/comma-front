@@ -10,8 +10,9 @@
 
      <!-- 설정 아이콘 -->
      <div class="setting-container">
-       <ion-img src="/public/select.png" class="setting-img"/>
+       <ion-img @click="showModal = true" src="/public/select.png" class="setting-img"/>
      </div>
+     <ModalComponent :isVisible="showModal" @close="showModal = false" />
 
      <!-- 오른쪽 네비게이션 바 -->
      <div class="right-navbar">
@@ -45,6 +46,7 @@
 import { IonPage, IonFooter, IonContent} from '@ionic/vue';
 import BaseBottomBar from "@/components/common/BaseBottomBar.vue";
 import BaseView from "@/components/common/BaseView.vue";
+import ModalComponent from '@/components/SettingModal.vue';
 
 interface ListItem{
   id:number;
@@ -53,7 +55,12 @@ interface ListItem{
 }
 
 export default {
-  components: { BaseView, BaseBottomBar, IonPage, IonFooter, IonContent},
+  components: {ModalComponent, BaseView, BaseBottomBar, IonPage, IonFooter, IonContent},
+  data() {
+    return {
+      showModal: false
+    };
+  },
   setup() {
     // 리스트 아이템 데이터
     const itemList: ListItem[] = [
