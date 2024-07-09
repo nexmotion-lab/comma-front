@@ -126,7 +126,6 @@ ion-content{
 }
 
 .btn-wrap{
-  margin-top: 5vh;
   display: flex;
   justify-content: center;
   gap: 25px;
