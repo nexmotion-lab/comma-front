@@ -60,7 +60,7 @@
         </div>
         <ion-card class="events-modal-content-wrapper">
           <ion-list lines="none" class="events-list">
-            <ion-item class="event-item" v-for="(event, index) in eventData" :key="index">
+            <ion-item class="event-item" v-for="(event, index) in eventData" :key="index" @click="goToDiary">
               <ion-label class="event-title">
                 <span>{{ index + 1 }}. {{ event.name }}</span>
               </ion-label>
@@ -90,7 +90,7 @@
         </div>
         <ion-card class="emotions-modal-content-wrapper">
           <ion-list lines="none" class="emotions-list">
-            <ion-item class="emotion-item" v-for="(emotion, index) in emotions" :key="index">
+            <ion-item class="emotion-item" v-for="(emotion, index) in emotions" :key="index" @click="goToDiary">
               <ion-label class="emotion-title">
                 <span>{{ index + 1 }}. {{ emotion.name }}</span>
               </ion-label>
@@ -153,7 +153,7 @@ import EmotionChart from "@/components/EmotionChart.vue";
 import BaseView from '@/components/common/BaseView.vue';
 import BaseBottomBar from '@/components/common/BaseBottomBar.vue';
 import {IonPage, IonHeader,IonCard, IonModal, IonImg, IonList, IonItem , IonCardTitle ,IonCardHeader, IonButton} from "@ionic/vue";
-
+import {useRouter} from "vue-router";
 export default defineComponent({
   name: "StaticHome",
   components: {
@@ -163,6 +163,7 @@ export default defineComponent({
     BaseBottomBar,
   },
   setup() {
+    const router = useRouter();
     const store = useStore();
     const showDateModal = ref(false);
     const eventsListModal = ref<any>(false);
@@ -298,6 +299,10 @@ export default defineComponent({
       }
     };
 
+    const goToDiary = () => {
+      router.push('');
+    };
+
     return {
       showDateModal,
       dismissEventsListModal,
@@ -323,6 +328,7 @@ export default defineComponent({
       handleBubbleClick,
       getEmotionColor, // 감정 색상 가져오기 함수 추가
       topEmotions,
+      goToDiary
     };
   },
 });
