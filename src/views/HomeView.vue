@@ -14,8 +14,9 @@
          <ion-chip color="medium"><ion-text class="nickname" color="success">윤동현</ion-text></ion-chip>
        </div>
      </div>
+     <ModalComponent :isVisible="showModal" @close="showModal = false" />
 
-       <!-- 오른쪽 네비게이션 바 -->
+     <!-- 오른쪽 네비게이션 바 -->
      <div class="right-navbar">
        <ul class="item-list">
          <li v-for="item in itemList" :key="item.id">
@@ -47,6 +48,7 @@
 import { IonPage, IonFooter, IonContent} from '@ionic/vue';
 import BaseBottomBar from "@/components/common/BaseBottomBar.vue";
 import BaseView from "@/components/common/BaseView.vue";
+import ModalComponent from '@/components/SettingModal.vue';
 import {ref} from "vue";
 
 interface ListItem{
@@ -62,7 +64,12 @@ interface Interaction {
 }
 
 export default {
-  components: { BaseView, BaseBottomBar, IonPage, IonFooter, IonContent},
+  components: {ModalComponent, BaseView, BaseBottomBar, IonPage, IonFooter, IonContent},
+  data() {
+    return {
+      showModal: false
+    };
+  },
   setup() {
     const itemList: ListItem[] = [
       { id: 1, imageUrl: "/public/chart.png", routerLink: "/" },
