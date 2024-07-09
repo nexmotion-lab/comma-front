@@ -127,7 +127,7 @@ export default defineComponent({
             max: 6,
             grid: {
               color: (context) => (context.tick.value === 0 ? "#000000" : "transparent"),
-              lineWidth: (context) => (context.tick.value === 0 ? 0.2 : 0),
+              lineWidth: (context) => (context.tick.value === 0 ? 3 : 0),
               drawTicks: false,
             },
             ticks: {
@@ -143,7 +143,7 @@ export default defineComponent({
             max: 6,
             grid: {
               color: (context) => (context.tick.value === 0 ? "#000000" : "transparent"),
-              lineWidth: (context) => (context.tick.value === 0 ? 0.2 : 0),
+              lineWidth: (context) => (context.tick.value === 0 ? 3 : 0),
               drawTicks: false,
             },
             ticks: {

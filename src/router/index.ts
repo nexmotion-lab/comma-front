@@ -19,7 +19,7 @@ import DiaryFour from "@/views/DiaryFour.vue";
 import DiaryFive from "@/views/DiaryFive.vue";
 import DiarySix from "@/views/DiarySix.vue";
 import MainView from "@/views/MainView.vue";
-import StaticHome from '@/views/static/StaticHome.vue'
+import StaticHome from '@/views/statistics/Statistics.vue'
 import Axios from '@/views/axios.vue'
 import SettingView from '@/views/SettingView.vue';
 
