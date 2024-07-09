@@ -125,6 +125,7 @@ export default defineComponent({
       if (this.newNickname) {
         // 여기에 닉네임 변경 로직 추가
         alert(`닉네임이 ${this.newNickname}로 변경되었습니다.`);
+        this.newNickname = "";
         this.showNameChange = false;
       } else {
         alert("닉네임을 입력해주세요.");
@@ -145,6 +146,7 @@ export default defineComponent({
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 5;
 }
 .modal-content {
   background: white;
@@ -258,6 +260,7 @@ input:checked + .slider:before {
 .note {
   margin-top: 20px;
   text-align: center;
+  font-size: small;
   color: #888;
 }
 .app-info .modal-body {

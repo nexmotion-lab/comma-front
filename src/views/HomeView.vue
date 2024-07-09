@@ -5,13 +5,13 @@
 
      <div class="user-container">
        <!-- 설정 아이콘 -->
-       <div class="setting-container">
+       <div class="setting-container" @click="showModal = true">
          <ion-img src="/public/select.png" class="setting-img"/>
        </div>
 
        <!-- 닉네임 영역 -->
        <div class="nickname-container">
-         <ion-chip color="medium"><ion-text class="nickname" color="success">윤동현</ion-text></ion-chip>
+         <ion-chip color="medium"><ion-text class="nickname" color="success">{{ nickname }}</ion-text></ion-chip>
        </div>
      </div>
      <ModalComponent :isVisible="showModal" @close="showModal = false" />
@@ -67,13 +67,14 @@ export default {
   components: {ModalComponent, BaseView, BaseBottomBar, IonPage, IonFooter, IonContent},
   data() {
     return {
-      showModal: false
+      showModal: false,
+      nickname: "아아아아아"
     };
   },
   setup() {
     const itemList: ListItem[] = [
-      { id: 1, imageUrl: "/public/chart.png", routerLink: "/" },
-      { id: 2, imageUrl: "/public/callender.png", routerLink: "/" }
+      { id: 1, imageUrl: "/public/chart.png", routerLink: "/statichome" },
+      { id: 2, imageUrl: "/public/callender.png", routerLink: "/calendar" }
     ];
 
     const interactions: Interaction[] = [
@@ -164,7 +165,7 @@ ion-content{
 }
 
 .nav-img{
-  margin-bottom: 10px;
+  margin-bottom: 20px;
   width : 70%;
 }
 
