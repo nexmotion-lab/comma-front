@@ -1,11 +1,12 @@
+<!-- ****세팅 모달창 이거 근데 다이어리에 있는 것도 똑같긴해**** -->
 <template>
-  <div v-if="isVisible" class="modal-overlay" @click="closeModal">
-    <div class="modal-content" @click.stop>
-      <div v-if="!showAccountLinking && !showNameChange && !showAppInfo" class="modal-settings">
-        <div class="modal-header">
-          <h2>설정</h2>
+  <ion-modal v-if="isVisible" class="modal-overlay" @click="closeModal">
+    <div class="modal-container" @click.stop>
+      <div class="modal-content" v-if="!showAccountLinking && !showNameChange && !showAppInfo">
+        <div class="close-button-wrap">
           <button @click="closeModal" class="close-button">✕</button>
         </div>
+        <h2 class="modal-header">설정</h2>
         <div class="modal-body">
           <div class="setting-item">
             <span>효과음</span>
@@ -34,14 +35,14 @@
           <button class="footer-button" @click="showAppInfo = true">앱 정보</button>
           <button class="footer-button" @click="showNameChange = true">이름 변경</button>
         </div>
-        <div class="version">Version: 1.0.0</div>
+        <div class="note">Version: 1.0.0</div>
       </div>
 
       <div v-if="showAccountLinking" class="account-linking">
-        <div class="modal-header">
-          <h2>계정 연동</h2>
+        <div class="close-button-wrap">
           <button @click="showAccountLinking = false" class="close-button">✕</button>
         </div>
+        <h2 class="modal-header">계정 연동</h2>
         <div class="modal-body">
           <div class="account-item">
             <label for="university">삼육대학교</label>
@@ -52,37 +53,38 @@
           <div class="account-item">
             <input type="password" id="password" v-model="password" placeholder="비밀번호를 입력하세요" />
           </div>
+        </div>
+        <div class="modal-footer ">
           <button class="footer-button" @click="linkAccount">확인</button>
         </div>
         <div class="note">*로그인은 수톡 아이디와 동일합니다.</div>
       </div>
 
+      <div v-if="showAppInfo" class="app-info">
+        <div class="close-button-wrap">
+          <button @click="showAppInfo = false" class="close-button">✕</button>
+        </div>
+        <h2 class="modal-header">앱 정보</h2>
+        <div class="modal-body">
+          <p>이 앱은 삼육대학교 컴퓨터공학부 '코더스랩' 에서 제작되었습니다. 상담심리학과 동아리 '컴마' 에는 해당 정보에 대한 저작권 및 지적 재산권이 있습니다. 무단으로 사용, 복제 및 배포하는 것은 금지되어 있습니다.</p>
+        </div>
+      </div>
+
       <div v-if="showNameChange" class="name-change">
-        <div class="modal-header">
-          <h2>닉네임 변경</h2>
+        <div class="close-button-wrap">
           <button @click="showNameChange = false" class="close-button">✕</button>
         </div>
+        <h2 class="modal-header">닉네임 변경</h2>
         <div class="modal-body">
           <input type="text" v-model="newNickname" placeholder="한글 2-6자, 영어 12자 이내" />
         </div>
         <div class="modal-footer">
-          <button class="footer-button cancel-button" @click="showNameChange = false">취소</button>
-          <button class="footer-button confirm-button" @click="changeNickname">결정</button>
+          <button class="footer-button" @click="changeNickname">결정</button>
         </div>
         <div class="note">*이름 변경 후 한달동안 변경 불가</div>
       </div>
-
-      <div v-if="showAppInfo" class="app-info">
-        <div class="modal-header">
-          <h2>앱 정보</h2>
-          <button @click="showAppInfo = false" class="close-button">✕</button>
-        </div>
-        <div class="modal-body">
-          <p>앱은 삼육대학교 컴퓨터공학부 '코더스랩' 에서 제작되었습니다. 상담심리학과 동아리 '컴마' 에는 해당 정보에 대한 저작권 및 지적 재산권이 있습니다. 무단으로 사용, 복제 및 배포하는 것은 금지되어 있습니다.</p>
-        </div>
-      </div>
     </div>
-  </div>
+  </ion-modal>
 </template>
 
 <script lang="ts">
@@ -148,29 +150,36 @@ export default defineComponent({
   align-items: center;
   z-index: 5;
 }
-.modal-content {
+.modal-container {
   background: white;
   padding: 20px;
   border-radius: 10px;
   width: 300px;
   position: relative;
+  box-shadow: 0 0 0 9px #A3E2B8, 0 0 0 20px #E6FFF2;
 }
 .modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #ccc;
+  text-align: center;
+  font-weight: bold;
+  border-bottom: 0.1rem solid #6e6e6e;
   padding-bottom: 10px;
+  margin: 0;
+}
+.modal-body {
+  border-bottom: 0.1rem solid #6e6e6e;
+}
+.close-button-wrap {
+  text-align: right;
 }
 .close-button {
   background: transparent;
   border: none;
   font-size: 20px;
+  font-weight: bold;
   cursor: pointer;
 }
 .setting-item, .account-item {
-  margin: 15px 0;
-  background: #e0f7ef;
+  margin: 7px 0;
   padding: 10px;
   border-radius: 10px;
   text-align: center;
@@ -234,7 +243,7 @@ input:checked + .slider:before {
   margin-top: 20px;
 }
 .footer-button {
-  background: #d0f0c0;
+  background: #A3E2B8;
   border: none;
   padding: 10px;
   border-radius: 5px;
@@ -243,19 +252,8 @@ input:checked + .slider:before {
 .footer-button.linked {
   background: #a0e0a0;
 }
-.footer-button.cancel-button {
-  background: #add8e6;
-}
-.footer-button.confirm-button {
-  background: #fa8072;
-}
 .footer-button[disabled] {
   cursor: not-allowed;
-}
-.version {
-  text-align: center;
-  margin-top: 20px;
-  color: #888;
 }
 .note {
   margin-top: 20px;
