@@ -3,19 +3,23 @@ import { defineComponent } from 'vue'
 import BaseView from '@/components/common/BaseView.vue'
 import BaseBottomBar from '@/components/common/BaseBottomBar.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
-import SpeechBubble from '@/components/icons/SpeechBubble.vue'
-import NicknameComponent from '@/components/icons/NicknameComponent.vue'
 import {IonPage} from "@ionic/vue";
+import ModalComponent from "@/components/SettingModal.vue";
 
 export default defineComponent({
   name: 'DiaryMain',
   components: {
     'BaseView': BaseView,
-    'speech-bubble': SpeechBubble,
     'BaseButton': BaseButton,
     'BaseBottomBar': BaseBottomBar,
-    'nickname': NicknameComponent,
-    'ion-page': IonPage
+    'ion-page': IonPage,
+    'ModalComponent': ModalComponent
+  },
+  data() {
+    return {
+      nickname: "아아아아",
+      showModal: false
+    }
   }
 })
 </script>
@@ -23,36 +27,106 @@ export default defineComponent({
 <template>
   <BaseView/>
   <ion-page class="custom-page">
-  <nickname>정찬희</nickname>
-  <div class="container">
-    <speech-bubble>오늘의 감정을 일기로 남길까?</speech-bubble>
-    <ion-img src="public/도토 기쁨 5.svg" alt="도토 이미지" />
-    <div class="btn-wrap">
-      <BaseButton>네</BaseButton>
-      <BaseButton>아니오<br>(타임라인)</BaseButton>
-    </div>
-  </div>
-  <BaseBottomBar></BaseBottomBar>
+    <ion-content scroll-y="false">
+      <div class="content-container">
+        <div class="user-container">
+          <!-- 설정 아이콘 -->
+          <div class="setting-container" @click="showModal = true">
+            <ion-img src="/public/select.png" class="setting-img"/>
+          </div>
+
+          <!-- 닉네임 영역 -->
+          <div class="nickname-container">
+            <ion-chip color="medium"><ion-text class="nickname" color="success">{{ nickname }}</ion-text></ion-chip>
+          </div>
+        </div>
+        <ion-card class="speech-bubble">
+          <ion-card-content class="text">오늘의 감정을 일기로 남길까?</ion-card-content>
+        </ion-card>
+        <div class="img-container">
+          <ion-img class="img" src="src/assets/diary_doto.png" alt="도토 이미지" />
+        </div>
+        <div class="btn-wrap">
+          <BaseButton @click="$router.push('/diary/character')">네</BaseButton>
+          <BaseButton @click="$router.push('/DiarySix')">아니오(타임라인)</BaseButton>
+        </div>
+      </div>
+    </ion-content>
+    <ion-footer>
+      <BaseBottomBar></BaseBottomBar>
+    </ion-footer>
   </ion-page>
+  <ModalComponent :isVisible="showModal" @close="showModal = false" />
 </template>
 
 <style scoped>
-div {
-  text-align: center;
-}
-
 .custom-page{
-  justify-content: flex-start;
-}
-ion-img {
-  height: 45vh;
+  justify-content: normal;
 }
 
-.btn-wrap {
+ion-content{
+  align-items: center;
+}
+
+.user-container {
+  display: inline-flex;
+  align-items: center;
+}
+
+.nickname-container{
+  justify-content: space-between;
+}
+
+.nickname{
+  padding: 4px;
+  font-weight: bold;
+  font-size: 4vw;
+}
+
+.setting-container{
+  justify-content: space-between;
+  width: 60px;
+  cursor: pointer;
+}
+
+.setting-img{
+  width: auto;
+}
+
+.content-container {
+  display: grid;
+  height: 90vh;
+  grid-template-rows: 15vh 20vh 35vh;
+}
+
+.speech-bubble {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: white;
   text-align: center;
+  margin: 10px 30px;
+  border-radius: 25px;
+}
+
+.text {
+  flex: 1;
+}
+
+.img-container {
+  display:flex;
+  margin-right: 0.5vw;
+  margin-left: 0.5vw;
+  margin-top: 20px;
+}
+
+.img {
+  flex: 1;
+}
+
+.btn-wrap{
   display: flex;
   justify-content: center;
-  gap: 20px;
+  gap: 25px;
 }
-
 </style>
