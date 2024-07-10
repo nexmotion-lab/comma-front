@@ -30,6 +30,8 @@ export default defineComponent({
   border-radius: 35px;
   background-color: #9abfa6;
   height: 90px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3); /* 버튼에 그림자 효과를 추가합니다. */
+
 }
 
 .ment2 {

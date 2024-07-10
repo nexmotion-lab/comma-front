@@ -5,7 +5,7 @@ import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
 import 'swiper/css'
 import BaseButton from '@/components/common/BaseButton.vue'
 import 'vue-router/dist/vue-router'
-import {IonPage} from "@ionic/vue";
+import {IonPage, IonCard} from "@ionic/vue";
 
 interface CenterInfo {
   psy_center_no: number
@@ -26,7 +26,7 @@ export default defineComponent({
     BaseButton,
     Swiper,
     SwiperSlide,
-    IonPage
+    IonPage, IonCard
   },
   setup() {
     // const router = useRouter()
@@ -79,20 +79,20 @@ export default defineComponent({
   <ion-page>
     <ion-content :scroll-y="false">
   <!-- centerInfo start -->
-  <div v-if="centerInfo.length === 0">
-    <h2>정보가 없습니다.</h2>
-  </div>
+<div v-if="centerInfo.length === 0">
+  <h2>정보가 없습니다.</h2>
+</div>
 <div class="mm">
   <swiper :options="swiperOptions" @slideChange="onSlideChange">
     <swiper-slide v-for="info in centerInfo" :key="info.psy_center_no">
-      <div class="content-wrapper">
+      <ion-card class="content-wrapper">
         <div class="content">
           <div class="content-header">
             <h1 class="center-name">{{ info.name }}</h1>
           </div>
           <div class="content-info">
             <div class="logo-image">
-              <img :src="info.logo || 'default-logo.png'" alt="센터 로고" />
+              <img :src="info.logo || 'default-logo.png'" alt="센터" />
             </div>
             <div class="description">
               {{ info.description }}
@@ -123,7 +123,7 @@ export default defineComponent({
             >신청하기</BaseButton
           >
         </div>
-      </div>
+      </ion-card>
     </swiper-slide>
   </swiper>
 </div>
@@ -284,7 +284,7 @@ hr {
 
 @media (max-width: 768px) {
   .slider-indicator {
-    margin-top: 15px; /* 작은 화면에서는 위치를 조금 더 위로 설정 */
+    margin-top: 0.8vh; /* 작은 화면에서는 위치를 조금 더 위로 설정 */
   }
 }
 </style>

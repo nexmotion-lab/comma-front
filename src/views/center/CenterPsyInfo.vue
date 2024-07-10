@@ -5,6 +5,13 @@ import NuguriBox from '@/components/NuguriBox.vue'
 import router from "@/router";
 import {IonPage} from "@ionic/vue";
 
+import psyInfoNuguri1 from "@/assets/center/psyInfo_nuguri1.png";
+import psyInfoNuguri2 from "@/assets/center/psyInfo_nuguri2.png";
+import psyInfoNuguri3 from "@/assets/center/psyInfo_nuguri3.png";
+import psyInfoNuguri4 from "@/assets/center/psyInfo_nuguri4.png";
+import psyInfoNuguri5 from "@/assets/center/psyInfo_nuguri5.png";
+import psyInfoNuguri6 from "@/assets/center/psyInfo_nuguri6.png";
+
 interface PsyInfo {
   psy_info_no: number
   title: string
@@ -21,12 +28,12 @@ export default defineComponent({
   setup() {
     const psyInfos = ref<PsyInfo[]>([])
     const images = [
-      '/src/assets/center/psyInfo_nuguri1.png',
-      '/src/assets/center/psyInfo_nuguri2.png',
-      '/src/assets/center/psyInfo_nuguri3.png',
-      '/src/assets/center/psyInfo_nuguri4.png',
-      '/src/assets/center/psyInfo_nuguri5.png',
-      '/src/assets/center/psyInfo_nuguri6.png'
+      psyInfoNuguri1,
+      psyInfoNuguri2,
+      psyInfoNuguri3,
+      psyInfoNuguri4,
+      psyInfoNuguri5,
+      psyInfoNuguri6
     ]
 
     const testPairs = computed(() => {
@@ -107,7 +114,7 @@ export default defineComponent({
 }
 .psyInfo-list {
   overflow-y: scroll; /* 세로 스크롤 활성화 */
-  max-height: 90%; /* 블록의 최대 높이 설정 */
+  max-height: 100%; /* 블록의 최대 높이 설정 */
   margin: 0px 5px 0px;
 }
 

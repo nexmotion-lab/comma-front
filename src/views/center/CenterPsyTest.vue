@@ -1,13 +1,9 @@
 <script lang="ts">
-import { defineComponent, ref, onMounted, computed, reactive } from 'vue'
+import {defineComponent, ref, onMounted, computed, reactive, onBeforeUnmount} from 'vue'
 import axios from 'axios'
-import GreenButton from '@/components/GreenButton.vue'
-import BaseView from '@/components/common/BaseView.vue'
-import BaseButton from '@/components/common/BaseButton.vue'
-import BaseBottomBar from '@/components/common/BaseBottomBar.vue'
 import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
 import 'swiper/swiper-bundle.min.css'
-import { IonButton, IonModal,IonIcon,IonPage } from '@ionic/vue';
+import {  IonModal,IonIcon,IonPage } from '@ionic/vue';
 import {closeOutline} from "ionicons/icons";
 
 
@@ -17,6 +13,11 @@ interface PsyTest {
   content: string
   target: string
   time: string
+}
+
+interface TestCategory{
+  name: string
+  tests: PsyTest[];
 }
 
 export default defineComponent({
@@ -32,13 +33,13 @@ export default defineComponent({
     IonModal,
     IonIcon,
     IonPage,
-    closeOutline
   },
   setup() {
     const modal1 = ref<any>(null)
     const modal2 = ref<any>(null)
-    const psyTests = ref<PsyTest[]>([])
+    const testCategories = ref<TestCategory[]>([]);
     const selectedTest = ref<PsyTest | null>(null) // 선택된 테스트 정보를 저장할 상태 추가
+    const activeCategory = ref<string>('')
     const bannerMessages = ref<string[]>([
       '학생상담센터의 심리검사는 모두 무료!',
       '대표적인 심리검사는 MBTI입니다',
@@ -52,13 +53,29 @@ export default defineComponent({
       activeSlideIndex.value = swiper.realIndex
     }
 
-    const testPairs = computed(() => {
+    const fetchPsyTests = async () =>{
+      try{
+        const response = await axios.get('http://192.168.0.154:8086/api/v1/psytest/')
+        const data = response.data
+        testCategories.value = Object.keys(data).map(key =>({
+          name:key,
+          tests: data[key]
+        }))
+        activeCategory.value = testCategories.value[0].name
+      }catch (error) {
+        console.error('Failed to fetch psytest :', error)
+        alert('Failed to fetch psytest')
+      }
+    }
+
+
+    const getTestPairs = (tests: PsyTest[]) => {
       const pairs = []
-      for (let i = 0; i < psyTests.value.length; i += 2) {
-        pairs.push(psyTests.value.slice(i, i + 2))
+      for (let i = 0; i < tests.length; i += 2) {
+        pairs.push(tests.slice(i, i + 2))
       }
       return pairs
-    })
+    }
 
     const swiperOptions = reactive({
       slidesPerView: 1,
@@ -71,14 +88,10 @@ export default defineComponent({
     })
 
     onMounted(async () => {
-      try {
-        const response = await axios.get<PsyTest[]>('http://192.168.0.154:8086/api/v1/psytest/')
-        psyTests.value = response.data // API 응답을 직접 할당
-        console.log(psyTests.value)
-      } catch (error) {
-        console.error('Failed to fetch psytest :', error)
-        alert('Failed to fetch psytest')
-      }
+      await fetchPsyTests()
+    })
+
+    onBeforeUnmount(()=>{
     })
 
     const navigate = (path: string) => {
@@ -97,7 +110,7 @@ export default defineComponent({
     }
     const dismiss1 = () => {
       if (modal1.value) {
-        modal1.value.dismiss()
+        modal1.value.$el.dismiss()
       }
     }
     const dismiss2 = () => {
@@ -124,21 +137,23 @@ export default defineComponent({
     }
 
     return {
+      getTestPairs,
       modal1,
       openModal1,
       dismiss1,
       modal2,
       openModal2,
       dismiss2,
-      psyTests,
       navigate,
-      testPairs,
       swiperOptions,
       activeSlideIndex,
       onSlideChange,
       bannerMessages,
       selectedTest,
-      wrapText
+      wrapText,
+      fetchPsyTests,
+      testCategories,
+      activeCategory
     }
   },
   data() {
@@ -205,23 +220,22 @@ export default defineComponent({
   </div>
   <!-- comment end -->
 
-  <!-- test-type start -->
-  <div class="test-type-section">
-    <div class="test-type-box">
-      <div class="test-type-title">성격 성향 검사</div>
-    </div>
-  </div>
-  <!-- test-type end -->
+      <div class="test-list">
+        <div v-for="(category, categoryIndex) in testCategories" :key="category.name" class="test-category">
+          <div class="test-type-section">
+            <ion-chip class="test-type-box">
+              <div class="test-type-title">{{ category.name }}</div>
+            </ion-chip>
+          </div>
 
-  <div class="test-list">
-    <div v-for="(pair, index) in testPairs" :key="index" class="test-pair">
-      <div class="test-item" @click="openModal2(test)" v-for="test in pair" :key="test.psy_test_no" >
-        <div class="test-title">
-          {{ wrapText(test.title, 15) }}
+          <div v-for="(pair, pairIndex) in getTestPairs(category.tests)" :key="pairIndex" class="test-pair" :data-category="category.name">
+            <div v-for="test in pair" :key="test.psy_test_no" class="test-item" @click="openModal2(test)">
+              <div class="test-title">{{ wrapText(test.title, 15) }}</div>
+            </div>
+            <div v-if="pair.length === 1" class="test-item-placeholder"></div> <!-- 빈 공간을 위한 요소 추가 -->
+          </div>
         </div>
       </div>
-    </div>
-  </div>
 
   <ion-modal id="example-modal" ref="modal2" >
     <div class="test-modal-wrapper" v-if="selectedTest">
@@ -362,10 +376,9 @@ ion-content{
 }
 
 .test-type-box {
-  border-radius: 15px;
-  padding: 5px;
-  background-color: #a3e2b8ff;
-  width: 55%;
+  padding: 0.7vh 1.2vh;
+  --background-color: #a3e2b8ff;
+  width: fit-content;
   text-align: center;
   display: flex;
   justify-content: center;
@@ -380,8 +393,8 @@ ion-content{
 /* Test List */
 .test-list {
   overflow-y: scroll; /* 세로 스크롤 활성화 */
-  max-height: 63vh; /* 블록의 최대 높이 설정 */
-  margin: 0px 5px 0px;
+  max-height: 65vh; /* 블록의 최대 높이 설정 */
+  margin: 0 5px 0;
 }
 
 .test-pair {
@@ -390,11 +403,11 @@ ion-content{
 }
 
 .test-item {
-  border: 6px solid green;
+  border: 6px solid #548263;
   border-radius: 10px;
   margin: 10px;
-  width: 150px;
-  height: 145px;
+  width: 45%;
+  height: 17vh;
   background-color: white;
   display: flex;
   align-items: center;
@@ -404,6 +417,13 @@ ion-content{
   flex: 1;
   padding: 10px;
   white-space: pre-line;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.test-item-placeholder {
+  margin: 10px;
+  width: 45%;
+  height: 17vh;
 }
 
 .test-title {

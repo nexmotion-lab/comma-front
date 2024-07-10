@@ -2,14 +2,16 @@
 import { defineComponent } from 'vue';
 import BaseButton from '@/components/common/BaseButton.vue';
 import { useRoute } from 'vue-router';
-import { IonPage } from "@ionic/vue";
+import { IonPage, IonCard } from "@ionic/vue";
 import router from "@/router";
+import TeachingNuguri from "@/assets/center/teaching_nuguri.png"
 
 export default defineComponent({
   name: 'CenterPsyInfoDetail',
   components: {
     BaseButton,
-    IonPage
+    IonPage,
+    IonCard,
   },
   setup() {
     const route = useRoute();
@@ -27,6 +29,7 @@ export default defineComponent({
     return {
       psyInfo,
       navigate,
+      TeachingNuguri
     };
   },
 });
@@ -36,7 +39,7 @@ export default defineComponent({
 <!-- 상담센터 상담 정보 상세 페이지-->
 <template>
   <ion-page>
-  <div class="content-wrapper">
+  <ion-card class="content-wrapper">
     <div class="content">
       <div class="content-header">
         <div class="content-title">
@@ -56,7 +59,7 @@ export default defineComponent({
             </p>
           </div>
           <div class="content-summary-footer">
-            <img class="footer-img" src="/src/assets/center/teaching_nuguri.png"/>
+            <img class="footer-img" :src="TeachingNuguri" />
           </div>
         </div>
       <div class="content-cf-wrapper" v-if="psyInfo.image">
@@ -83,11 +86,13 @@ export default defineComponent({
       </BaseButton>
     </div>
     </div>
-  </div>
+  </ion-card>
   </ion-page>
 </template>
 
 <style scoped>
+
+
 .content-wrapper {
   position: relative; /* 상대적 위치 설정 */
   letter-spacing: 0.6px;
@@ -95,7 +100,8 @@ export default defineComponent({
   color: black;
   height: 80%;
   border-radius: 20px;
-  margin: 10px 20px 10px 20px;
+  margin: 20px 20px 15px 20px;
+
   display: flex;
   flex-direction: column; /* Flexbox로 세로 정렬 설정 */
 
@@ -131,9 +137,9 @@ export default defineComponent({
 
 .close-button {
   background-color: rgb(168, 209, 168);
-  padding-left: 10px;
-  padding-right: 10px;
-  padding-bottom: revert;
+  padding-left: 1vh;
+  padding-right: 1vh;
+  padding-bottom: 0.5vh;
   border-radius: 50%;
   font-weight: 800;
   font-size: 20px;
@@ -209,7 +215,7 @@ export default defineComponent({
   left:50%;
   transform:translateX(-50%);
   flex-shrink: 0; /* 푸터가 축소되지 않도록 설정 */
-  padding: 10px 0;
+  padding: 1vh 0;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -219,6 +225,7 @@ export default defineComponent({
 .previous-button{
   border: none; /* 테두리를 제거합니다. */
   border-radius: 20px; /* 버튼의 모서리를 약간 둥글게 만듭니다. */
+  width: fit-content;
   font-size: 16px; /* 텍스트 크기를 설정합니다. */
   cursor: pointer; /* 마우스를 올렸을 때 커서 모양을 변경합니다. */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 버튼에 그림자 효과를 추가합니다. */
