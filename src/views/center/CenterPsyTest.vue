@@ -15,6 +15,10 @@ interface PsyTest {
   time: string
 }
 
+interface SelectedTest extends PsyTest {
+  categoryName: string
+}
+
 interface TestCategory{
   name: string
   tests: PsyTest[];
@@ -38,7 +42,7 @@ export default defineComponent({
     const modal1 = ref<any>(null)
     const modal2 = ref<any>(null)
     const testCategories = ref<TestCategory[]>([]);
-    const selectedTest = ref<PsyTest | null>(null) // 선택된 테스트 정보를 저장할 상태 추가
+    const selectedTest = ref<SelectedTest | null>(null) // 선택된 테스트 정보를 저장할 상태 추가
     const activeCategory = ref<string>('')
     const bannerMessages = ref<string[]>([
       '학생상담센터의 심리검사는 모두 무료!',
@@ -102,8 +106,8 @@ export default defineComponent({
         modal1.value.$el.present()
       }
     }
-    const openModal2 = (test: PsyTest) => {
-      selectedTest.value = test // 선택된 테스트 정보를 설정
+    const openModal2 = (test: PsyTest, categoryName:string) => {
+      selectedTest.value = {...test, categoryName } // 선택된 테스트 정보를 설정
       if (modal2.value) {
         modal2.value.$el.present();
       }
@@ -229,8 +233,8 @@ export default defineComponent({
           </div>
 
           <div v-for="(pair, pairIndex) in getTestPairs(category.tests)" :key="pairIndex" class="test-pair" :data-category="category.name">
-            <div v-for="test in pair" :key="test.psy_test_no" class="test-item" @click="openModal2(test)">
-              <div class="test-title">{{ wrapText(test.title, 15) }}</div>
+            <div v-for="test in pair" :key="test.psy_test_no" class="test-item" @click="openModal2(test,category.name)">
+              <div class="test-title">{{ wrapText(test.title, 5) }}</div>
             </div>
             <div v-if="pair.length === 1" class="test-item-placeholder"></div> <!-- 빈 공간을 위한 요소 추가 -->
           </div>
@@ -249,7 +253,7 @@ export default defineComponent({
           ></ion-icon>
           </ion-label>
       </div>
-      <div class="test-modal-subtitle">오락가락하는 내 기분 나도 모르겠다고?</div>
+      <div class="test-modal-subtitle">{{selectedTest.categoryName}}</div>
       <ion-list lines="none">
         <ion-item>
           <ion-label class="test-modal-description">
@@ -431,7 +435,7 @@ ion-content{
   font-size: 20px;
   font-weight: 650;
   text-align: center; /* 가운데 정렬 */
-  padding: 10px; /* 적절한 패딩 추가 */
+  padding: 1vh; /* 적절한 패딩 추가 */
   white-space: normal; /* 줄 바꿈 허용 */
   overflow-wrap: break-word; /* 단어 단위로 개행 */
   word-break: break-all; /* 긴 단어 자르기 */

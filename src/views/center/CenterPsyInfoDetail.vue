@@ -109,6 +109,8 @@ export default defineComponent({
 
 .content{
   flex: 1; /* 콘텐츠가 남은 공간을 채우도록 설정 */
+  display: flex;
+  flex-direction: column;
   overflow-y: auto; /* 세로 스크롤 설정 */
   padding: 14px 0 18px 0; /* padding 조정 */
 }
@@ -210,16 +212,13 @@ export default defineComponent({
 }
 
 .content-bottom {
-  position: absolute;
-  bottom:20px;
-  left:50%;
-  transform:translateX(-50%);
-  flex-shrink: 0; /* 푸터가 축소되지 않도록 설정 */
+  flex-shrink: 0;
   padding: 1vh 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  text-align: center; /* 버튼을 가운데 정렬합니다. */
+  text-align: center;
+  margin-top: auto; /* 자동으로 위의 요소들을 밀어내면서 아래로 이동 */
 }
 
 .previous-button{

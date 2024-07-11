@@ -51,6 +51,6 @@ export default defineComponent({
   --padding-bottom: 1px;
   --padding-start: 1.2em;
   --padding-end: 1.2em;
-  margin: 0.5em;
+  margin: 1vh;
 }
 </style>
