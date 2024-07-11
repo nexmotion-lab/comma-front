@@ -108,6 +108,17 @@ export default defineComponent({
             display: false,
           },
           tooltip: {
+            backgroundColor: '#ffffff', // 툴팁 배경색 흰색
+            borderColor: '#000000', // 툴팁 경계선 색상
+            borderWidth: 1, // 툴팁 경계선 두께
+            titleColor: '#000000',
+            bodyColor: '#000000',
+            bodyFont: {
+              weight: '600', // 툴팁 본문 텍스트를 두껍게
+              size: 14, // 폰트 크기
+              family: 'Arial, sans-serif', // 폰트 패밀리 설정
+            },
+            padding: 8,
             callbacks: {
               label: (context) => {
                 const label = context.raw.label || '';

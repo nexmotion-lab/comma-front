@@ -106,9 +106,18 @@
     </ion-modal>
 <!-- 조회된 전체 감정 리스트 출력 모달 부분 end -->
 
-<!---->
 <!--  header 설정 버튼 부분-->
-    <ion-header class="header ion-no-border"></ion-header>
+    <ion-header class="header ion-no-border">
+      <div class="setting-container" @click="showModal = true">
+        <ion-img src="/public/select.png" class="setting-img"/>
+      </div>
+
+      <!-- 닉네임 영역 -->
+      <div class="nickname-container">
+        <ion-chip color="medium"><ion-text class="nickname" color="success">{{ nickname }}</ion-text></ion-chip>
+      </div>
+      <SettingModal :isVisible="showModal" @close="showModal = false" /></ion-header>
+
 <!--    감정 지도 통계 content 부분-->
     <ion-card class="home">
       <ion-card-header class="content-header">
@@ -125,8 +134,10 @@
       </div>
 
 <!--  emotionsList 부분 -->
-      <div class="emotion-list">
-        <p>이번 달 (닉네임)가 가장 많이 선택한 감정은?</p>
+      <div class="topEmotions-list-wrapper">
+        <ion-label class="topEmotions-question" color="dark">
+          이번 달 (닉네임)가 가장 많이 선택한 감정은?
+        </ion-label>
         <ion-list class="topEmotions-list" lines="none">
           <ion-item class="topEmotions-item" v-for="(emotion, index) in topEmotions" :key="index">
               <ion-label class="topEmotion-title">
@@ -154,6 +165,7 @@ import BaseView from '@/components/common/BaseView.vue';
 import BaseBottomBar from '@/components/common/BaseBottomBar.vue';
 import {IonPage, IonHeader,IonCard, IonModal, IonImg, IonList, IonItem , IonCardTitle ,IonCardHeader, IonButton} from "@ionic/vue";
 import {useRouter} from "vue-router";
+import SettingModal from "@/components/SettingModal.vue";
 export default defineComponent({
   name: "StaticHome",
   components: {
@@ -161,7 +173,15 @@ export default defineComponent({
     EmotionChart,
     BaseView,
     BaseBottomBar,
+    SettingModal
   },
+  data(){
+    return{
+      showModal: false,
+      nickname:"아아아아아"
+    }
+  }
+  ,
   setup() {
     const router = useRouter();
     const store = useStore();
@@ -416,18 +436,43 @@ ion-modal#emotions-list-modal, ion-modal#events-list-modal {
 
 /* emotions-List-modal css end */
 
+/* main template start */
+
 .custom-page{
   justify-content: normal;
   border-radius: 20px;
 }
 
 .header{
-  height: 5%
+  display: inline-flex;
+  align-items: center;
+  left: 1vw;
+  height: 5%;
+  padding: 4.5vh 0 1.2vh 0;
 }
+.nickname-container{
+  justify-content: space-between;
+}
+
+.nickname{
+  padding: 0.5vh;
+  font-weight: bold;
+  font-size: 4vw;
+}
+
+.setting-container{
+  justify-content: space-between;
+  width: 60px;
+}
+
+.setting-img{
+  width: auto;
+}
+
+
 
 .home {
   text-align: center;
-  margin: 2vh 2vh;
   padding: 1vh;
   background-color: #ffffff;
   border-radius: 2vh;
@@ -452,6 +497,11 @@ ion-modal#emotions-list-modal, ion-modal#events-list-modal {
   height: 45vh;
   position: relative;
 }
+
+.topEmotions-question{
+  font-size: 2vh;
+ font-weight: bold;
+}
 .topEmotions-list{
   --inner-padding-start: 0;
   --inner-padding-end: 0;
@@ -463,15 +513,15 @@ ion-modal#emotions-list-modal, ion-modal#events-list-modal {
   --inner-padding-end: 0;
 }
 
-.emotion-list {
+.topEmotions-list-wrapper {
   margin-top: 2vh;
   text-align: left;
   padding: 0 1vh;
 }
 
-.emotion-list p {
+.topEmotions-list-wrapper p {
   font-size: 2vh;
-  margin-bottom: 0.5vh;
+  margin :0;
 }
 
 .more-button {
