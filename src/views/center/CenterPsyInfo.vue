@@ -3,7 +3,7 @@ import { defineComponent, ref, onMounted, computed } from 'vue'
 import axios from 'axios'
 import NuguriBox from '@/components/NuguriBox.vue'
 import router from "@/router";
-import {IonPage} from "@ionic/vue";
+import {IonPage, IonCard} from "@ionic/vue";
 
 import psyInfoNuguri1 from "@/assets/center/psyInfo_nuguri1.png";
 import psyInfoNuguri2 from "@/assets/center/psyInfo_nuguri2.png";
@@ -23,7 +23,7 @@ export default defineComponent({
   name: 'CenterPsyInfo',
   components: {
     NuguriBox,
-    IonPage
+    IonPage, IonCard
   },
   setup() {
     const psyInfos = ref<PsyInfo[]>([])
@@ -91,26 +91,34 @@ export default defineComponent({
 <template>
   <ion-page>
   <!-- psyInfo start -->
-  <div class="psyInfo-list" v-if="testPairs.length > 0">
-    <div v-for="(pair, index) in testPairs" :key="index">
-      <NuguriBox v-for="test in pair" :key="test.psy_info_no" :image="getRandomImage()" @click="navigateToDetail(test)">
-        {{ test.title }}
-      </NuguriBox>
-    </div>
-  </div>
-  <div v-else>데이터를 불러오는 중입니다...</div>
+    <ion-card class="content-wrapper">
+      <div class="psyInfo-list" v-if="testPairs.length > 0">
+        <div v-for="(pair, index) in testPairs" :key="index">
+          <NuguriBox v-for="test in pair" :key="test.psy_info_no" :image="getRandomImage()" @click="navigateToDetail(test)">
+            {{ test.title }}
+          </NuguriBox>
+        </div>
+      </div>
+      <div v-else>데이터를 불러오는 중입니다...</div>
   <!-- psyInfo end -->
+    </ion-card>
   </ion-page>
 <!--  <BaseBottomBar></BaseBottomBar>-->
 </template>
 
 <style scoped>
-.header {
-  height: 10%;
+.content-wrapper {
+  position: relative; /* 상대적 위치 설정 */
+  letter-spacing: 0.6px;
+  background-color: white;
+  color: black;
+  height: 85%;
+  border-radius: 20px;
+  margin: 20px 20px 15px 20px;
+
   display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 10px;
+  flex-direction: column; /* Flexbox로 세로 정렬 설정 */
+
 }
 .psyInfo-list {
   overflow-y: scroll; /* 세로 스크롤 활성화 */
@@ -118,9 +126,4 @@ export default defineComponent({
   margin: 0px 5px 0px;
 }
 
-.nav-bar {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 </style>

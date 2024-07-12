@@ -44,7 +44,7 @@ export default defineComponent({
 }
 
 .nuguri {
-  height: 7vh;
+  height: 8.7vh;
   margin: 0 2.3vh 0 1vh;
   align-self: flex-end; /* 아래 경계선에 맞추기 */
 }

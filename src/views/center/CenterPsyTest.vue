@@ -407,7 +407,7 @@ ion-content{
 }
 
 .test-item {
-  border: 6px solid #548263;
+  border: 8px solid #548263;
   border-radius: 10px;
   margin: 10px;
   width: 45%;
@@ -419,7 +419,7 @@ ion-content{
   flex-direction: column;
   font-weight: 700;
   flex: 1;
-  padding: 10px;
+  padding: 1vh;
   white-space: pre-line;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
