@@ -31,13 +31,10 @@
      <div class="main-content-wrapper">
        <div class="speech-bubble shadow">
          <div class="speech-bubble-description">
-           <p v-html="currentInteraction?.text"></p>
+           <p v-html="currentInteraction.text"></p>
          </div>
        </div>
-       <ion-img
-         class="interaction-img"
-         :src="currentInteraction?.images[currentImageIndex]?.url"
-         :class="{ transitioning: isTransitioning }" />
+       <ion-img class="interaction-img" :src="currentInteraction.imageUrl"></ion-img>
        <ion-img class="background-img" src="/public/ground.png"></ion-img>
      </div>
    </ion-content>
@@ -52,7 +49,7 @@ import { IonPage, IonFooter, IonContent} from '@ionic/vue';
 import BaseBottomBar from "@/components/common/BaseBottomBar.vue";
 import BaseView from "@/components/common/BaseView.vue";
 import ModalComponent from '@/components/SettingModal.vue';
-import {onMounted, onUnmounted, ref} from "vue";
+import {ref} from "vue";
 
 interface ListItem{
   id:number;
@@ -62,7 +59,7 @@ interface ListItem{
 
 interface Interaction {
   id: number;
-  images: { url: string }[];
+  imageUrl: string;
   text: string;
 }
 
@@ -81,195 +78,40 @@ export default {
     ];
 
     const interactions: Interaction[] = [
-      {
-        id: 1,
-        images: [
-          { url: "/src/assets/action1-1.png" },
-          { url: "/src/assets/action1-2.png" }
-        ],
-        text: "무엇보다 너가 가장 소중한 사실<br>절대 잊지마"
-      },
-      {
-        id: 2,
-        images: [
-          { url: "/src/assets/action2-1.png" },
-          { url: "/src/assets/action2-2.png" }
-        ],
-        text: "슬픔이란 누구나 느낄 수 있는<br>자연스러운 감정이야"
-      },
-      {
-        id: 3,
-        images: [
-          { url: "/src/assets/action3-1.png" },
-          { url: "/src/assets/action3-2.png" }
-        ],
-        text: "너의 약점을 잘 살펴봐.<br>분명 너를 강하게 해줄테니"
-      },
-      {
-        id: 4,
-        images: [
-          { url: "/src/assets/action4-1.png" },
-          { url: "/src/assets/action4-2.png" }
-        ],
-        text: "'어떡하지'보다 '어쩌겠어'로<br>어차피 할 거 기분 좋게<br>해보는거 어때?"
-      },
-      {
-        id: 5,
-        images: [
-          { url: "/src/assets/action5-1.png" },
-          { url: "/src/assets/action5-2.png" },
-          { url: "/src/assets/action5-3.png" }
-        ],
-        text: "오늘도 나는 널<br>사랑해 사랑해 사랑해"
-      },
-      {
-        id: 6,
-        images: [
-          { url: "/src/assets/action6-1.png" },
-          { url: "/src/assets/action6-2.png" }
-        ],
-        text: "너의 웃음 하나에 살아갈 힘을 얻는 사람이 있다는 사실을 잊지마~"
-      },
-      {
-        id: 7,
-        images: [
-          { url: "/src/assets/action7-1.png" },
-          { url: "/src/assets/action7-2.png" }
-        ],
-        text: "잘 살아라, 그게 최고의 복수다.<br>-탈무드-"
-      },
-      {
-        id: 8,
-        images: [
-          { url: "/src/assets/action8-1.png" },
-          { url: "/src/assets/action8-2.png" }
-        ],
-        text: "오래 살아보니 알겠다<br>꾸준함이 재능이고, 그 꾸준함은<br>좋아하는 마음에서 나온다는 것을.<br>좋아하는 것을 찾으세요.<br>당신은 천재가 됩니다."
-      },
-      {
-        id: 9,
-        images: [
-          { url: "/src/assets/action9-1.png" },
-          { url: "/src/assets/action9-2.png" }
-        ],
-        text: "지각했다고?<br>아니야 세상이 빨랐던거야"
-      },
-      {
-        id: 10,
-        images: [
-          { url: "/src/assets/action10-1.png" },
-          { url: "/src/assets/action10-2.png" }
-        ],
-        text: "또! 너무 과하게 생각하고 있네<br>생각 스탑"
-      },
-      {
-        id: 11,
-        images: [
-          { url: "/src/assets/action11-1.png" },
-          { url: "/src/assets/action11-2.png" }
-        ],
-        text: "너의 약점을 잘 살펴봐.<br>분명 너를 강하게 해줄테니"
-      },
-      {
-        id: 12,
-        images: [
-          { url: "/src/assets/action12-1.png" },
-          { url: "/src/assets/action12-2.png" }
-        ],
-        text: "이젠 나를 좀 더 사랑할거야<br>[버즈 - 나에게로 떠나는 여행]"
-      },
-      {
-        id: 13,
-        images: [
-          { url: "/src/assets/action13-1.png" },
-          { url: "/src/assets/action14-2.png" }
-        ],
-        text: "보고 싶었어!!<br>왜 이제 왔어"
-      },
-      {
-        id: 14,
-        images: [
-          { url: "/src/assets/action13-1.png" },
-          { url: "/src/assets/action14-2.png" }
-        ],
-        text: "삶이 있는 한 희망은 존재한다"
-      },
-      {
-        id: 15,
-        images: [
-          { url: "/src/assets/action15-1.png" },
-          { url: "/src/assets/action15-2.png" }
-        ],
-        text: "혹시 일기 썼어?<br>안 썼으면 같이 쓰러 가자"
-      },
-      {
-        id: 16,
-        images: [
-          { url: "/src/assets/action16-1.png" },
-          { url: "/src/assets/action16-2.png" },
-          { url: "/src/assets/action16-3.png" }
-        ],
-        text: "일기 안 썼으면<br>지금 당장 쓰러 가자!!!"
-      },
-      {
-        id: 17,
-        images: [
-          { url: "/src/assets/action17-1.png" },
-          { url: "/src/assets/action17-2.png" }
-        ],
-        text: "같이 일기 쓰러 가자~~~~"
-      },
-      {
-        id: 18,
-        images: [
-          { url: "/src/assets/action18-1.png" },
-          { url: "/src/assets/action18-2.png" }
-        ],
-        text: "일기 쓰러 가지 않을래?<br>(๑•᎑<๑)ｰ☆"
-      }
+      { id: 1, imageUrl: "/src/assets/action1-2.png", text: "무엇보다 너가 가장 소중한 사실<br>절대 잊지마" },
+      { id: 2, imageUrl: "/src/assets/action2-2.png", text: "슬픔이란 누구나 느낄 수 있는<br>자연스러운 감정이야" },
+      { id: 3, imageUrl: "/src/assets/action3-2.png", text: "너의 약점을 잘 살펴봐.<br>분명 너를 강하게 해줄테니" },
+      { id: 4, imageUrl: "/src/assets/action4-2.png", text: "'어떡하지'보다 '어쩌겠어'로<br>어차피 할 거 기분 좋게<br>해보는거 어때?" },
+      { id: 5, imageUrl: "/src/assets/action5-3.png", text: "오늘도 나는 널<br>사랑해 사랑해 사랑해" },
+      { id: 6, imageUrl: "/src/assets/action6-2.png", text: "너의 웃음 하나에 살아갈 힘을 얻는 사람이 있다는 사실을 잊지마~" },
+      { id: 7, imageUrl: "/src/assets/action7-2.png", text: "잘 살아라, 그게 최고의 복수다.<br>-탈무드-" },
+      { id: 8, imageUrl: "/src/assets/action8-2.png", text: "오래 살아보니 알겠다.<br>꾸준함이 재능이고, 그 꾸준함은<br>좋아하는 마음에서 나온다는 것을.<br>좋아하는 것을 찾으세요.<br>당신은 천재가 됩니다." },
+      { id: 9, imageUrl: "/src/assets/action9-2.png", text: "지각했다고?<br>아니야 세상이 빨랐던거야" },
+      { id: 10, imageUrl: "/src/assets/action10-2.png", text: "또! 너무 과하게 생각하고 있네<br>생각 스탑" },
+      { id: 11, imageUrl: "/src/assets/action11-2.png", text: "너의 약점을 잘 살펴봐.<br>분명 너를 강하게 해줄테니" },
+      { id: 12, imageUrl: "/src/assets/action12-2.png", text: "이젠 나를 좀 더 사랑할거야<br>[버즈 - 나에게로 떠나는 여행]" },
+      { id: 13, imageUrl: "/src/assets/action13-1.png", text: "보고 싶었어!!<br>왜 이제 왔어" },
+      { id: 14, imageUrl: "/src/assets/action14-2.png", text: "삶이 있는 한 희망은 존재한다" },
+      { id: 15, imageUrl: "/src/assets/action15-2.png", text: "혹시 일기 썼어?<br>안 썼으면 같이 쓰러 가자" },
+      { id: 16, imageUrl: "/src/assets/action16-3.png", text: "일기 안 썼으면<br>지금 당장 쓰러 가자!!!" },
+      { id: 17, imageUrl: "/src/assets/action17-2.png", text: "같이 일기 쓰러 가자~~~~" },
+      { id: 18, imageUrl: "/src/assets/action18-2.png", text: "일기 쓰러 가지 않을래?<br>(๑•᎑<๑)ｰ☆" },
     ];
 
+    const currentInteraction = ref<Interaction>({ id: 0, imageUrl: '', text: '' });
 
-    const currentInteraction = ref<Interaction | null>(null);
-    const currentImageIndex = ref(0);
-    const nextImageIndex = ref(1);
-    const isTransitioning = ref(false);
-    let intervalId: NodeJS.Timeout;
-
+    // 페이지가 생성될 때 랜덤으로 이미지와 텍스트를 선택
     const selectRandomInteraction = () => {
       const randomIndex = Math.floor(Math.random() * interactions.length);
       currentInteraction.value = interactions[randomIndex];
-      currentImageIndex.value = 0;
-      nextImageIndex.value = 1;
     };
 
-    const getNextImage = () => {
-      isTransitioning.value = true;
-      setTimeout(() => {
-        if (currentInteraction.value) {
-          currentImageIndex.value = (currentImageIndex.value + 1) % currentInteraction.value.images.length;
-          nextImageIndex.value = (currentImageIndex.value + 1) % currentInteraction.value.images.length;
-        }
-        isTransitioning.value = false;
-      }, 10);
-    };
-
-    onMounted(() => {
-      selectRandomInteraction();
-      intervalId = setInterval(getNextImage, 2000);
-    });
-
-    onUnmounted(() => {
-      clearInterval(intervalId);
-    });
+    // 컴포넌트가 생성될 때 랜덤 이미지 설정
+    selectRandomInteraction();
 
     return {
       itemList,
       currentInteraction,
-      currentImageIndex,
-      nextImageIndex,
-      isTransitioning,
-      getNextImage,
     };
   }
 }
@@ -337,7 +179,7 @@ ion-content{
   border-radius: 1.6em;
   position: absolute;
   border: 1px solid lightgray;
-  padding: 1vh 3vh;
+  padding: 1.5vh 4vh;
   bottom: 58%;
   height: auto;
   width: auto;
@@ -348,7 +190,7 @@ ion-content{
 .speech-bubble:after {
   content: '';
   position: absolute;
-  bottom: -2.10vh; /* 말풍선 아래에 위치하도록 설정 */
+  bottom: -2.1vh; /* 말풍선 아래에 위치하도록 설정 */
   left: 36%;
   width: 2.4vh; /* 꼬리의 너비 */
   height: 2vh; /* 꼬리의 높이 */
