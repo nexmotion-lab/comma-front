@@ -19,9 +19,10 @@ import DiaryFour from "@/views/DiaryFour.vue";
 import DiaryFive from "@/views/DiaryFive.vue";
 import DiarySix from "@/views/DiarySix.vue";
 import MainView from "@/views/MainView.vue";
-import StaticHome from '@/views/statistics/Statistics.vue'
 import Axios from '@/views/axios.vue'
 import SettingView from '@/views/SettingView.vue';
+import Statistics from "@/views/statistics/Statistics.vue";
+import Test from "@/views/Test.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -51,9 +52,9 @@ const routes: Array<RouteRecordRaw> = [
     ]
   },
   {
-    path: '/statichome',
-    name: 'StaticHome',
-    component: StaticHome
+    path: '/statistics',
+    name: 'Statistics',
+    component: Statistics
   },
   {
     path: '/setting',
@@ -159,6 +160,11 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Main',
     component: MainView,
   },
+  {
+    path: '/test',
+    name: 'Test',
+    component: Test
+  }
 ]
 
 const router = createRouter({

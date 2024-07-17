@@ -1,6 +1,6 @@
 import Vuex from 'vuex';
 
-interface EmotionTag {
+export interface EmotionTag {
     xvalue: number;
     yvalue: number
     emotion_tag_no: number;

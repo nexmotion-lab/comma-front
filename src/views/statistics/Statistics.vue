@@ -1,58 +1,37 @@
 <template>
   <BaseView />
   <ion-page class="custom-page">
+<!-- 날짜 모달 start   -->
+    <ion-modal ref="dateModal" trigger="open-date-modal" class="date-modal">
+      <ion-content class="date-modal-content" scroll-y="false">
+        <ion-card class="date-modal-card">
+          <ion-datetime
+              presentation="month-year"
+              :min="minDate"
+              :max="maxDate"
+              :value="tempSelectedDate"
+              @ionChange="handleDateChange"
+              :prefer-wheel="true"
+          ></ion-datetime>
+        </ion-card>
+      </ion-content>
+      <ion-footer>
+        <ion-toolbar>
+          <ion-label class="cancel-text" @click="dateCancel">취소</ion-label>
+          <ion-label class="confirm-text" @click="dateConfirm">확인</ion-label>
+        </ion-toolbar>
+      </ion-footer>
+    </ion-modal>
 
-<!--    날짜 선택 부분 start  -->
-  <div v-if="showDateModal" class="date-modal">
-    <div class="date-modal-content">
-      <div class="date-picker">
-        <div class="date-column">
-          <ul>
-            <li
-                v-for="year in years"
-                :key="year"
-                :class="{ selected: year === tempSelectedYear }"
-                @click="tempSelectedYear = year"
-            >
-              {{ year }}
-            </li>
-          </ul>
-        </div>
-        <div class="label-column">
-          <p>년</p>
-        </div>
-        <div class="date-column">
-          <ul>
-            <li
-                v-for="month in months"
-                :key="month"
-                :class="{ selected: month === tempSelectedMonth }"
-                @click="tempSelectedMonth = month"
-            >
-              {{ month }}
-            </li>
-          </ul>
-        </div>
-        <div class="label-column">
-          <p>월</p>
-        </div>
-      </div>
-      <div class="date-modal-buttons">
-        <button @click="cancelDate">취소</button>
-        <button @click="confirmDate">확인</button>
-      </div>
-    </div>
-  </div>
+<!-- 날짜 모달 end   -->
 
-<!--    날짜 선택 부분 end  -->
-
-<!--    선택된 감정관 연관된 사건을 보여주는 모달 부분 start -->
+<!--   선택된 감정관 연관된 사건을 보여주는 모달 부분 start -->
     <ion-modal id="events-list-modal" ref="eventsListModal">
       <ion-card class="events-modal-wrapper">
         <div class="events-modal-header">
           <ion-card class="events-bubble">
             <p class="events-modal-date"><strong>{{ selectedYear }}</strong>년 <strong>{{ selectedMonth }}월</strong> </p>
-            <p class="emotions-modal-title">'닉네임'가 '{{selectedEmotion}}'와 함께 자주 쓴 사건 태그야!</p>
+            <p class="emotions-modal-title">(<span class="nickname">{{nickname}}</span>)가 (<span class="keyword">{{selectedEmotion}}</span>)와 함께 자주 쓴 사건 태그야!</p>
           </ion-card>
         </div>
         <div class="modal-img">
@@ -82,7 +61,7 @@
         <div class="emotions-modal-header">
           <ion-card class="emotions-bubble">
             <p class="emotions-modal-date"><strong>{{ selectedYear }}</strong>년 <strong>{{ selectedMonth }}월</strong> </p>
-            <p class="emotions-modal-title">(닉네임)가 많이 선택한 감정들을 정리해봤어!</p>
+            <p class="emotions-modal-title"><strong>({{nickname}})</strong>가 많이 선택한 감정들을 정리해봤어!</p>
           </ion-card>
         </div>
         <div class="modal-img">
@@ -105,10 +84,11 @@
       </ion-card>
     </ion-modal>
 <!-- 조회된 전체 감정 리스트 출력 모달 부분 end -->
+    <SettingModal :isVisible="showSettingModal" @close="closeSettingModal" />
 
-<!--  header 설정 버튼 부분-->
+<!--  header 설정 버튼 부분 start  -->
     <ion-header class="header ion-no-border">
-      <div class="setting-container" @click="showModal = true">
+      <div class="setting-container" @click="openSettingModal">
         <ion-img src="/public/select.png" class="setting-img"/>
       </div>
 
@@ -116,12 +96,13 @@
       <div class="nickname-container">
         <ion-chip color="medium"><ion-text class="nickname" color="success">{{ nickname }}</ion-text></ion-chip>
       </div>
-      <SettingModal :isVisible="showModal" @close="showModal = false" /></ion-header>
+    </ion-header>
+<!--  header 설정 버튼 부분 start  -->
 
-<!--    감정 지도 통계 content 부분-->
+<!--    감정 지도 통계 content 부분 start   -->
     <ion-card class="home">
       <ion-card-header class="content-header">
-        <ion-card-title @click="showDateModal = true">{{ selectedDate }}</ion-card-title>
+        <ion-card-title id="open-date-modal" @click="showDateModal">{{ selectedDate }} 감정지도</ion-card-title>
       </ion-card-header>
 
 <!--      버블차트 부분    -->
@@ -133,7 +114,7 @@
         />
       </div>
 
-<!--  emotionsList 부분 -->
+<!--  emotionsList 부분 start  -->
       <div class="topEmotions-list-wrapper">
         <ion-label class="topEmotions-question" color="dark">
           이번 달 (닉네임)가 가장 많이 선택한 감정은?
@@ -144,6 +125,9 @@
                 <span>{{ index + 1 }}. {{ emotion.name }}</span>
               </ion-label>
               <ion-label class="topEmotion-count">{{ emotion.count }}회</ion-label>
+              <ion-label class="topEmotion-bar">
+                <span class="topEmotion-bar-dot" :style="{ backgroundColor: getEmotionColor(emotion.name) }"></span>
+              </ion-label>
           </ion-item>
         </ion-list>
         <div>
@@ -151,7 +135,9 @@
         </div>
       </div>
     </ion-card>
+<!--  emotionsList 부분 end  -->
 
+<!--  감정 지도 통계 content부분 end  -->
     <BaseBottomBar />
   </ion-page>
 </template>
@@ -163,43 +149,74 @@ import { useStore } from 'vuex';
 import EmotionChart from "@/components/EmotionChart.vue";
 import BaseView from '@/components/common/BaseView.vue';
 import BaseBottomBar from '@/components/common/BaseBottomBar.vue';
-import {IonPage, IonHeader,IonCard, IonModal, IonImg, IonList, IonItem , IonCardTitle ,IonCardHeader, IonButton} from "@ionic/vue";
+import {IonPage, IonHeader,IonCard, IonModal, IonImg, IonList, IonItem ,IonContent, IonCardTitle ,IonCardHeader, IonButton, IonDatetime,IonToolbar} from "@ionic/vue";
 import {useRouter} from "vue-router";
 import SettingModal from "@/components/SettingModal.vue";
+import {IonFooter} from "@ionic/vue";
+import {EmotionTag} from "@/store";
 export default defineComponent({
-  name: "StaticHome",
+  name: "StatisticMain",
   components: {
-    IonPage, IonHeader, IonCard,  IonModal, IonImg, IonList, IonItem, IonCardTitle,IonCardHeader, IonButton,
+    IonPage, IonHeader, IonCard,  IonModal, IonImg, IonList, IonItem, IonCardTitle,IonCardHeader, IonButton, IonDatetime,IonToolbar, IonContent, IonFooter,
     EmotionChart,
     BaseView,
     BaseBottomBar,
     SettingModal
   },
-  data(){
-    return{
-      showModal: false,
-      nickname:"아아아아아"
-    }
-  }
-  ,
+
   setup() {
     const router = useRouter();
     const store = useStore();
-    const showDateModal = ref(false);
+    const dateModal = ref<any>();
     const eventsListModal = ref<any>(false);
     const emotionsListModal = ref<any>(null)
-    const years = ref(["2020", "2021", "2022", "2023", "2024", "2025"]);
-    const months = ref(["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]);
+    const minDate = ref("2020-01");
+    const maxDate = ref("2025-12");
     const selectedYear = ref("2024");
     const selectedMonth = ref("06");
-    const selectedDate = ref("2024.06. 감정지도");
-    const tempSelectedYear = ref(selectedYear.value);
-    const tempSelectedMonth = ref(selectedMonth.value);
+    const selectedDate = ref("2024.06.");
+    const tempSelectedDate = ref(`${selectedYear.value}-${selectedMonth.value}`)
     const selectedEmotion = ref("");
     const selectedEmotionId = ref(""); // 선택된 감정의 ID를 저장할 상태
-    const emotions = ref([] as { name: string; count: number }[]);
-    const topEmotions = ref([] as { name: string; count: number }[]);
+    const emotions = ref<EmotionTag[]>([]);
+    const topEmotions = ref<EmotionTag[]>([]);
     const eventData = ref([] as { name: string; count: number; color: string }[]); // 이벤트 데이터를 저장할 상태
+    const showSettingModal = ref(false);
+    const originalSelectedDate = ref(tempSelectedDate.value);
+    const nickname = ref("홍길동");
+
+    const openSettingModal = () => {
+      showSettingModal.value = true;
+    };
+
+    const closeSettingModal = () => {
+      showSettingModal.value = false;
+    };
+
+    const showDateModal = () => {
+      if(dateModal.value){
+        dateModal.value.$el.present();
+      }
+    }
+
+    const dateCancel = () => {
+      tempSelectedDate.value = originalSelectedDate.value;
+      if (dateModal.value){
+        dateModal.value.$el.dismiss();
+      }
+    };
+
+    const dateConfirm = async () => {
+      const [year, month] = tempSelectedDate.value.split("-");
+      selectedYear.value = year;
+      selectedMonth.value = month;
+      selectedDate.value = `${selectedYear.value}.${selectedMonth.value}.`;
+
+      if (dateModal.value){
+        dateModal.value.$el.dismiss();
+      }
+    };
+
 
     const fetchEmotions = async () => {
       try {
@@ -219,13 +236,55 @@ export default defineComponent({
           const nameMatch = key.match(/name=([^,)]+)/);
           const name = nameMatch ? nameMatch[1] : 'Unknown';
           const count = data[key];
-          const color = store.state.emotionTags.find(e => e.name === name)?.color || '#000000'; // Vuex 스토어에서 색상 가져오기
-          return { name, count, color };
-        }).sort((a, b) => b.count-a.count);
+          const emotionTag = store.state.emotionTags.find(e => e.name === name) as EmotionTag; // Vuex 스토어에서 감정 태그 찾기
+          return { ...emotionTag, count }; // 기존 EmotionTag에 count 속성 추가
+        });
 
-        console.log(fetchedEmotions);
+        // 감정을 사분면에 따라 분류
+        const quadrants = [[], [], [], []] as EmotionTag[][];
+        fetchedEmotions.forEach(emotion => {
+          if (emotion.xvalue > 0 && emotion.yvalue > 0) quadrants[0].push(emotion);
+          else if (emotion.xvalue > 0 && emotion.yvalue < 0) quadrants[1].push(emotion);
+          else if (emotion.xvalue < 0 && emotion.yvalue > 0) quadrants[2].push(emotion);
+          else quadrants[3].push(emotion);
+        });
+
+        // 각 사분면을 순차적으로 돌며 빈도수에 따라 정렬된 배열 생성
+        const sortedEmotions = [] as EmotionTag[];
+        const quadrantsOrder = [0, 3, 1, 2];
+
+        quadrantsOrder.forEach(quadrantIndex => {
+          const quadrant = quadrants[quadrantIndex];
+          quadrant.forEach(emotion => {
+            // 현재 감정을 삽입할 위치를 찾음
+            let inserted = false;
+            for (let i = 0; i < sortedEmotions.length; i++) {
+              if (emotion.count > sortedEmotions[i].count) {
+                sortedEmotions.splice(i, 0, emotion);
+                inserted = true;
+                break;
+              } else if (emotion.count === sortedEmotions[i].count) {
+                // 빈도수가 같은 경우 이전 사분면의 요소가 있는지 확인
+                const currentQuadrantIndex = quadrantsOrder.findIndex(qIndex => sortedEmotions[i].xvalue === quadrants[qIndex][0]?.xvalue);
+                if (currentQuadrantIndex > quadrantIndex) {
+                  sortedEmotions.splice(i, 0, emotion);
+                  inserted = true;
+                  break;
+                }
+              }
+            }
+            // 삽입되지 않았으면 배열 끝에 추가
+            if (!inserted) {
+              sortedEmotions.push(emotion);
+            }
+          });
+        });
+
+        // 최종적으로 상위 N개의 감정을 추출
+        const topNEmotions = sortedEmotions.slice(0, 3); // 상위 3개만 추출 (필요에 따라 조정 가능)
+
         emotions.value = fetchedEmotions;
-        topEmotions.value = fetchedEmotions.slice(0, 3); // 상위 3개만 저장
+        topEmotions.value = topNEmotions; // 최종 상위 N개만 저장
       } catch (error) {
         console.error('Error fetching emotions:', error);
       }
@@ -268,24 +327,10 @@ export default defineComponent({
       fetchEmotions();
     });
 
-    const selectYear = (year: string) => {
-      tempSelectedYear.value = year;
+    const handleDateChange = (event: any) => {
+      tempSelectedDate.value = event.detail.value;
     };
 
-    const selectMonth = (month: string) => {
-      tempSelectedMonth.value = month;
-    };
-
-    const confirmDate = () => {
-      selectedYear.value = tempSelectedYear.value;
-      selectedMonth.value = tempSelectedMonth.value;
-      selectedDate.value = `${selectedYear.value}.${selectedMonth.value}. 감정지도`;
-      showDateModal.value = false;
-    };
-
-    const cancelDate = () => {
-      showDateModal.value = false;
-    };
 
     const handleBubbleClick = (emotion: string, emotionId: number) => {
       selectedEmotion.value = emotion;
@@ -324,27 +369,30 @@ export default defineComponent({
     };
 
     return {
+      nickname,
+      showSettingModal,
+      closeSettingModal,
+      openSettingModal,
+      dateModal,
       showDateModal,
       dismissEventsListModal,
       eventsListModal,
       emotionsListModal,
       openEmotionsListModal,
       dismissEmotionsListModal,
-      years,
-      months,
       selectedYear,
       selectedMonth,
       selectedDate,
-      tempSelectedYear,
-      tempSelectedMonth,
+      dateConfirm,
+      dateCancel,
+      minDate,
+      maxDate,
+      tempSelectedDate,
+      handleDateChange,
       selectedEmotion,
       selectedEmotionId, // 선택된 감정의 ID 추가
       emotions,
       eventData, // 이벤트 데이터 추가
-      selectYear,
-      selectMonth,
-      confirmDate,
-      cancelDate,
       handleBubbleClick,
       getEmotionColor, // 감정 색상 가져오기 함수 추가
       topEmotions,
@@ -355,6 +403,45 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.date-modal-card {
+  display: flex;
+  flex-direction: column;
+  margin: 5vw;
+  height: fit-content;
+  border-radius: 30px;
+  border-left: 3vw solid #A3E2B8FF;
+  border-right: 3vw solid #A3E2B8FF;
+  border-top: 3vw solid #A3E2B8FF;
+}
+
+.date-modal {
+  --height: 28%;
+  --border-radius: 40px;
+  --width: 90%;
+  --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
+}
+
+.date-modal-content {
+  --background: #DEF9EB
+}
+
+ion-datetime::part(wheel-item) {
+  font-size: 7vw;
+}
+ion-datetime {
+  --wheel-fade-background-rgb: none;
+}
+
+.cancel-text {
+  font-size: 6vw;
+  padding-right: 12vw;
+}
+
+.confirm-text {
+  font-size: 6vw;
+  padding-left: 12vw;
+}
+
 
 /* emotions-List-modal, events-List-modal css start */
 ion-modal#emotions-list-modal, ion-modal#events-list-modal {
@@ -433,6 +520,11 @@ ion-modal#emotions-list-modal, ion-modal#events-list-modal {
   flex : 1.1;
   height: 100%;
 }
+.keyword{
+  padding: 0.5vh;
+  font-weight: bold;
+  font-size: 3.8vw;
+}
 
 /* emotions-List-modal css end */
 
@@ -447,9 +539,10 @@ ion-modal#emotions-list-modal, ion-modal#events-list-modal {
   display: inline-flex;
   align-items: center;
   left: 1vw;
-  height: 5%;
-  padding: 4.5vh 0 1.2vh 0;
+  height: 6%;
+  padding: 3.2vh 0 1.2vh 0;
 }
+
 .nickname-container{
   justify-content: space-between;
 }
@@ -470,7 +563,6 @@ ion-modal#emotions-list-modal, ion-modal#events-list-modal {
 }
 
 
-
 .home {
   text-align: center;
   padding: 1vh;
@@ -482,7 +574,7 @@ ion-modal#emotions-list-modal, ion-modal#events-list-modal {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 1.6vh;
+  padding: 1vh;
   border-bottom: 0.3vh solid #A3E2B8;
 }
 
@@ -523,6 +615,26 @@ ion-modal#emotions-list-modal, ion-modal#events-list-modal {
   font-size: 2vh;
   margin :0;
 }
+.topEmotion-title {
+  flex: 4;
+}
+
+.topEmotion-count {
+  flex: 2;
+}
+
+.topEmotion-bar {
+  flex: 2;
+  display: flex;
+  align-items: center; /* 수직 가운데 정렬 */
+  margin-left: 10px; /* 왼쪽 여백 추가 */
+}
+
+.topEmotion-bar-dot {
+  height: 3vh; /* 고정된 높이 설정 */
+  width: 3vh; /* 고정된 너비 설정 */
+  border-radius: 50%; /* 완전히 둥글게 만들기 위해 50%로 설정 */
+}
 
 .more-button {
   display: block;
@@ -534,92 +646,5 @@ ion-modal#emotions-list-modal, ion-modal#events-list-modal {
   cursor: pointer;
   font-weight: bold
 }
-
-.date-modal {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.date-modal-content {
-  background-color: #ffffff;
-  padding: 2vh;
-  border-radius: 1vh;
-  text-align: center;
-  width: 80%;
-  max-width: 30vh;
-  border: 0.2vh solid #a0c4ff;
-  z-index: 1001;
-}
-
-
-
-.date-picker {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 2vh;
-}
-
-.date-column {
-  flex: 1;
-  text-align: center;
-  overflow-y: auto;
-  height: 15vh;
-}
-
-.label-column {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 4vh;
-}
-
-.label-column p {
-  margin: 0;
-  font-size: 1.8vh;
-}
-
-.date-column ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.date-column li {
-  margin: 1vh 0;
-  font-size: 1.8vh;
-  cursor: pointer;
-}
-
-.date-column li.selected {
-  font-weight: bold;
-  color: #f0a500;
-}
-
-.date-modal-buttons {
-  display: flex;
-  justify-content: space-around;
-}
-
-.date-modal-buttons button {
-  padding: 1vh 2vh;
-  background-color: #d1f7c4;
-  border: none;
-  border-radius: 0.5vh;
-  cursor: pointer;
-  font-size: 1.6vh;
-  width: 40%;
-}
-
-.date-modal-buttons button:first-child {
-  background-color: #f0a500;
-}
-
-
 
 </style>
