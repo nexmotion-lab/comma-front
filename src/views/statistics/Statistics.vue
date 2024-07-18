@@ -111,6 +111,7 @@
           @bubble-click="handleBubbleClick"
           :selectedYear="selectedYear"
           :selectedMonth="selectedMonth"
+          :emotions="emotions"
         />
       </div>
 
@@ -178,8 +179,8 @@ export default defineComponent({
     const tempSelectedDate = ref(`${selectedYear.value}-${selectedMonth.value}`)
     const selectedEmotion = ref("");
     const selectedEmotionId = ref(""); // 선택된 감정의 ID를 저장할 상태
-    const emotions = ref<EmotionTag[]>([]);
-    const topEmotions = ref<EmotionTag[]>([]);
+    const emotions = ref<(EmotionTag & { count: number })[]>([]);
+    const topEmotions = ref<(EmotionTag & { count: number })[]>([]);
     const eventData = ref([] as { name: string; count: number; color: string }[]); // 이벤트 데이터를 저장할 상태
     const showSettingModal = ref(false);
     const originalSelectedDate = ref(tempSelectedDate.value);
@@ -232,16 +233,15 @@ export default defineComponent({
 
         const data = response.data;
         const fetchedEmotions = Object.keys(data).map(key => {
-          // 키에서 name 값을 추출하고 괄호를 제거
           const nameMatch = key.match(/name=([^,)]+)/);
           const name = nameMatch ? nameMatch[1] : 'Unknown';
           const count = data[key];
-          const emotionTag = store.state.emotionTags.find(e => e.name === name) as EmotionTag; // Vuex 스토어에서 감정 태그 찾기
-          return { ...emotionTag, count }; // 기존 EmotionTag에 count 속성 추가
+          const emotionTag = store.state.emotionTags.find(e => e.name === name);
+          return{ ...emotionTag, count };
         });
 
         // 감정을 사분면에 따라 분류
-        const quadrants = [[], [], [], []] as EmotionTag[][];
+        const quadrants = [[], [], [], []] as (EmotionTag & { count: number })[][];
         fetchedEmotions.forEach(emotion => {
           if (emotion.xvalue > 0 && emotion.yvalue > 0) quadrants[0].push(emotion);
           else if (emotion.xvalue > 0 && emotion.yvalue < 0) quadrants[1].push(emotion);
@@ -250,7 +250,7 @@ export default defineComponent({
         });
 
         // 각 사분면을 순차적으로 돌며 빈도수에 따라 정렬된 배열 생성
-        const sortedEmotions = [] as EmotionTag[];
+        const sortedEmotions = [] as (EmotionTag & { count: number })[];
         const quadrantsOrder = [0, 3, 1, 2];
 
         quadrantsOrder.forEach(quadrantIndex => {
@@ -264,8 +264,8 @@ export default defineComponent({
                 inserted = true;
                 break;
               } else if (emotion.count === sortedEmotions[i].count) {
-                // 빈도수가 같은 경우 이전 사분면의 요소가 있는지 확인
-                const currentQuadrantIndex = quadrantsOrder.findIndex(qIndex => sortedEmotions[i].xvalue === quadrants[qIndex][0]?.xvalue);
+                // 빈도수가 같은 경우 사분면 우선순위 고려
+                const currentQuadrantIndex = quadrantsOrder.findIndex(qIndex => quadrants[qIndex].some(e => e.name === sortedEmotions[i].name));
                 if (currentQuadrantIndex > quadrantIndex) {
                   sortedEmotions.splice(i, 0, emotion);
                   inserted = true;
@@ -283,8 +283,8 @@ export default defineComponent({
         // 최종적으로 상위 N개의 감정을 추출
         const topNEmotions = sortedEmotions.slice(0, 3); // 상위 3개만 추출 (필요에 따라 조정 가능)
 
-        emotions.value = fetchedEmotions;
-        topEmotions.value = topNEmotions; // 최종 상위 N개만 저장
+        emotions.value = sortedEmotions;
+        topEmotions.value = topNEmotions as (EmotionTag & { count: number })[]; // 최종 상위 N개만 저장
       } catch (error) {
         console.error('Error fetching emotions:', error);
       }

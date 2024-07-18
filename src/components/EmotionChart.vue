@@ -32,6 +32,10 @@ export default defineComponent({
     selectedMonth: {
       type: String,
       required: true
+    },
+    emotions: {
+      type: Array,
+      required: true
     }
   },
   emits: ['bubble-click'],
@@ -40,53 +44,16 @@ export default defineComponent({
     const store = useStore();
     let chartInstance: ChartJS | null = null;
 
-    // API로 불러온 감정 데이터를 저장할 상태
-    const emotions = ref([] as any[]);
-
-    const fetchEmotions = async () => {
-      try {
-        const yearMonth = `${props.selectedYear}-${props.selectedMonth}`;
-        const response = await axios.get('http://192.168.0.154:8092/api/v1/statistics/emotion', {
-          params: {
-            yearMonth,
-          },
-          headers: {
-            'X-User-Id': '4',
-          },
-        });
-
-        const data = response.data;
-        const names = Object.keys(data).map(key => {
-          const nameMatch = key.match(/name=([^,)]+)/);
-          return {
-            name: nameMatch ? nameMatch[1] : 'Unknown',
-            count: data[key], // 감정 태그의 카운트 값을 함께 저장
-            id: key.match(/emotionTagNo=(\d+)/)[1], // 감정 태그 ID 추출
-            color: store.state.emotionTags.find(e => e.name === nameMatch[1])?.color || '#randomColor' // 색상 설정
-          };
-        });
-
-        // Vuex 스토어에 감정 데이터 설정
-        store.commit('setEmotionTags', names.map(tag => ({ name: tag.name, id: tag.id, color: tag.color })));
-        emotions.value = names;
-
-      } catch (error) {
-        console.error('Error fetching emotions:', error);
-      }
-    };
-
     const createChart = () => {
-      const filteredEmotionData = store.state.emotionTags.filter(tag => emotions.value.some(e => e.name === tag.name)).map(tag => {
-        const emotion = emotions.value.find(e => e.name === tag.name);
-        return {
-          x: tag.xvalue,
-          y: tag.yvalue,
-          r: emotion ? emotion.count * 10 : 20, // count 값에 10을 곱하여 반영
-          label: tag.name,
-          backgroundColor: tag.color,
-          id: emotion.id // 감정 태그 ID 추가
-        };
-      });
+      const filteredEmotionData = props.emotions.map(tag => ({
+        x: tag.xvalue,
+        y: tag.yvalue,
+        r: tag.count * 10, // count 값에 10을 곱하여 반영
+        label: tag.name,
+        backgroundColor: tag.color,
+        id: tag.id // 감정 태그 ID 추가
+      }));
+
 
       const data = {
         datasets: [
@@ -198,14 +165,12 @@ export default defineComponent({
     };
 
     onMounted(async () => {
-      await fetchEmotions();
       createChart();
     });
 
-    watch([() => props.selectedYear, () => props.selectedMonth], async () => {
-      await fetchEmotions();
+    watch(() => props.emotions, () => {
       createChart();
-    });
+    }, { deep: true });
 
     return {
       chartCanvas,
