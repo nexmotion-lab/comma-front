@@ -173,9 +173,10 @@ export default defineComponent({
     const emotionsListModal = ref<any>(null)
     const minDate = ref("2020-01");
     const maxDate = ref("2025-12");
-    const selectedYear = ref("2024");
-    const selectedMonth = ref("06");
-    const selectedDate = ref("2024.06.");
+    const now = new Date();
+    const selectedYear = ref(String(now.getFullYear()));
+    const selectedMonth = ref(String(now.getMonth() + 1).padStart(2, '0'));
+    const selectedDate = ref(`${selectedYear.value}.${selectedMonth.value}.`);
     const tempSelectedDate = ref(`${selectedYear.value}-${selectedMonth.value}`)
     const selectedEmotion = ref("");
     const selectedEmotionId = ref(""); // 선택된 감정의 ID를 저장할 상태
@@ -237,11 +238,11 @@ export default defineComponent({
           const name = nameMatch ? nameMatch[1] : 'Unknown';
           const count = data[key];
           const emotionTag = store.state.emotionTags.find(e => e.name === name);
-          return{ ...emotionTag, count };
+          return{ ...emotionTag, count, id: key.match(/emotionTagNo=(\d+)/)?.[1] ?? null };
         });
 
         // 감정을 사분면에 따라 분류
-        const quadrants = [[], [], [], []] as (EmotionTag & { count: number })[][];
+        const quadrants = [[], [], [], []] as (EmotionTag & { count: number, id: number })[][];
         fetchedEmotions.forEach(emotion => {
           if (emotion.xvalue > 0 && emotion.yvalue > 0) quadrants[0].push(emotion);
           else if (emotion.xvalue > 0 && emotion.yvalue < 0) quadrants[1].push(emotion);
@@ -250,7 +251,7 @@ export default defineComponent({
         });
 
         // 각 사분면을 순차적으로 돌며 빈도수에 따라 정렬된 배열 생성
-        const sortedEmotions = [] as (EmotionTag & { count: number })[];
+        const sortedEmotions = [] as (EmotionTag & { count: number, id: number })[];
         const quadrantsOrder = [0, 3, 1, 2];
 
         quadrantsOrder.forEach(quadrantIndex => {
@@ -620,11 +621,11 @@ ion-modal#emotions-list-modal, ion-modal#events-list-modal {
 }
 
 .topEmotion-count {
-  flex: 2;
+  flex: 1;
 }
 
 .topEmotion-bar {
-  flex: 2;
+  flex: 1.5;
   display: flex;
   align-items: center; /* 수직 가운데 정렬 */
   margin-left: 10px; /* 왼쪽 여백 추가 */

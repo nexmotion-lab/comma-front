@@ -21,6 +21,14 @@ import {
 import type { ChartConfiguration } from "chart.js";
 
 ChartJS.register(Title, Tooltip, Legend, PointElement, CategoryScale, LinearScale, BubbleController);
+interface EmotionTag {
+  xvalue: number;
+  yvalue: number;
+  count: number;
+  name: string;
+  color: string;
+  id: number;
+}
 
 export default defineComponent({
   name: "EmotionChart",
@@ -34,7 +42,7 @@ export default defineComponent({
       required: true
     },
     emotions: {
-      type: Array,
+      type: Array as () => EmotionTag[],
       required: true
     }
   },
@@ -45,7 +53,7 @@ export default defineComponent({
     let chartInstance: ChartJS | null = null;
 
     const createChart = () => {
-      const filteredEmotionData = props.emotions.map(tag => ({
+      const filteredEmotionData = props.emotions.map((tag: EmotionTag)=> ({
         x: tag.xvalue,
         y: tag.yvalue,
         r: tag.count * 10, // count 값에 10을 곱하여 반영
@@ -101,8 +109,8 @@ export default defineComponent({
           x: {
             type: 'linear',
             position: 'bottom',
-            min: -6,
-            max: 6,
+            min: -7,
+            max: 7,
             grid: {
               color: (context) => (context.tick.value === 0 ? "#000000" : "transparent"),
               lineWidth: (context) => (context.tick.value === 0 ? 3 : 0),
@@ -117,8 +125,8 @@ export default defineComponent({
           },
           y: {
             type: 'linear',
-            min: -6,
-            max: 6,
+            min: -7,
+            max: 7,
             grid: {
               color: (context) => (context.tick.value === 0 ? "#000000" : "transparent"),
               lineWidth: (context) => (context.tick.value === 0 ? 3 : 0),
