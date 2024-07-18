@@ -22,7 +22,6 @@ import MainView from "@/views/MainView.vue";
 import Axios from '@/views/axios.vue'
 import SettingView from '@/views/SettingView.vue';
 import Statistics from "@/views/statistics/Statistics.vue";
-import Test from "@/views/Test.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -159,11 +158,6 @@ const routes: Array<RouteRecordRaw> = [
     path: '/main',
     name: 'Main',
     component: MainView,
-  },
-  {
-    path: '/test',
-    name: 'Test',
-    component: Test
   }
 ]
 
