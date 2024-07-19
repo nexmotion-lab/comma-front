@@ -5,7 +5,7 @@ import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
 import 'swiper/css'
 import BaseButton from '@/components/common/BaseButton.vue'
 import 'vue-router/dist/vue-router'
-import {IonPage, IonCard} from "@ionic/vue";
+import {IonPage} from "@ionic/vue";
 
 interface CenterInfo {
   psy_center_no: number
@@ -26,7 +26,7 @@ export default defineComponent({
     BaseButton,
     Swiper,
     SwiperSlide,
-    IonPage, IonCard
+    IonPage
   },
   setup() {
     // const router = useRouter()
@@ -79,20 +79,20 @@ export default defineComponent({
   <ion-page>
     <ion-content :scroll-y="false">
   <!-- centerInfo start -->
-<div v-if="centerInfo.length === 0">
-  <h2>정보가 없습니다.</h2>
-</div>
+  <div v-if="centerInfo.length === 0">
+    <h2>정보가 없습니다.</h2>
+  </div>
 <div class="mm">
   <swiper :options="swiperOptions" @slideChange="onSlideChange">
     <swiper-slide v-for="info in centerInfo" :key="info.psy_center_no">
-      <ion-card class="content-wrapper">
+      <div class="content-wrapper">
         <div class="content">
           <div class="content-header">
             <h1 class="center-name">{{ info.name }}</h1>
           </div>
           <div class="content-info">
             <div class="logo-image">
-              <img :src="info.logo || 'default-logo.png'" alt="센터" />
+              <img :src="info.logo || 'default-logo.png'" alt="센터 로고" />
             </div>
             <div class="description">
               {{ info.description }}
@@ -123,7 +123,7 @@ export default defineComponent({
             >신청하기</BaseButton
           >
         </div>
-      </ion-card>
+      </div>
     </swiper-slide>
   </swiper>
 </div>
@@ -145,6 +145,8 @@ export default defineComponent({
 ion-content{
   --background: #f0fff7 ;
 }
+
+
 
 .content-wrapper {
   position: relative; /* 상대적 위치 설정 */
@@ -171,8 +173,8 @@ ion-content{
 }
 
 .center-name {
-  margin-top: 3.2%;
-  font-size: 2.6vw;
+  margin-top: 24px;
+  font-size: 4.6vw;
 }
 
 hr {
@@ -188,7 +190,7 @@ hr {
 .apply-button {
   border: none; /* 테두리를 제거합니다. */
   border-radius: 20px; /* 버튼의 모서리를 약간 둥글게 만듭니다. */
-  font-size: 2.1vw; /* 텍스트 크기를 설정합니다. */
+  font-size: 3.8vw; /* 텍스트 크기를 설정합니다. */
   cursor: pointer; /* 마우스를 올렸을 때 커서 모양을 변경합니다. */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 버튼에 그림자 효과를 추가합니다. */
 }
@@ -218,22 +220,22 @@ hr {
 }
 
 .content-details .section h3 {
-  font-size: 2.4vw; /* Adjust size as needed */
+  font-size: 18px; /* Adjust size as needed */
   font-weight: 800; /* Makes the font bold */
   color: #466851;
   word-spacing: -2px; /* 단어 간격을 좁게 조절 */
 }
 
 .content-details .section p {
-  font-size: 1.7vw; /* Adjust size as needed */
+  font-size: 13px; /* Adjust size as needed */
   font-weight: 500; /* Normal text weight for the paragraph */
   color: #008080; /* Teal color, adjust the color code to match the screenshot exactly */
 }
 
 .logo-image {
   /* Styling for your logo image placeholder */
-  width: 13vw; /* Example width */
-  height: 13vw; /* Example height */
+  width: 25vw; /* Example width */
+  height: 25vw; /* Example height */
   border-radius: 50%; /* For circular shape */
   background-color: #cfd8dc; /* Example background color */
   display: flex;
@@ -245,7 +247,7 @@ hr {
   flex: 3; /* Three parts width */
   text-align: start;
   padding: 9px;
-  font-size: 1.4vw;
+  font-size: 3vw;
   font-weight: 500;
 }
 
@@ -282,7 +284,7 @@ hr {
 
 @media (max-width: 768px) {
   .slider-indicator {
-    margin-top: 0.8vh; /* 작은 화면에서는 위치를 조금 더 위로 설정 */
+    margin-top: 15px; /* 작은 화면에서는 위치를 조금 더 위로 설정 */
   }
 }
 </style>
