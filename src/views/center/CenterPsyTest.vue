@@ -321,7 +321,7 @@ ion-content{
 
 .comment-box {
   color: black;
-  margin-top: 10px;
+  margin-top: 2%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -409,7 +409,7 @@ ion-content{
 .test-item {
   border: 8px solid #548263;
   border-radius: 10px;
-  margin: 10px;
+  margin: 2%;
   width: 45%;
   height: 17vh;
   background-color: white;
@@ -432,7 +432,7 @@ ion-content{
 
 .test-title {
   color: black;
-  font-size: 20px;
+  font-size: 4vh;
   font-weight: 650;
   text-align: center; /* 가운데 정렬 */
   padding: 1vh; /* 적절한 패딩 추가 */
@@ -445,13 +445,13 @@ ion-content{
 
 .profile-image {
   display: inline-block;
-  height: 40px;
-  width: 50px;
+  height: 8vh;
+  width: 10vh;
   margin-right: 15px;
 }
 
 .test-ref p {
-  font-size: 14px;
+  font-size: 2.8vw;
 
   color: #00796b;
 }
@@ -487,7 +487,7 @@ ion-modal#example-modal {
 }
 
 .test-modal-header h1 {
-  font-size: 24px;
+  font-size: 4.8vw;
   font-weight: bold;
   text-align: center;
   margin-bottom: 10px;
@@ -506,28 +506,28 @@ ion-icon[part="iconX"] {
   position: absolute;
   right: 10px;
   top: 10px;
-  font-size: 24px;
+  font-size: 4.8vw;
   cursor: pointer;
   color: #00796b;
 }
 
 ion-icon[part="iconX2"] {
-  font-size: 24px;
+  font-size: 4.8vw;
   color: #00796b;
 }
 
 .test-modal-subtitle {
-  font-size: 13px;
+  font-size: 2.6vw;
   text-align: center;
   color: #999;
-  margin-bottom: 20px;
+  margin-bottom: 4%;
 }
 
 .test-modal-description {
-  margin-bottom: 40px;
+  margin-bottom: 8%;
 }
 .test-modal-description p {
-  font-size: 15px;
+  font-size: 3vw;
   color: black;
 }
 .test-section {
@@ -535,13 +535,13 @@ ion-icon[part="iconX2"] {
   justify-content: space-between; /* 요소들 사이에 공간을 최대로 배분 */
   align-items: center; /* 세로 중앙 정렬 */
   margin: 10px 0 10px 0;
-  padding: 10px 0px 10px 0;
+  padding: 10px 0;
 }
 .test-section-title {
   flex: 6;
 }
 .test-section-title span {
-  padding: 4px 8px 4px 8px;
+  padding: 4px 8px;
   text-align: center;
   color: black;
   font-weight: 500;
@@ -557,7 +557,7 @@ ion-icon[part="iconX2"] {
 .test-section-value p,
 .test-section-value div {
   color: black;
-  font-size: 14px;
+  font-size: 2.8vw;
 }
 
 </style>

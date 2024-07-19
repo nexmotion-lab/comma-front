@@ -114,8 +114,7 @@ export default defineComponent({
   color: black;
   height: 85%;
   border-radius: 20px;
-  margin: 20px 20px 15px 20px;
-
+  margin: 3vw;
   display: flex;
   flex-direction: column; /* Flexbox로 세로 정렬 설정 */
 
@@ -123,7 +122,7 @@ export default defineComponent({
 .psyInfo-list {
   overflow-y: scroll; /* 세로 스크롤 활성화 */
   max-height: 100%; /* 블록의 최대 높이 설정 */
-  margin: 0px 5px 0px;
+  margin: 0 5px;
 }
 
 </style>

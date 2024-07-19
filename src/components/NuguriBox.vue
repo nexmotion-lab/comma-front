@@ -26,10 +26,10 @@ export default defineComponent({
   display: flex;
   justify-content: space-between; /* 요소 사이에 공간을 균등하게 배분 */
   border: 1px solid green;
-  margin: 5% 5%; /* 5% 상하좌우 여백 */
+  margin: 5% 3%; /* 5% 상하좌우 여백 */
   border-radius: 35px;
   background-color: #9abfa6;
-  height: 90px;
+  height: 80px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3); /* 버튼에 그림자 효과를 추가합니다. */
 
 }
@@ -37,8 +37,8 @@ export default defineComponent({
 .ment2 {
   display: flex;
   align-items: center;
-  padding-left: 2vw;
-  font-size: 18px;
+  padding-left: 3vw;
+  font-size: 3.5vw;
   font-weight: bold;
   flex: 1;
 }

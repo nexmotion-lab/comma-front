@@ -146,8 +146,6 @@ ion-content{
   --background: #f0fff7 ;
 }
 
-
-
 .content-wrapper {
   position: relative; /* 상대적 위치 설정 */
   letter-spacing: 0.6px;
@@ -173,8 +171,8 @@ ion-content{
 }
 
 .center-name {
-  margin-top: 24px;
-  font-size: 20px;
+  margin-top: 3.2%;
+  font-size: 2.6vw;
 }
 
 hr {
@@ -190,7 +188,7 @@ hr {
 .apply-button {
   border: none; /* 테두리를 제거합니다. */
   border-radius: 20px; /* 버튼의 모서리를 약간 둥글게 만듭니다. */
-  font-size: 16px; /* 텍스트 크기를 설정합니다. */
+  font-size: 2.1vw; /* 텍스트 크기를 설정합니다. */
   cursor: pointer; /* 마우스를 올렸을 때 커서 모양을 변경합니다. */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 버튼에 그림자 효과를 추가합니다. */
 }
@@ -220,22 +218,22 @@ hr {
 }
 
 .content-details .section h3 {
-  font-size: 18px; /* Adjust size as needed */
+  font-size: 2.4vw; /* Adjust size as needed */
   font-weight: 800; /* Makes the font bold */
   color: #466851;
   word-spacing: -2px; /* 단어 간격을 좁게 조절 */
 }
 
 .content-details .section p {
-  font-size: 13px; /* Adjust size as needed */
+  font-size: 1.7vw; /* Adjust size as needed */
   font-weight: 500; /* Normal text weight for the paragraph */
   color: #008080; /* Teal color, adjust the color code to match the screenshot exactly */
 }
 
 .logo-image {
   /* Styling for your logo image placeholder */
-  width: 100px; /* Example width */
-  height: 100px; /* Example height */
+  width: 13vw; /* Example width */
+  height: 13vw; /* Example height */
   border-radius: 50%; /* For circular shape */
   background-color: #cfd8dc; /* Example background color */
   display: flex;
@@ -247,7 +245,7 @@ hr {
   flex: 3; /* Three parts width */
   text-align: start;
   padding: 9px;
-  font-size: 11px;
+  font-size: 1.4vw;
   font-weight: 500;
 }
 

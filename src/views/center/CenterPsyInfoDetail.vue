@@ -95,13 +95,12 @@ export default defineComponent({
 
 .content-wrapper {
   position: relative; /* 상대적 위치 설정 */
-  letter-spacing: 0.6px;
+  letter-spacing: 0.2vw;
   background-color: white;
   color: black;
   height: 80%;
   border-radius: 20px;
-  margin: 20px 20px 15px 20px;
-
+  margin: 2vh 3vh;
   display: flex;
   flex-direction: column; /* Flexbox로 세로 정렬 설정 */
 
@@ -112,7 +111,7 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   overflow-y: auto; /* 세로 스크롤 설정 */
-  padding: 14px 0 18px 0; /* padding 조정 */
+  padding: 3vw 0 5vw 0; /* padding 조정 */
 }
 
 .content-header {
@@ -128,13 +127,13 @@ export default defineComponent({
   color: white;
   display: flex;
   margin-top : 0;
-  margin-right: 10px;
+  margin-right: 1vw;
   width: 80%;
 }
 
 .content-question {
   font-weight: 800;
-  margin : 4px 0;
+  margin : 1vw 0;
 }
 
 .close-button {
@@ -149,13 +148,13 @@ export default defineComponent({
 }
 
 .content-description{
-  margin-bottom: 40px;
+  margin-bottom: 7vw;
 }
 
 .content-summary-wrapper {
-  margin: 0 15px 0 15px;
+  margin: 0 3.5vw 0 3.5vw;
   position: relative;
-  padding: 5px 0 5px 0;
+  padding: 1vw 0 1vw 0;
   min-height: 400px;
 }
 .content-summary-wrapper p {
@@ -166,7 +165,7 @@ export default defineComponent({
   margin-bottom: 50px;
 }
 .content-summary-header p {
-  font-size: 16px;
+  font-size: 3.7vw;
   font-weight: bold;
   display: flex;
 }
@@ -185,7 +184,7 @@ export default defineComponent({
 }
 
 .content-cf-header p {
-  font-size: 16px;
+  font-size: 3.7vw;
   font-weight: bold;
   display: flex;
 }
@@ -203,7 +202,7 @@ export default defineComponent({
 }
 
 .content-cf-description-header p {
-  font-size: 14px;
+  font-size: 3.5vw;
   font-weight: bold;
   margin-bottom: 0;
 }
@@ -225,7 +224,7 @@ export default defineComponent({
   border: none; /* 테두리를 제거합니다. */
   border-radius: 20px; /* 버튼의 모서리를 약간 둥글게 만듭니다. */
   width: fit-content;
-  font-size: 16px; /* 텍스트 크기를 설정합니다. */
+  font-size: 3.7vw; /* 텍스트 크기를 설정합니다. */
   cursor: pointer; /* 마우스를 올렸을 때 커서 모양을 변경합니다. */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 버튼에 그림자 효과를 추가합니다. */
 }
