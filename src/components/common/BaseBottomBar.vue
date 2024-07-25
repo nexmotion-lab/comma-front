@@ -7,12 +7,14 @@ export default defineComponent({
 </script>
 
 <template>
-  <ion-footer class="footer">
+  <ion-footer >
+    <ion-toolbar class="footer">
     <div class="image-container">
       <ion-img class="nav-btn" src="/public/letter.png"></ion-img>
       <ion-img class="nav-btn" src="/public/house.png"></ion-img>
       <ion-img class="nav-btn" src="/public/memo.png"></ion-img>
     </div>
+    </ion-toolbar>
   </ion-footer>
 </template>
 
@@ -21,7 +23,8 @@ export default defineComponent({
   position: fixed;
   left: 0;
   bottom: 0;
-  background-color: var(--bottom-nav-bar);
+  --background: var(--bottom-nav-bar);
+  height: 10vh;
 }
 
 .image-container {
@@ -33,7 +36,10 @@ export default defineComponent({
   gap: 10%;
 }
 .nav-btn {
-  height: 3.5em;
-  margin: 0.5em;
+  width: 20vw;
+  height: 20vw;
+  margin-left: 1vw;
+  margin-right: 1vw;
+
 }
 </style>

@@ -1,0 +1,79 @@
+.my-custom-alert-class {
+  .alert-wrapper {
+    border-radius: 20px;
+    border: 10px solid #A3E2B8FF;
+  }
+  .alert-head {
+    text-align: center;
+  }
+  .alert-input {
+    font-size: 6vw;
+  }
+
+  .alert-button-inner {
+    font-size: 8vw;
+    width: 20vw;
+    padding-bottom: 2vh;
+    color: black;
+  }
+
+  .alert-button-group {
+    padding: 0;
+  }
+
+
+  .alert-button-role-confirm {
+    padding-right: 8vw;
+
+  }
+}
+
+.error-alert {
+  .alert-wrapper {
+    border-radius: 20px;
+    border: 10px solid #ff6437;
+  }
+  .alert-head {
+    text-align: center;
+
+  }
+
+  .alert-title {
+    color: red;
+  }
+
+  .alert-button-inner {
+    font-size: 6vw;
+    width: 20vw;
+    padding-bottom: 2vh;
+    color: black;
+  }
+
+  .alert-button-group {
+    padding: 0;
+  }
+
+
+  .alert-button-role-confirm {
+    padding-right: 8vw;
+
+  }
+}
+
+.event-searchbar {
+  input.searchbar-input.sc-ion-searchbar-md {
+    padding-bottom: 0.2vh!important;
+    padding-top: 0.2vh!important;
+  }
+
+  .searchbar-search-icon {
+    transform: translateY(-0.6vh);
+  }
+}
+
+.diary-modal {
+  --height: 75%;
+  --border-radius: 40px;
+  --width: 90%;
+  --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
+}

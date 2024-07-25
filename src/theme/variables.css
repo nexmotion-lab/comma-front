@@ -1,2 +1,10 @@
 /* For information on how to create your own theme, please see:
 http://ionicframework.com/docs/theming/ */
+:root {
+    --background-color: #f0fff7;  /* 기본 배경색 */
+    --bottom-nav-bar: #DEF9EB;    /* 하단 네비게이터 바 색 */
+    --main-color: #A3E2B8;        /* 메인 색(버튼 등) */
+    --main-color-shade: #8fc7a2;
+    --main-dark-color: #548263;   /* 메인 어두운 색 */
+    --main-dark-color-shade: #4a7257;
+}
