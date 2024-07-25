@@ -28,13 +28,13 @@ export default defineComponent({
 }
 
 .image-container {
-  //border-top: 1px solid rgba(0, 0, 0, 0.439);
   display: flex;
   text-align: center;
   align-items: center; /* 세로 방향으로 가운데 정렬 */
   justify-content: center; /* 가로 방향으로 가운데 정렬 */
   gap: 10%;
 }
+
 .nav-btn {
   width: 20vw;
   height: 20vw;
