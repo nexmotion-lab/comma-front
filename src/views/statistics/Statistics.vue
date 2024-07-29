@@ -297,9 +297,6 @@ export default defineComponent({
             yearMonth,
             emotionId: selectedEmotionId.value // 선택된 감정의 ID 추가
           },
-          headers: {
-            'X-User-Id': '4',
-          },
         });
 
         const data = response.data;
@@ -429,6 +426,10 @@ ion-datetime::part(wheel-item) {
 }
 ion-datetime {
   --wheel-fade-background-rgb: none;
+}
+
+ion-toolbar{
+  text-align: center;
 }
 
 .cancel-text {
