@@ -16,7 +16,7 @@ export default defineComponent({
     const handleSocialLogin = async (event: Event, provider: string) => {
       event.preventDefault();
 
-      await Browser.open({ url: `http://www.comma-coders.com:8998/oauth2/authorization/${provider}`})
+      await Browser.open({ url: `https://www.comma-coders.com:8998/oauth2/authorization/${provider}`})
 
     };
 

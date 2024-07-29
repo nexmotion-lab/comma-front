@@ -11,7 +11,29 @@ export default defineConfig({
   plugins: [
     vue(),
     legacy(),
-    VitePWA({ registerType: 'autoUpdate' })
+    VitePWA({ registerType: 'autoUpdate',
+      devOptions: {
+        enabled: true,
+      },
+      manifest: {
+        name: 'My Awesome App',
+        short_name: 'MyApp',
+        display: 'standalone',
+        description: 'My Awesome App description',
+        theme_color: '#ffffff',
+        icons: [
+          {
+            src: 'logo-192.png',
+            sizes: '192x192',
+            type: 'image/png'
+          },
+          {
+            src: 'logo-512.png',
+            sizes: '512x512',
+            type: 'image/png'
+          }
+      ]
+      }})
   ],
   resolve: {
     alias: {

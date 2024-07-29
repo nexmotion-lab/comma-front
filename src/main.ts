@@ -25,6 +25,7 @@ import '@ionic/vue/css/palettes/dark.system.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import './registerServiceWorker.js';
 
 const app = createApp(App)
   .use(IonicVue)
