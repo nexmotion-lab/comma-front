@@ -1,12 +1,11 @@
 <script lang="ts">
-import { defineComponent, ref, onMounted, computed, reactive } from 'vue'
+import {defineComponent, ref, onMounted, computed, reactive, onBeforeUnmount} from 'vue'
 import axios from 'axios'
-import GreenButton from '@/components/GreenButton.vue'
-import BaseView from '@/components/common/BaseView.vue'
-import BaseButton from '@/components/common/BaseButton.vue'
-import BaseBottomBar from '@/components/common/BaseBottomBar.vue'
 import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
 import 'swiper/swiper-bundle.min.css'
+import {  IonModal,IonIcon,IonPage } from '@ionic/vue';
+import {closeOutline} from "ionicons/icons";
+
 
 interface PsyTest {
   psy_test_no: number
@@ -16,21 +15,35 @@ interface PsyTest {
   time: string
 }
 
+interface SelectedTest extends PsyTest {
+  categoryName: string
+}
+
+interface TestCategory{
+  name: string
+  tests: PsyTest[];
+}
+
 export default defineComponent({
   name: 'CenterPsyTest',
+  methods: {
+    closeOutline() {
+      return closeOutline
+    }
+  },
   components: {
-    BaseView,
-    BaseBottomBar,
-    GreenButton,
-    BaseButton,
     Swiper,
-    SwiperSlide
+    SwiperSlide,
+    IonModal,
+    IonIcon,
+    IonPage,
   },
   setup() {
     const modal1 = ref<any>(null)
     const modal2 = ref<any>(null)
-    const psyTests = ref<PsyTest[]>([])
-    const selectedTest = ref<PsyTest | null>(null) // 선택된 테스트 정보를 저장할 상태 추가
+    const testCategories = ref<TestCategory[]>([]);
+    const selectedTest = ref<SelectedTest | null>(null) // 선택된 테스트 정보를 저장할 상태 추가
+    const activeCategory = ref<string>('')
     const bannerMessages = ref<string[]>([
       '학생상담센터의 심리검사는 모두 무료!',
       '대표적인 심리검사는 MBTI입니다',
@@ -44,13 +57,29 @@ export default defineComponent({
       activeSlideIndex.value = swiper.realIndex
     }
 
-    const testPairs = computed(() => {
+    const fetchPsyTests = async () =>{
+      try{
+        const response = await axios.get('http://192.168.0.154:8086/api/v1/psytest/')
+        const data = response.data
+        testCategories.value = Object.keys(data).map(key =>({
+          name:key,
+          tests: data[key]
+        }))
+        activeCategory.value = testCategories.value[0].name
+      }catch (error) {
+        console.error('Failed to fetch psytest :', error)
+        alert('Failed to fetch psytest')
+      }
+    }
+
+
+    const getTestPairs = (tests: PsyTest[]) => {
       const pairs = []
-      for (let i = 0; i < psyTests.value.length; i += 2) {
-        pairs.push(psyTests.value.slice(i, i + 2))
+      for (let i = 0; i < tests.length; i += 2) {
+        pairs.push(tests.slice(i, i + 2))
       }
       return pairs
-    })
+    }
 
     const swiperOptions = reactive({
       slidesPerView: 1,
@@ -63,14 +92,10 @@ export default defineComponent({
     })
 
     onMounted(async () => {
-      try {
-        const response = await axios.get<PsyTest[]>('http://192.168.0.154:8086/api/v1/psytest/')
-        psyTests.value = response.data // API 응답을 직접 할당
-        console.log(psyTests.value)
-      } catch (error) {
-        console.error('Failed to fetch psytest:', error)
-        alert('Failed to fetch psytest')
-      }
+      await fetchPsyTests()
+    })
+
+    onBeforeUnmount(()=>{
     })
 
     const navigate = (path: string) => {
@@ -78,23 +103,23 @@ export default defineComponent({
     }
     const openModal1 = () => {
       if (modal1.value) {
-        modal1.value.present()
+        modal1.value.$el.present()
       }
     }
-    const openModal2 = (test: PsyTest) => {
-      selectedTest.value = test // 선택된 테스트 정보를 설정
+    const openModal2 = (test: PsyTest, categoryName:string) => {
+      selectedTest.value = {...test, categoryName } // 선택된 테스트 정보를 설정
       if (modal2.value) {
-        modal2.value.present()
+        modal2.value.$el.present();
       }
     }
     const dismiss1 = () => {
       if (modal1.value) {
-        modal1.value.dismiss()
+        modal1.value.$el.dismiss()
       }
     }
     const dismiss2 = () => {
       if (modal2.value) {
-        modal2.value.dismiss()
+        modal2.value.$el.dismiss()
       }
     }
 
@@ -116,21 +141,23 @@ export default defineComponent({
     }
 
     return {
+      getTestPairs,
       modal1,
       openModal1,
       dismiss1,
       modal2,
       openModal2,
       dismiss2,
-      psyTests,
       navigate,
-      testPairs,
       swiperOptions,
       activeSlideIndex,
       onSlideChange,
       bannerMessages,
       selectedTest,
-      wrapText
+      wrapText,
+      fetchPsyTests,
+      testCategories,
+      activeCategory
     }
   },
   data() {
@@ -143,135 +170,128 @@ export default defineComponent({
 
 <!-- 상담센터 심리검사 페이지 -->
 <template>
-  <BaseView />
-  <div class="header">
-    <div class="nav-bar">
-      <BaseButton @click="navigate('CenterPsyInfo')">심리정보</BaseButton>
-      <GreenButton>심리검사</GreenButton>
-      <BaseButton @click="navigate('CenterPsyCenter')">상담센터</BaseButton>
-    </div>
-  </div>
+  <ion-page>
+    <ion-content :scroll-y="false" :fullscreen="false">
+      <!-- 심리검사 모달 버튼  -->
+      <div class="info-button">
+        <div class="info-icon" @click="openModal1">i</div>
+      </div>
 
-  <div class="info-button">
-    <div class="info-icon" @click="openModal1">i</div>
-  </div>
+      <!-- 심리검사 참고 모달 -->
+      <ion-modal id="example-modal" ref="modal1" >
+        <div class="test-modal-wrapper">
+          <ion-list lines="none">
+            <ion-item>
+              <ion-label>
+                <h2><strong>Info.</strong></h2>
+              </ion-label>
+              <ion-icon
+                  :icon="closeOutline()"
+                  @click="dismiss1"
+                  part="iconX"
+              ></ion-icon>
+            </ion-item>
+            <ion-item class="test-ref-detail">
+              <ion-img class="profile-image" src="/public/sahmyook.png"></ion-img>
+              <ion-label class="test-ref">
+                <p>
+                  이 표시가 들어간 심리검사들은 삼육대학교 상담센터에서 신청 시 무료로 받을 수 있는
+                  검사입니다.
+                </p>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        </div>
+      </ion-modal>
 
-  <!-- comment start -->
-  <div class="comment-section">
-    <swiper :options="swiperOptions" @slideChange="onSlideChange">
-      <swiper-slide v-for="(message, index) in bannerMessages" :key="index" class="comment-box">
-        <div class="comment-content">{{ message }}</div>
-      </swiper-slide>
-    </swiper>
-    <!-- slider-indicator를 swiper 외부로 이동 -->
-    <div class="slider-indicator">
+
+      <!-- comment start -->
+      <div class="comment-section">
+        <swiper :options="swiperOptions" @slideChange="onSlideChange">
+          <swiper-slide v-for="(message, index) in bannerMessages" :key="index" class="comment-box">
+            <div class="comment-content">{{ message }}</div>
+          </swiper-slide>
+        </swiper>
+        <!-- slider-indicator를 swiper 외부로 이동 -->
+        <div class="slider-indicator">
       <span
-        class="dot"
-        v-for="index in bannerMessages.length"
-        :key="index"
-        :class="{ active: activeSlideIndex === index - 1 }"
+          class="dot"
+          v-for="index in bannerMessages.length"
+          :key="index"
+          :class="{ active: activeSlideIndex === index - 1 }"
       ></span>
-    </div>
-  </div>
-  <!-- comment end -->
-
-  <!-- test-type start -->
-  <div class="test-type-section">
-    <div class="test-type-box">
-      <div class="test-type-title">성격 성향 검사</div>
-    </div>
-  </div>
-  <!-- test-type end -->
-
-  <div class="test-list">
-    <div v-for="(pair, index) in testPairs" :key="index" class="test-pair">
-      <div class="test-item" @click="openModal2(test)" v-for="test in pair" :key="test.psy_test_no">
-        <div class="test-title">
-          {{ wrapText(test.title, 15) }}
         </div>
       </div>
-    </div>
-  </div>
+      <!-- comment end -->
 
-  <ion-modal id="example-modal" ref="modal1">
-    <div class="test-modal-wrapper">
-      <ion-list lines="none">
-        <ion-item>
-          <ion-label>
-            <h2><strong>Info.</strong></h2>
-            <ion-icon name="close" class="modal-close" @click="dismiss2"></ion-icon>
-          </ion-label>
-        </ion-item>
-        <ion-item class="test-ref-detail">
-          <ion-img class="profile-image" src="/public/sahmyook.png"></ion-img>
-          <ion-label class="test-ref">
-            <p>
-              이 표시가 들어간 심리검사들은 삼육대학교 상담센터에서 신청 시 무료로 받을 수 있는
-              검사입니다.
-            </p>
-          </ion-label>
-        </ion-item>
-      </ion-list>
-    </div>
-  </ion-modal>
+      <div class="test-list">
+        <div v-for="(category, categoryIndex) in testCategories" :key="category.name" class="test-category">
+          <div class="test-type-section">
+            <ion-chip class="test-type-box">
+              <div class="test-type-title">{{ category.name }}</div>
+            </ion-chip>
+          </div>
 
-  <ion-modal id="example-modal" ref="modal2">
-    <div class="test-modal-wrapper" v-if="selectedTest">
-      <div class="test-modal-header">
-        <h1>{{ selectedTest.title }}</h1>
-        <ion-icon name="close" class="modal-close" @click="dismiss2"></ion-icon>
-      </div>
-      <div class="test-modal-subtitle">오락가락하는 내 기분 나도 모르겠다고?</div>
-      <ion-list lines="none">
-        <ion-item>
-          <ion-label class="test-modal-description">
-            <p>
-              {{ selectedTest.content }}
-            </p>
-          </ion-label>
-        </ion-item>
-        <div class="test-section-wrapper">
-          <ion-item class="test-section">
-            <ion-label class="test-section-title">
-              <span>검사 대상</span>
-            </ion-label>
-            <ion-label class="test-section-value">
-              <p>{{ selectedTest.target }}</p>
-            </ion-label>
-          </ion-item>
-          <ion-item class="test-section">
-            <ion-label class="test-section-title">
-              <span>소요 시간</span>
-            </ion-label>
-            <ion-label class="test-section-value">
-              <div>{{ selectedTest.time }}</div>
-            </ion-label>
-          </ion-item>
+          <div v-for="(pair, pairIndex) in getTestPairs(category.tests)" :key="pairIndex" class="test-pair" :data-category="category.name">
+            <div v-for="test in pair" :key="test.psy_test_no" class="test-item" @click="openModal2(test,category.name)">
+              <div class="test-title">{{ wrapText(test.title, 5) }}</div>
+            </div>
+            <div v-if="pair.length === 1" class="test-item-placeholder"></div> <!-- 빈 공간을 위한 요소 추가 -->
+          </div>
         </div>
-      </ion-list>
-    </div>
-  </ion-modal>
+      </div>
 
-  <BaseBottomBar></BaseBottomBar>
+      <ion-modal id="example-modal" ref="modal2" >
+        <div class="test-modal-wrapper" v-if="selectedTest">
+          <div class="test-modal-header">
+            <h1>{{ selectedTest.title }}</h1>
+            <ion-label class="modal2-close">
+              <ion-icon
+                  :icon="closeOutline()"
+                  @click="dismiss2"
+                  part="iconX2"
+              ></ion-icon>
+            </ion-label>
+          </div>
+          <div class="test-modal-subtitle">{{selectedTest.categoryName}}</div>
+          <ion-list lines="none">
+            <ion-item>
+              <ion-label class="test-modal-description">
+                <p>
+                  {{ selectedTest.content }}
+                </p>
+              </ion-label>
+            </ion-item>
+            <div class="test-section-wrapper">
+              <ion-item class="test-section">
+                <ion-label class="test-section-title">
+                  <span>검사 대상</span>
+                </ion-label>
+                <ion-label class="test-section-value">
+                  <p>{{ selectedTest.target }}</p>
+                </ion-label>
+              </ion-item>
+              <ion-item class="test-section">
+                <ion-label class="test-section-title">
+                  <span>소요 시간</span>
+                </ion-label>
+                <ion-label class="test-section-value">
+                  <div>{{ selectedTest.time }}</div>
+                </ion-label>
+              </ion-item>
+            </div>
+          </ion-list>
+        </div>
+      </ion-modal>
+    </ion-content>
+  </ion-page>
 </template>
 
 <style scoped>
-/* Header Section */
-.header {
-  height: 10%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 10px;
-  position: relative;
+ion-content{
+  --background: #f0fff7;
+  --scroll-y:false;
 }
-
-.nav-bar {
-  display: flex;
-  justify-content: center; /* 수평 가운데 정렬 */
-  align-items: center; /* 수직 가운데 정렬 */
-}
-
 /* Info Button */
 .info-button {
   display: flex;
@@ -280,22 +300,19 @@ export default defineComponent({
 }
 
 .info-icon {
+  padding-right: 1vw;
   display: flex; /* Flexbox 레이아웃 사용 */
   border-radius: 50%;
   background-color: lightgray;
   color: white;
-  width: 25px;
-  height: 25px; /* 버튼 높이 추가 */
+  width: 5vw;
+  height: 5vw; /* 버튼 높이 추가 */
   align-items: center;
   justify-content: center;
   font-style: italic; /* 기울임꼴 적용 */
   font-weight: bold; /* 굵게 적용 */
-  font-size: 18px; /* 폰트 크기 조정 */
+  font-size: 4vw; /* 폰트 크기 조정 */
   cursor: pointer; /* 마우스 커서 포인터로 변경 */
-}
-
-.info-icon:hover {
-  background-color: gray; /* 호버 시 배경색 변경 */
 }
 .comment-section {
   margin: 0 15px 15px 15px;
@@ -311,7 +328,7 @@ export default defineComponent({
   text-align: center;
   height: 10vh;
   border-radius: 35px;
-  background-color: rgb(138, 221, 138);
+  background-color: rgb(204, 238, 204);
   z-index: 1; /* z-index 추가 */
 }
 
@@ -337,9 +354,9 @@ export default defineComponent({
   border-radius: 50%;
   display: inline-block;
   transition:
-    background-color 0.3s,
-    border 0.3s,
-    transform 0.3s; /* 테두리 및 변환 추가 */
+      background-color 0.3s,
+      border 0.3s,
+      transform 0.3s; /* 테두리 및 변환 추가 */
 }
 
 .dot.active {
@@ -363,10 +380,9 @@ export default defineComponent({
 }
 
 .test-type-box {
-  border-radius: 15px;
-  padding: 5px;
-  background-color: #a3e2b8ff;
-  width: 55%;
+  padding: 0.7vh 1.2vh;
+  --background-color: #a3e2b8ff;
+  width: fit-content;
   text-align: center;
   display: flex;
   justify-content: center;
@@ -381,8 +397,8 @@ export default defineComponent({
 /* Test List */
 .test-list {
   overflow-y: scroll; /* 세로 스크롤 활성화 */
-  max-height: 60vh; /* 블록의 최대 높이 설정 */
-  margin: 0px 5px 0px;
+  max-height: 65vh; /* 블록의 최대 높이 설정 */
+  margin: 0 5px 0;
 }
 
 .test-pair {
@@ -391,11 +407,11 @@ export default defineComponent({
 }
 
 .test-item {
-  border: 6px solid green;
+  border: 1.6vw solid #548263;
   border-radius: 10px;
   margin: 10px;
-  width: 150px;
-  height: 145px;
+  width: 45%;
+  height: 17vh;
   background-color: white;
   display: flex;
   align-items: center;
@@ -403,16 +419,23 @@ export default defineComponent({
   flex-direction: column;
   font-weight: 700;
   flex: 1;
-  padding: 10px;
+  padding: 1vh;
   white-space: pre-line;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.test-item-placeholder {
+  margin: 10px;
+  width: 45%;
+  height: 17vh;
 }
 
 .test-title {
   color: black;
-  font-size: 20px;
+  font-size: 4.5vw;
   font-weight: 650;
   text-align: center; /* 가운데 정렬 */
-  padding: 10px; /* 적절한 패딩 추가 */
+  padding: 1vh; /* 적절한 패딩 추가 */
   white-space: normal; /* 줄 바꿈 허용 */
   overflow-wrap: break-word; /* 단어 단위로 개행 */
   word-break: break-all; /* 긴 단어 자르기 */
@@ -437,13 +460,14 @@ export default defineComponent({
   margin-bottom: 15px;
 }
 
+
 ion-modal#example-modal {
   --width: 80%;
   --min-width: 250px;
   --height: fit-content;
-  --border-radius: 6px;
+  --border-radius: 20px;
   --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
-  --border-radius: 10px;
+  --background-color: white;
 }
 
 .test-modal-wrapper {
@@ -451,7 +475,8 @@ ion-modal#example-modal {
   border-radius: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   border: 1px solid #a3e2b8ff; /* border-color 속성을 border로 변경 */
-  margin: 10px;
+  margin: 3px;
+  background-color: white;
 }
 
 .test-modal-header {
@@ -466,16 +491,28 @@ ion-modal#example-modal {
   font-weight: bold;
   text-align: center;
   margin-bottom: 10px;
-  padding-right: 30px;
-  flex: 1; /* flex-grow를 사용하여 h1을 가운데 정렬 */
+  padding-right: 0.5vw;
+  flex: 9; /* flex-grow를 사용하여 h1을 가운데 정렬 */
 }
 
-.modal-close {
+.modal2-close{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+}
+
+ion-icon[part="iconX"] {
   position: absolute;
   right: 10px;
   top: 10px;
   font-size: 24px;
   cursor: pointer;
+  color: #00796b;
+}
+
+ion-icon[part="iconX2"] {
+  font-size: 24px;
   color: #00796b;
 }
 
@@ -501,7 +538,7 @@ ion-modal#example-modal {
   padding: 10px 0px 10px 0;
 }
 .test-section-title {
-  flex: 5;
+  flex: 6;
 }
 .test-section-title span {
   padding: 4px 8px 4px 8px;
@@ -523,9 +560,4 @@ ion-modal#example-modal {
   font-size: 14px;
 }
 
-.modal-close {
-  font-size: 24px;
-  cursor: pointer;
-  color: #00796b;
-}
 </style>
