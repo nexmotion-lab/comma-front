@@ -252,7 +252,7 @@ hr {
 
 .content-footer {
   flex-shrink: 0; /* 푸터가 축소되지 않도록 설정 */
-  padding: 10px 0;
+  padding: 1.5vh 0;
   display: flex;
   justify-content: center;
   align-items: center;
