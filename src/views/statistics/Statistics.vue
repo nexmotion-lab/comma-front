@@ -539,6 +539,7 @@ ion-modal#emotions-list-modal, ion-modal#events-list-modal {
 .home {
   text-align: center;
   padding: 1vh;
+  margin: 0.5vh 1.5vh;
   background-color: #ffffff;
   border-radius: 2vh;
 }
