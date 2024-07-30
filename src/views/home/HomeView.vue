@@ -133,14 +133,6 @@ export default {
 </script>
 
 <style scoped>
-.user-container {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  top: 20px;
-  left: 5px;
-}
-
 .custom-page{
   justify-content: normal;
 }
@@ -149,15 +141,16 @@ ion-content{
   align-items: center;
 }
 
-.nickname-container{
-  position: absolute;
-  transform: translateX(32%);
-  width: max-content;
-  z-index: 1;
+.user-container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  top: 20px;
+  left: 5px;
 }
 
 .nickname{
-  padding-left: 3vw;
+  padding-left: 2vw;
   padding-right: 2vw;
   font-weight: bold;
   font-size: 4vw;

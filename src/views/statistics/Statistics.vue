@@ -86,7 +86,7 @@
     <!-- 조회된 전체 감정 리스트 출력 모달 부분 end -->
 
       <!--  header 설정 버튼 부분 start  -->
-    <BaseHeader @open-settings="openSettingModal"></BaseHeader>
+    <BaseHeader></BaseHeader>
     <!--  header 설정 버튼 부분 end  -->
 
     <!--    감정 지도 통계 content 부분 start   -->
@@ -131,7 +131,6 @@
     <!--  감정 지도 통계 content부분 end  -->
     <BaseBottomBar />
   </ion-page>
-  <SettingModal :isVisible="showSettingModal" @close="closeSettingModal" />
 </template>
 
 <script lang="ts">
@@ -142,7 +141,6 @@ import EmotionChart from "@/components/EmotionChart.vue";
 import BaseBottomBar from '@/components/common/BaseBottomBar.vue';
 import {IonPage, IonHeader,IonCard, IonModal, IonImg, IonList, IonItem ,IonContent, IonCardTitle ,IonCardHeader, IonButton, IonDatetime,IonToolbar} from "@ionic/vue";
 import {useRouter} from "vue-router";
-import SettingModal from "@/components/SettingModal.vue";
 import {IonFooter} from "@ionic/vue";
 import {EmotionTag} from "@/store";
 import apiClient from "@/axios";
@@ -155,7 +153,6 @@ export default defineComponent({
     IonPage, IonHeader, IonCard,  IonModal, IonImg, IonList, IonItem, IonCardTitle,IonCardHeader, IonButton, IonDatetime,IonToolbar, IonContent, IonFooter,
     EmotionChart,
     BaseBottomBar,
-    SettingModal
   },
 
   setup() {
@@ -176,17 +173,8 @@ export default defineComponent({
     const emotions = ref<(EmotionTag & { count: number })[]>([]);
     const topEmotions = ref<(EmotionTag & { count: number })[]>([]);
     const eventData = ref([] as { name: string; count: number; color: string }[]); // 이벤트 데이터를 저장할 상태
-    const showSettingModal = ref(false);
     const originalSelectedDate = ref(tempSelectedDate.value);
     const nickname = ref("홍길동");
-
-    const openSettingModal = () => {
-      showSettingModal.value = true;
-    };
-
-    const closeSettingModal = () => {
-      showSettingModal.value = false;
-    };
 
     const showDateModal = () => {
       if(dateModal.value){
@@ -358,9 +346,6 @@ export default defineComponent({
 
     return {
       nickname,
-      showSettingModal,
-      closeSettingModal,
-      openSettingModal,
       dateModal,
       showDateModal,
       dismissEventsListModal,
