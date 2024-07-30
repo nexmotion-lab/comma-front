@@ -5,6 +5,7 @@ import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
 import 'swiper/swiper-bundle.min.css'
 import {  IonModal,IonIcon,IonPage } from '@ionic/vue';
 import {closeOutline} from "ionicons/icons";
+import SamyookLogo from "@/assets/common/sahmyook.png";
 
 
 interface PsyTest {
@@ -192,7 +193,7 @@ export default defineComponent({
               ></ion-icon>
             </ion-item>
             <ion-item class="test-ref-detail">
-              <ion-img class="profile-image" src="/public/sahmyook.png"></ion-img>
+              <ion-img class="profile-image" :src="SamyookLogo"></ion-img>
               <ion-label class="test-ref">
                 <p>
                   이 표시가 들어간 심리검사들은 삼육대학교 상담센터에서 신청 시 무료로 받을 수 있는

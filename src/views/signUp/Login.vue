@@ -4,6 +4,10 @@ import { IonPage } from '@ionic/vue'
 import axios from 'axios';
 import { useRouter } from "vue-router";
 import { Browser } from "@capacitor/browser";
+import GoogleLogo from "@/assets/signUp/google_login.png";
+import NaverLogo from "@/assets/signUp/naver_login.png";
+import KakaoLogo from "@/assets/signUp/kakao_login.png";
+import CommaIcon from "@/assets/comma_icon.png"
 
 export default defineComponent({
   name: 'Login',
@@ -20,8 +24,31 @@ export default defineComponent({
 
     };
 
+    const naverStyle = {
+      background: `#03c75a url(${NaverLogo}) no-repeat scroll 5px 0 / 50px 50px padding-box border-box`
+    }
+
+    const kakaoStyle = {
+      background: `#fee500 url(${KakaoLogo}) no-repeat scroll 5px 0 / 50px 50px padding-box border-box`
+    }
+
+    const googleStyle = {
+      background: `rgb(255, 255, 255) url(${GoogleLogo}) no-repeat scroll 5px 0 / 50px 50px padding-box border-box`
+    }
+
+    const commaStyle = {
+      background: `url(${CommaIcon}) no-repeat center`,
+      height: '50px',
+      backgroundSize: '70px',
+      filter: 'invert(26%) sepia(38%) saturate(7498%) hue-rotate(326deg) brightness(92%) contrast(99%)'
+    };
+
     return {
-      handleSocialLogin
+      handleSocialLogin,
+      naverStyle,
+      kakaoStyle,
+      googleStyle,
+      commaStyle
     };
   }
 });
@@ -31,21 +58,17 @@ export default defineComponent({
   <ion-page>
     <div class="login-container">
       <div class="login-header">
-        <h1 class="login-title-comma"></h1>
+        <h1 :style="commaStyle" class="login-title-comma"></h1>
         <h1>오늘의 쉼표</h1>
         <h1>다이어리</h1>
       </div>
-      <button @click="handleSocialLogin($event, 'naver')" class="social-buttons" id="naver-connect">
+      <button @click="handleSocialLogin($event, 'naver')" class="social-buttons" id="naver-connect" :style="naverStyle">
         <span>네이버 로그인</span>
       </button>
-      <button @click="handleSocialLogin($event, 'kakao')" class="social-buttons" id="kakao-connect">
+      <button @click="handleSocialLogin($event, 'kakao')" class="social-buttons" id="kakao-connect" :style="kakaoStyle">
         <span>카카오 로그인</span>
       </button>
-      <button
-        @click="handleSocialLogin($event, 'google')"
-        class="social-buttons"
-        id="google-connect"
-      >
+      <button @click="handleSocialLogin($event, 'google')" class="social-buttons" id="google-connect" :style="googleStyle">
         <span>Google 로그인</span>
       </button>
     </div>
@@ -75,12 +98,6 @@ body {
     transition: 0.2s linear;
     margin: 15px;
   }
-  & .login-title-comma {
-    background: url('src/assets/comma_icon.png') no-repeat center;
-    height: 50px;
-    background-size: 70px;
-    filter: invert(26%) sepia(38%) saturate(7498%) hue-rotate(326deg) brightness(92%) contrast(99%);
-  }
   margin-bottom: 40px;
 }
 
@@ -106,11 +123,6 @@ body {
   font-family: inherit; /* 부모 폰트 패밀리 상속 */
 }
 
-#naver-connect {
-  background: #03c75a url('src/assets/naver_login.png') no-repeat scroll 5px 0 / 50px 50px
-    padding-box border-box;
-}
-
 #naver-connect span {
   box-sizing: border-box;
   color: black;
@@ -124,11 +136,6 @@ body {
   -ms-transition: all 0.3s ease;
   -o-transition: all 0.3s ease;
   transition: all 0.3s ease;
-}
-
-#google-connect {
-  background: rgb(255, 255, 255) url('src/assets/google_login.png') no-repeat scroll 5px 0px / 50px
-    50px padding-box border-box;
 }
 
 #google-connect span {
@@ -146,10 +153,6 @@ body {
   transition: all 0.3s ease;
 }
 
-#kakao-connect {
-  background: #fee500 url('src/assets/kakao_login.png') no-repeat scroll 5px 0px / 50px 50px
-    padding-box border-box;
-}
 
 #kakao-connect span {
   box-sizing: border-box;
