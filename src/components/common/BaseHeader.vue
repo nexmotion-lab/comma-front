@@ -2,7 +2,7 @@
   <ion-header class="shadow">
     <ion-toolbar>
       <ion-buttons slot="start" class="settings-button">
-        <ion-button @click="openSettings" class="settings-button">
+        <ion-button @click="$emit('open-settings')" class="settings-button">
           <ion-icon :icon="settingsSharp"></ion-icon>
         </ion-button>
       </ion-buttons>
@@ -24,21 +24,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref} from 'vue';
 import { IonHeader, IonToolbar, IonButtons, IonButton, IonIcon, IonFab, IonFabButton, IonFabList } from '@ionic/vue';
 import { settingsSharp, chevronBackCircle } from 'ionicons/icons';
-
 export default defineComponent({
   components: { IonHeader, IonToolbar, IonButtons, IonButton, IonIcon, IonFab, IonFabButton, IonFabList },
+  emits: ['open-settings'],
   setup() {
-    return { settingsSharp, chevronBackCircle };
+    return { settingsSharp, chevronBackCircle};
   },
-  methods: {
-    openSettings() {
-      console.log("ㅎㅇ")
-      this.$router.push({ name: 'Login' });
-    }
-  }
 });
 </script>
 

@@ -1,6 +1,6 @@
 <template>
-  <BaseView />
   <ion-page class="custom-page">
+    <ion-content scroll-y="false" style="--background: var(--background-color)">
     <!-- 날짜 모달 start   -->
     <ion-modal ref="dateModal" trigger="open-date-modal" class="date-modal">
       <ion-content class="date-modal-content" scroll-y="false">
@@ -84,10 +84,9 @@
       </ion-card>
     </ion-modal>
     <!-- 조회된 전체 감정 리스트 출력 모달 부분 end -->
-    <SettingModal :isVisible="showSettingModal" @close="closeSettingModal" />
 
-    <!--  header 설정 버튼 부분 start  -->
-    <BaseHeader></BaseHeader>
+      <!--  header 설정 버튼 부분 start  -->
+    <BaseHeader @open-settings="openSettingModal"></BaseHeader>
     <!--  header 설정 버튼 부분 end  -->
 
     <!--    감정 지도 통계 content 부분 start   -->
@@ -128,10 +127,11 @@
       </div>
     </ion-card>
     <!--  emotionsList 부분 end  -->
-
+    </ion-content>
     <!--  감정 지도 통계 content부분 end  -->
     <BaseBottomBar />
   </ion-page>
+  <SettingModal :isVisible="showSettingModal" @close="closeSettingModal" />
 </template>
 
 <script lang="ts">
@@ -139,7 +139,6 @@ import { defineComponent, ref, onMounted, watch } from "vue";
 import axios from 'axios';
 import { useStore } from 'vuex';
 import EmotionChart from "@/components/EmotionChart.vue";
-import BaseView from '@/components/common/BaseView.vue';
 import BaseBottomBar from '@/components/common/BaseBottomBar.vue';
 import {IonPage, IonHeader,IonCard, IonModal, IonImg, IonList, IonItem ,IonContent, IonCardTitle ,IonCardHeader, IonButton, IonDatetime,IonToolbar} from "@ionic/vue";
 import {useRouter} from "vue-router";
@@ -155,7 +154,6 @@ export default defineComponent({
     BaseHeader,
     IonPage, IonHeader, IonCard,  IonModal, IonImg, IonList, IonItem, IonCardTitle,IonCardHeader, IonButton, IonDatetime,IonToolbar, IonContent, IonFooter,
     EmotionChart,
-    BaseView,
     BaseBottomBar,
     SettingModal
   },
@@ -394,6 +392,14 @@ export default defineComponent({
 </script>
 
 <style scoped>
+SettingModal{
+  --width: 90%;
+  --height: fit-content;
+  --border-radius: 10px;
+  --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
+  --background: white;
+}
+
 .date-modal-card {
   display: flex;
   flex-direction: column;

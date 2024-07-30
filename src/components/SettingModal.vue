@@ -1,9 +1,9 @@
 <template>
-  <ion-modal v-if="isVisible" class="modal-overlay" @click="closeModal">
+  <ion-modal :isOpen="isVisible" @ionModalDidDismiss="closeSettingModal">
     <div class="modal-container" @click.stop>
       <div class="modal-content" v-if="!showAccountLinking && !showNameChange && !showAppInfo">
         <div class="close-button-wrap">
-          <button @click="closeModal" class="close-button">✕</button>
+          <button @click="closeSettingModal" class="close-button">✕</button>
         </div>
         <h2 class="modal-header">설정</h2>
         <div class="modal-body">
@@ -111,7 +111,7 @@ export default defineComponent({
     };
   },
   methods: {
-    closeModal() {
+    closeSettingModal() {
       this.$emit('close');
     },
     linkAccount() {
@@ -137,25 +137,20 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 5;
+ion-modal {
+  --width: fit-content;
+  --min-width: 250px;
+  --height: fit-content;
+  --border-radius: 4px;
+  --box-shadow: 0 0 0 9px #A3E2B8, 0 0 0 20px #E6FFF2;
 }
+
 .modal-container {
   background: white;
   padding: 20px;
   border-radius: 10px;
   width: 300px;
   position: relative;
-  box-shadow: 0 0 0 9px #A3E2B8, 0 0 0 20px #E6FFF2;
 }
 .modal-header {
   text-align: center;

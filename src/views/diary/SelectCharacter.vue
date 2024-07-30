@@ -1,29 +1,43 @@
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 import BaseView from '@/components/common/BaseView.vue'
 import BaseBottomBar from '@/components/common/BaseBottomBar.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
-import {IonPage} from "@ionic/vue";
-import ModalComponent from "@/components/SettingModal.vue";
-import selectImg from "@/assets/diary/select.png"
+import { IonPage } from "@ionic/vue";
+import SettingModal from "@/components/SettingModal.vue";
+import selectImg from "@/assets/diary/select.png";
 import dotoImg from "@/assets/diary/select_doto.png";
 import doreImg from "@/assets/diary/select_dore.png";
 
 export default defineComponent({
   name: 'SelectCharacter',
   components: {
-    'ion-page':IonPage,
+    'ion-page': IonPage,
     'BaseView': BaseView,
     'BaseButton': BaseButton,
     'BaseBottomBar': BaseBottomBar,
-    ModalComponent
+    SettingModal
   },
-  data() {
+  setup() {
+    const showSettingModal = ref(false);
+
+    const openSettingModal = () => {
+      showSettingModal.value = true;
+    };
+
+    const closeSettingModal = () => {
+      showSettingModal.value = false;
+    };
+
     return {
-      nickname: "아아아아",
-      showModal: false,
-      selectImg, dotoImg, doreImg
-    }
+      openSettingModal,
+      closeSettingModal,
+      showSettingModal,
+      selectImg,
+      dotoImg,
+      doreImg,
+      nickname: "아아아아"
+    };
   }
 })
 </script>
@@ -34,7 +48,7 @@ export default defineComponent({
       <div class="content-container">
         <div class="user-container">
           <!-- 설정 아이콘 -->
-          <div class="setting-container" @click="showModal = true">
+          <div class="setting-container" @click="openSettingModal">
             <ion-img :src="selectImg" class="setting-img"/>
           </div>
 
@@ -43,7 +57,6 @@ export default defineComponent({
             <ion-chip color="medium"><ion-text class="nickname" color="success">{{ nickname }}</ion-text></ion-chip>
           </div>
         </div>
-
 
         <ion-card class="speech-bubble"><ion-card-content class="text">누구랑 일기 쓸래?</ion-card-content></ion-card>
         <div class="img-container">
@@ -59,8 +72,8 @@ export default defineComponent({
     <ion-footer>
       <BaseBottomBar></BaseBottomBar>
     </ion-footer>
+    <SettingModal :isVisible="showSettingModal" @close="closeSettingModal" class="setting-modal"/>
   </ion-page>
-  <ModalComponent :isVisible="showModal" @close="showModal = false" />
 </template>
 
 <style scoped>
@@ -137,4 +150,19 @@ ion-content{
   justify-content: center;
   gap: 25px;
 }
+
+.setting-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000; /* 다른 요소보다 위에 표시 */
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  width: 80%; /* 필요에 따라 조정 */
+  max-width: 400px; /* 필요에 따라 조정 */
+  padding: 20px;
+}
+
 </style>
