@@ -13,7 +13,6 @@
          <ion-chip color="medium" style="height: 6vh"><ion-text class="nickname" color="success">{{ nickname }}</ion-text></ion-chip>
        </div>
      </div>
-     <ModalComponent :isVisible="showModal" @close="showModal = false" />
 
      <!-- 오른쪽 네비게이션 바 -->
      <div class="right-navbar">
@@ -37,8 +36,9 @@
        <ion-img class="background-img" src="/public/ground.png"></ion-img>
      </div>
    </ion-content>
-     <BaseBottomBar></BaseBottomBar>
+   <BaseBottomBar></BaseBottomBar>
  </ion-page>
+  <ModalComponent :isVisible="showModal" @close="showModal = false" />
 </template>
 
 <script lang="ts">

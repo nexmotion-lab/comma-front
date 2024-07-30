@@ -1,9 +1,9 @@
 <template>
-  <ion-modal v-if="isVisible" class="modal-overlay" @click="closeModal">
-    <div class="modal-container" @click.stop>
+  <ion-content scroll-y="false">
+    <div class="modal-container">
       <div class="modal-content" v-if="!showAccountLinking && !showNameChange && !showAppInfo">
         <div class="close-button-wrap">
-          <button @click="closeModal" class="close-button">✕</button>
+          <button @click="closeSettingModal" class="close-button">✕</button>
         </div>
         <h2 class="modal-header">설정</h2>
         <div class="modal-body">
@@ -83,11 +83,12 @@
         <div class="note">*이름 변경 후 한달동안 변경 불가</div>
       </div>
     </div>
-  </ion-modal>
+  </ion-content>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import {modalController} from "@ionic/vue"
 
 export default defineComponent({
   name: 'ModalComponent',
@@ -111,9 +112,11 @@ export default defineComponent({
     };
   },
   methods: {
-    closeModal() {
-      this.$emit('close');
-    },
+
+    closeSettingModal() {
+      modalController.dismiss(null, 'cancel');
+      },
+
     linkAccount() {
       if (this.studentId && this.password) {
         this.isLinked = true;
@@ -137,25 +140,13 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
+.modal-container {
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 5;
-}
-.modal-container {
   background: white;
-  padding: 20px;
+  padding: 2vh;
   border-radius: 10px;
-  width: 300px;
   position: relative;
-  box-shadow: 0 0 0 9px #A3E2B8, 0 0 0 20px #E6FFF2;
 }
 .modal-header {
   text-align: center;
@@ -169,6 +160,15 @@ export default defineComponent({
 }
 .close-button-wrap {
   text-align: right;
+}
+.modal-content .close-button-wrap{
+  margin-bottom: 3vh;
+}
+.app-info .close-button-wrap{
+  margin-bottom: 3vh;
+}
+.name-change .close-button-wrap{
+  margin-bottom: 6vh;
 }
 .close-button {
   background: transparent;
@@ -244,7 +244,7 @@ input:checked + .slider:before {
 .footer-button {
   background: #A3E2B8;
   border: none;
-  padding: 10px;
+  padding: 1vh;
   border-radius: 5px;
   cursor: pointer;
 }
@@ -264,4 +264,5 @@ input:checked + .slider:before {
   font-size: 14px;
   line-height: 1.5;
 }
+
 </style>

@@ -2,7 +2,7 @@
   <ion-header class="shadow">
     <ion-toolbar>
       <ion-buttons slot="start" class="settings-button">
-        <ion-button @click="openSettings" class="settings-button">
+        <ion-button @click="openModal" class="settings-button">
           <ion-icon :icon="settingsSharp"></ion-icon>
         </ion-button>
       </ion-buttons>
@@ -24,21 +24,36 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { IonHeader, IonToolbar, IonButtons, IonButton, IonIcon, IonFab, IonFabButton, IonFabList } from '@ionic/vue';
+import SettingModal from "@/components/SettingModal.vue";
+import { defineComponent, ref} from 'vue';
+import {
+  IonHeader,
+  IonToolbar,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonFab,
+  IonFabButton,
+  IonFabList,
+  modalController
+} from '@ionic/vue';
 import { settingsSharp, chevronBackCircle } from 'ionicons/icons';
-
 export default defineComponent({
   components: { IonHeader, IonToolbar, IonButtons, IonButton, IonIcon, IonFab, IonFabButton, IonFabList },
+  emits: ['open-settings'],
   setup() {
-    return { settingsSharp, chevronBackCircle };
+    const openModal = async () => {
+      const modal = await modalController.create({
+        component: SettingModal,
+        cssClass: 'setting-modal'
+      });
+
+      modal.present();
+
+    };
+
+    return { openModal, settingsSharp, chevronBackCircle};
   },
-  methods: {
-    openSettings() {
-      console.log("ㅎㅇ")
-      this.$router.push({ name: 'Login' });
-    }
-  }
 });
 </script>
 

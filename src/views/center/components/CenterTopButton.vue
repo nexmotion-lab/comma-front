@@ -1,5 +1,5 @@
 <template>
-  <ion-button :class="buttonClass"><slot>default</slot></ion-button>
+  <ion-button :class="buttonClass" mode="ios"><slot>default</slot></ion-button>
 </template>
 
 <script lang="ts">

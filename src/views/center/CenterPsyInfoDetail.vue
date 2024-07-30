@@ -72,10 +72,7 @@ export default defineComponent({
             <div class="content-cf-description-header"><p>설명</p></div>
             <div class="content-cf-description">
               <p>
-                Quisque tempus porttitor massa, vel condimentum risus finibus a. Aliquam viverra maximus-->
-                odio, id ornare justo tristique ac. Mauris euismod arcu eget neque sagittis rutrum. Ut
-                vehicula porta lacus nec lobortis. Vestibulum et elit ultrices, lacinia metus in, lobortis
-                est. Vivam
+                  <!--   내용    -->
               </p>
             </div>
           </div>

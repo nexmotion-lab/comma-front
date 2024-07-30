@@ -1,29 +1,43 @@
 <script lang="ts">
-import { defineComponent } from 'vue'
-import BaseView from '@/components/common/BaseView.vue'
+import { defineComponent, ref } from 'vue'
 import BaseBottomBar from '@/components/common/BaseBottomBar.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
-import {IonPage} from "@ionic/vue";
-import ModalComponent from "@/components/SettingModal.vue";
-import selectImg from "@/assets/diary/select.png"
+import {IonPage, IonContent, IonCard, IonFooter} from "@ionic/vue";
+import SettingModal from "@/components/SettingModal.vue";
+import selectImg from "@/assets/diary/select.png";
 import dotoImg from "@/assets/diary/select_doto.png";
 import doreImg from "@/assets/diary/select_dore.png";
+import BaseHeader from "@/components/common/BaseHeader.vue";
 
 export default defineComponent({
   name: 'SelectCharacter',
   components: {
-    'ion-page':IonPage,
-    'BaseView': BaseView,
+    IonPage,IonContent, IonCard, IonFooter,
+    BaseHeader,
     'BaseButton': BaseButton,
     'BaseBottomBar': BaseBottomBar,
-    ModalComponent
+    SettingModal
   },
-  data() {
+  setup() {
+    const showSettingModal = ref(false);
+
+    const openSettingModal = () => {
+      showSettingModal.value = true;
+    };
+
+    const closeSettingModal = () => {
+      showSettingModal.value = false;
+    };
+
     return {
-      nickname: "아아아아",
-      showModal: false,
-      selectImg, dotoImg, doreImg
-    }
+      openSettingModal,
+      closeSettingModal,
+      showSettingModal,
+      selectImg,
+      dotoImg,
+      doreImg,
+      nickname: "아아아아"
+    };
   }
 })
 </script>
@@ -32,17 +46,7 @@ export default defineComponent({
   <ion-page class="custom-page">
     <ion-content scroll-y="false" class="background">
       <div class="content-container">
-        <div class="user-container">
-          <!-- 설정 아이콘 -->
-          <div class="setting-container" @click="showModal = true">
-            <ion-img :src="selectImg" class="setting-img"/>
-          </div>
-
-          <!-- 닉네임 영역 -->
-          <div class="nickname-container">
-            <ion-chip color="medium"><ion-text class="nickname" color="success">{{ nickname }}</ion-text></ion-chip>
-          </div>
-        </div>
+        <BaseHeader @open-settings="openSettingModal"></BaseHeader>
 
 
         <ion-card class="speech-bubble"><ion-card-content class="text">누구랑 일기 쓸래?</ion-card-content></ion-card>
@@ -60,7 +64,7 @@ export default defineComponent({
       <BaseBottomBar></BaseBottomBar>
     </ion-footer>
   </ion-page>
-  <ModalComponent :isVisible="showModal" @close="showModal = false" />
+  <SettingModal :isVisible="showSettingModal" @close="closeSettingModal" class="setting-modal"/>
 </template>
 
 <style scoped>
@@ -137,4 +141,6 @@ ion-content{
   justify-content: center;
   gap: 25px;
 }
+
+
 </style>

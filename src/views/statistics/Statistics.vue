@@ -1,6 +1,6 @@
 <template>
-  <BaseView />
   <ion-page class="custom-page">
+    <ion-content scroll-y="false" style="--background: var(--background-color)">
     <!-- 날짜 모달 start   -->
     <ion-modal ref="dateModal" trigger="open-date-modal" class="date-modal">
       <ion-content class="date-modal-content" scroll-y="false">
@@ -35,7 +35,7 @@
           </ion-card>
         </div>
         <div class="modal-img">
-          <ion-img src="/src/assets/statistics/statistics_dore.png" style="width: 80%"></ion-img>
+          <ion-img :src="DoreImg" style="width: 80%"></ion-img>
         </div>
         <ion-card class="events-modal-content-wrapper">
           <ion-list lines="none" class="events-list">
@@ -65,7 +65,7 @@
           </ion-card>
         </div>
         <div class="modal-img">
-          <ion-img src="/src/assets/statistics/statistics_dore.png" style="width: 80%"></ion-img>
+          <ion-img :src="DoreImg" style="width: 80%"></ion-img>
         </div>
         <ion-card class="emotions-modal-content-wrapper">
           <ion-list lines="none" class="emotions-list">
@@ -84,20 +84,10 @@
       </ion-card>
     </ion-modal>
     <!-- 조회된 전체 감정 리스트 출력 모달 부분 end -->
-    <SettingModal :isVisible="showSettingModal" @close="closeSettingModal" />
 
-    <!--  header 설정 버튼 부분 start  -->
-    <ion-header class="header ion-no-border">
-      <div class="setting-container" @click="openSettingModal">
-        <ion-img src="/public/select.png" class="setting-img"/>
-      </div>
-
-      <!-- 닉네임 영역 -->
-      <div class="nickname-container">
-        <ion-chip color="medium"><ion-text class="nickname" color="success">{{ nickname }}</ion-text></ion-chip>
-      </div>
-    </ion-header>
-    <!--  header 설정 버튼 부분 start  -->
+      <!--  header 설정 버튼 부분 start  -->
+    <BaseHeader @open-settings="openSettingModal"></BaseHeader>
+    <!--  header 설정 버튼 부분 end  -->
 
     <!--    감정 지도 통계 content 부분 start   -->
     <ion-card class="home">
@@ -137,10 +127,11 @@
       </div>
     </ion-card>
     <!--  emotionsList 부분 end  -->
-
+    </ion-content>
     <!--  감정 지도 통계 content부분 end  -->
     <BaseBottomBar />
   </ion-page>
+  <SettingModal :isVisible="showSettingModal" @close="closeSettingModal" />
 </template>
 
 <script lang="ts">
@@ -148,7 +139,6 @@ import { defineComponent, ref, onMounted, watch } from "vue";
 import axios from 'axios';
 import { useStore } from 'vuex';
 import EmotionChart from "@/components/EmotionChart.vue";
-import BaseView from '@/components/common/BaseView.vue';
 import BaseBottomBar from '@/components/common/BaseBottomBar.vue';
 import {IonPage, IonHeader,IonCard, IonModal, IonImg, IonList, IonItem ,IonContent, IonCardTitle ,IonCardHeader, IonButton, IonDatetime,IonToolbar} from "@ionic/vue";
 import {useRouter} from "vue-router";
@@ -156,12 +146,14 @@ import SettingModal from "@/components/SettingModal.vue";
 import {IonFooter} from "@ionic/vue";
 import {EmotionTag} from "@/store";
 import apiClient from "@/axios";
+import DoreImg from "@/assets/statistics/statistics_dore.png"
+import BaseHeader from "@/components/common/BaseHeader.vue";
 export default defineComponent({
   name: "StatisticMain",
   components: {
+    BaseHeader,
     IonPage, IonHeader, IonCard,  IonModal, IonImg, IonList, IonItem, IonCardTitle,IonCardHeader, IonButton, IonDatetime,IonToolbar, IonContent, IonFooter,
     EmotionChart,
-    BaseView,
     BaseBottomBar,
     SettingModal
   },
@@ -392,13 +384,22 @@ export default defineComponent({
       handleBubbleClick,
       getEmotionColor, // 감정 색상 가져오기 함수 추가
       topEmotions,
-      goToDiary
+      goToDiary,
+      DoreImg,
     };
   },
 });
 </script>
 
 <style scoped>
+SettingModal{
+  --width: 90%;
+  --height: fit-content;
+  --border-radius: 10px;
+  --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
+  --background: white;
+}
+
 .date-modal-card {
   display: flex;
   flex-direction: column;
@@ -535,37 +536,16 @@ ion-modal#emotions-list-modal, ion-modal#events-list-modal {
   border-radius: 20px;
 }
 
-.header{
-  display: inline-flex;
-  align-items: center;
-  left: 1vw;
-  height: 6%;
-  padding: 3.2vh 0 1.2vh 0;
-}
-
-.nickname-container{
-  justify-content: space-between;
-}
-
 .nickname{
   padding: 0.5vh;
   font-weight: bold;
   font-size: 4vw;
 }
 
-.setting-container{
-  justify-content: space-between;
-  width: 60px;
-}
-
-.setting-img{
-  width: auto;
-}
-
-
 .home {
   text-align: center;
   padding: 1vh;
+  margin: 0.5vh 1.5vh;
   background-color: #ffffff;
   border-radius: 2vh;
 }

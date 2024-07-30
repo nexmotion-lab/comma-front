@@ -146,8 +146,6 @@ ion-content{
   --background: #f0fff7 ;
 }
 
-
-
 .content-wrapper {
   position: relative; /* 상대적 위치 설정 */
   letter-spacing: 0.6px;
@@ -158,6 +156,7 @@ ion-content{
   margin: 20px 20px 15px 20px;
   display: flex;
   flex-direction: column; /* Flexbox로 세로 정렬 설정 */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* 버튼에 그림자 효과를 추가합니다. */
 }
 
 .content {
@@ -253,7 +252,7 @@ hr {
 
 .content-footer {
   flex-shrink: 0; /* 푸터가 축소되지 않도록 설정 */
-  padding: 10px 0;
+  padding: 1.5vh 0;
   display: flex;
   justify-content: center;
   align-items: center;
