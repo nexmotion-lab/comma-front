@@ -158,7 +158,8 @@ export default defineComponent({
       wrapText,
       fetchPsyTests,
       testCategories,
-      activeCategory
+      activeCategory,
+      SamyookLogo
     }
   },
   data() {
