@@ -1,11 +1,16 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted, computed } from 'vue'
 import axios from 'axios'
-import BaseView from '@/components/common/BaseView.vue'
-import GreenButton from '@/components/GreenButton.vue'
 import NuguriBox from '@/components/NuguriBox.vue'
-import BaseBottomBar from '@/components/common/BaseBottomBar.vue'
-import BaseButton from '@/components/common/BaseButton.vue'
+import router from "@/router";
+import {IonPage, IonCard} from "@ionic/vue";
+
+import psyInfoNuguri1 from "@/assets/center/psyInfo_nuguri1.png";
+import psyInfoNuguri2 from "@/assets/center/psyInfo_nuguri2.png";
+import psyInfoNuguri3 from "@/assets/center/psyInfo_nuguri3.png";
+import psyInfoNuguri4 from "@/assets/center/psyInfo_nuguri4.png";
+import psyInfoNuguri5 from "@/assets/center/psyInfo_nuguri5.png";
+import psyInfoNuguri6 from "@/assets/center/psyInfo_nuguri6.png";
 
 interface PsyInfo {
   psy_info_no: number
@@ -17,14 +22,19 @@ interface PsyInfo {
 export default defineComponent({
   name: 'CenterPsyInfo',
   components: {
-    BaseBottomBar,
-    BaseView,
-    BaseButton,
-    GreenButton,
-    NuguriBox
+    NuguriBox,
+    IonPage, IonCard
   },
   setup() {
     const psyInfos = ref<PsyInfo[]>([])
+    const images = [
+      psyInfoNuguri1,
+      psyInfoNuguri2,
+      psyInfoNuguri3,
+      psyInfoNuguri4,
+      psyInfoNuguri5,
+      psyInfoNuguri6
+    ]
 
     const testPairs = computed(() => {
       const pairs = []
@@ -45,24 +55,28 @@ export default defineComponent({
       }
     })
 
-    const navigate = (path: string) => {
-      window.location.href = path
+    const getRandomImage = () => {
+      const randomIndex = Math.floor(Math.random() * images.length)
+      return images[randomIndex]
     }
 
     const navigateToDetail = (psyInfo: PsyInfo) => {
-      const queryParams = new URLSearchParams({
-        title: psyInfo.title,
-        content: psyInfo.content,
-        image: psyInfo.image
-      }).toString()
-      window.location.href = `/centerPsyInfo/detail/${psyInfo.psy_info_no}?${queryParams}`
-    }
+      router.push({
+        name: 'CenterPsyInfoDetail',
+        params: { id: psyInfo.psy_info_no },
+        query: {
+          title: psyInfo.title,
+          content: psyInfo.content,
+          image: psyInfo.image,
+        },
+      });
+    };
 
     return {
       psyInfos,
-      navigate,
       navigateToDetail,
-      testPairs
+      testPairs,
+      getRandomImage
     }
   },
   data() {
@@ -75,45 +89,40 @@ export default defineComponent({
 
 <!-- 상담센터 상담 정보 리스트 페이지 -->
 <template>
-  <BaseView />
-  <div class="header">
-    <div class="nav-bar">
-      <GreenButton>심리정보</GreenButton>
-      <BaseButton @click="navigate('/centerPsyTest')">심리검사</BaseButton>
-      <BaseButton @click="navigate('/centerPsyCenter')">상담센터</BaseButton>
-    </div>
-  </div>
-
-  <!-- psyInfo start -->
-  <div class="psyInfo-list" v-if="testPairs.length > 0">
-    <div v-for="(pair, index) in testPairs" :key="index">
-      <NuguriBox v-for="test in pair" :key="test.psy_info_no" @click="navigateToDetail(test)">
-        {{ test.title }}
-      </NuguriBox>
-    </div>
-  </div>
-  <div v-else>데이터를 불러오는 중입니다...</div>
-  <!-- psyInfo end -->
-
-  <BaseBottomBar></BaseBottomBar>
+  <ion-page>
+    <!-- psyInfo start -->
+    <ion-card class="content-wrapper">
+      <div class="psyInfo-list" v-if="testPairs.length > 0">
+        <div v-for="(pair, index) in testPairs" :key="index">
+          <NuguriBox v-for="test in pair" :key="test.psy_info_no" :image="getRandomImage()" @click="navigateToDetail(test)">
+            {{ test.title }}
+          </NuguriBox>
+        </div>
+      </div>
+      <div v-else>데이터를 불러오는 중입니다...</div>
+      <!-- psyInfo end -->
+    </ion-card>
+  </ion-page>
+  <!--  <BaseBottomBar></BaseBottomBar>-->
 </template>
 
 <style scoped>
-.header {
-  height: 10%;
+.content-wrapper {
+  position: relative; /* 상대적 위치 설정 */
+  letter-spacing: 0.6px;
+  background-color: white;
+  color: black;
+  height: 85%;
+  border-radius: 20px;
+  margin: 3vw;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 10px;
+  flex-direction: column; /* Flexbox로 세로 정렬 설정 */
+
 }
 .psyInfo-list {
   overflow-y: scroll; /* 세로 스크롤 활성화 */
-  max-height: 80%; /* 블록의 최대 높이 설정 */
-  margin: 0px 5px 0px;
+  max-height: 100%; /* 블록의 최대 높이 설정 */
+  margin: 0 5px;
 }
 
-.nav-bar {
-  display: flex;
-  justify-content: center;
-}
 </style>

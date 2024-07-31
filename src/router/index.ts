@@ -11,6 +11,12 @@ import DiaryCreate from "@/views/diary/DiaryCreate.vue";
 import DiaryFinish from "@/views/diary/DiaryFinish.vue";
 import DiaryList from "@/views/diary/DiaryList.vue";
 import FirstLogin from "@/views/signUp/FirstLogin.vue";
+import CenterPsyCenter from "@/views/center/CenterPsyCenter.vue";
+import CenterPsyTest from "@/views/center/CenterPsyTest.vue";
+import CenterPsyInfoDetail from "@/views/center/CenterPsyInfoDetail.vue";
+import CenterPsyInfo from "@/views/center/CenterPsyInfo.vue";
+import PsyCenter from "@/views/center/PsyCenter.vue";
+import Statistics from "@/views/statistics/Statistics.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -97,7 +103,43 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/diary/DiaryCoreEmotion.vue'),
       }
     ]
-  }
+  },
+  {
+    path: '/psyCenter',
+    component: PsyCenter,
+    children:[
+      {
+        path: '',
+        redirect: '/psyCenter/psyInfo'
+      },
+      {
+        path: 'psyInfo',
+        name: 'CenterPsyInfo',
+        component: CenterPsyInfo
+      },
+      {
+        path: 'psyInfo/detail/:id',
+        name: 'CenterPsyInfoDetail',
+        component:CenterPsyInfoDetail
+      },
+      {
+        path: 'psyTest',
+        name: 'CenterPsyTest',
+        component:CenterPsyTest
+      },
+      {
+        path: 'center',
+        name: 'CenterPsyCenter',
+        component: CenterPsyCenter
+      }
+
+    ]
+  },
+  {
+    path: '/statistics',
+    name: 'Statistics',
+    component: Statistics
+  },
 ]
 
 const router = createRouter({
