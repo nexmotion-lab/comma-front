@@ -18,6 +18,7 @@ import { calendarNumberOutline } from "ionicons/icons";
 import store from "@/store";
 import apiClient from "@/axios";
 import router from "@/router";
+import {useStore} from "vuex";
 
 const isOpen = ref(false);
 const selectedSegment = ref('');
@@ -69,6 +70,7 @@ async function startProcess() {
     });
 
     if (response.status === 200) {
+      res
       router.push({path: "/firstLogin"})
     }
   } catch (error) {
@@ -91,11 +93,9 @@ watch(selectedDate, (newDate) => {
 
 onMounted(async () => {
 
-  const response = await apiClient.get('/account/info', {});
-
-  selectedSegment.value = response.data.gender.toUpperCase();
-  selectedDate.value = response.data.birthdate;
-  name.value = response.data.nickname;
+  selectedSegment.value = useStore().state.name
+  selectedDate.value = useStore().state.birthday
+  name.value = useStore().state.name
 });
 </script>
 

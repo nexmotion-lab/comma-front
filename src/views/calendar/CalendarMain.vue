@@ -5,12 +5,14 @@
   <ion-content class="custom-content">
     <ion-card class="ion-card">
       <ion-card-header class="ion-header">
-        <ion-datetime-button datetime="datetime" class="custom-datetime" color="primary" ></ion-datetime-button>
-        <ion-modal class="date-modal" :keep-contents-mounted="true" >
+        <ion-label id="calendarLabel" class="select-date">
+          {{ selectDate }}
+        </ion-label>
+        <ion-modal ref="datemodal" trigger="calendarLabel" class="date-modal" :keep-contents-mounted="true" >
           <ion-content class="date-modal-content">
           <ion-card class="date-modal-card">
-          <ion-datetime id="datetime" ref="datetime"
-                        presentation="month-year"
+          <ion-datetime id="datetime" ref="datetime" :value="selectDate"
+                        presentation="month-year" @ionChange="dateChange"
                         ></ion-datetime>
           </ion-card>
           </ion-content>
@@ -69,7 +71,7 @@
 
 
 <script setup lang="ts">
-import {computed, defineComponent, ref} from 'vue';
+import {computed, defineComponent, ref, watch} from 'vue';
 import {
   IonModal,
   IonDatetime,
@@ -88,7 +90,7 @@ import {
   IonRow,
   IonCol,
   IonPage,
-  IonFooter, IonToolbar, IonContent,
+  IonFooter, IonToolbar, IonContent, modalController,
 } from '@ionic/vue';
 import { ellipse } from 'ionicons/icons';
 import axios from 'axios';
@@ -96,11 +98,15 @@ import BaseView from "@/components/common/BaseView.vue";
 import BaseBottomBar from "@/components/common/BaseBottomBar.vue";
 import BaseHeader from "@/components/common/BaseHeader.vue";
 import {useStore} from 'vuex';
+import apiClient from "@/axios";
+import DiaryDetail from "@/components/diary/DiaryDetail.vue";
 
 const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
 const selectedDate = ref(new Date());
 
 const store = useStore()
+
+
 
 
 interface CalendarDate {
@@ -110,10 +116,33 @@ interface CalendarDate {
   emotionTagNo: number | null;
 }
 
+const getFormattedDate = (date) => {
+  const year = date.getFullYear();
+  const month = ('0' + (date.getMonth() + 1)).slice(-2);
+  return `${year}-${month}`;
+};
+
 const datetime = ref();
-console.log(datetime)
-const dateCancel = () => datetime.value.$el.cancel();
-const dateConfirm = () => datetime.value.$el.confirm();
+const datemodal = ref();
+const originalDate = ref(getFormattedDate(new Date()));
+const selectDate = ref(originalDate.value);
+
+const dateCancel = () => {
+  selectDate.value = originalDate.value
+  datemodal.value.$el.dismiss();
+}
+const dateConfirm = () => {
+  originalDate.value = selectDate.value
+  const date = new Date(selectDate.value);
+  onDateSelected(date)
+  datemodal.value.$el.dismiss()
+};
+
+async function dateChange(event) {
+  if (event.detail.value) {
+    selectDate.value = event.detail.value;
+  }
+}
 
 type CalendarWeek = CalendarDate[];
 
@@ -133,57 +162,52 @@ async function generateCalendar(year: number, month: number) {
   let calendarArray: CalendarDate[] = [];
 
   const yearMonth = `${year}-${String(month + 1).padStart(2, '0')}`;
-  const response = await axios.get(`http://192.168.0.154:8092/api/v1/calendar`, {
+  const response = await apiClient.get(`/api/diary/calendar`, {
     params: {
       yearMonth: yearMonth
-    },
-    headers: {
-      'X-User-Id': '4'
     }
   });
 
   const emotionTags = response.data;
   console.log(emotionTags)
 
-  function getEmotionTagForDate(date: Date): number | null {
-    const dateString = date.toISOString().split('T')[0]; // "YYYY-MM-DD" 형식으로 변환
-    return emotionTags[dateString] || null;
+  function getEmotionTagForDate(date: string): number | null {
+    return emotionTags[date] || null;
   }
 
-  // 이전 달의 날짜를 채우기
   for (let i = prevDays; i > 0; i--) {
     const date = new Date(year, month - 1, prevMonthDays - i + 1);
     calendarArray.push({
       day: date.getDate(),
       date,
       isCurrentMonth: false,
-      emotionTagNo: getEmotionTagForDate(date)
+      emotionTagNo: getEmotionTagForDate(date.toISOString().split('T')[0])
     });
   }
 
-  // 현재 달의 날짜를 채우기
   for (let day = 1; day <= daysInMonth; day++) {
     const date = new Date(year, month, day);
+    const dateString = new Date(year, month, day+1).toISOString().split('T')[0];
     calendarArray.push({
       day,
       date,
       isCurrentMonth: true,
-      emotionTagNo: getEmotionTagForDate(date)
+      emotionTagNo: getEmotionTagForDate(dateString)
     });
   }
 
-  // 다음 달의 날짜를 채우기
   for (let i = 1; i <= nextMonthStart; i++) {
     const date = new Date(year, month + 1, i);
     calendarArray.push({
       day: date.getDate(),
       date,
       isCurrentMonth: false,
-      emotionTagNo: getEmotionTagForDate(date)
+      emotionTagNo: getEmotionTagForDate(date.toISOString().split('T')[0])
     });
+
   }
 
-  // 달력 데이터를 7일씩 나누어 주별로 배열로 묶음
+  console.log(calendarArray)
   return chunkArray(calendarArray, 7);
 }
 
@@ -196,21 +220,35 @@ function chunkArray<T>(arr: T[], size: number): T[][] {
   return res;
 }
 
-async function onDateSelected(event) {
-  const selected = new Date(event.detail.value);
-  const newCalendar = await generateCalendar(selected.getFullYear(), selected.getMonth());
+async function onDateSelected(date: Date) {
+  const newCalendar = await generateCalendar(date.getFullYear(), date.getMonth());
   calendar.value = newCalendar;
 }
 
+const openDiary = async (date: Date) => {
+  const diary = apiClient.get('/api/diary/')
+  if (diary) {
+    const modal = await modalController.create({
+      component: DiaryDetail,
+      componentProps: {
+        diary: diary
+      },
+      cssClass: 'diary-modal'
+    });
+    modal.present();
+  } else {
+    console.error('Diary not found');
+  }
+};
+
 async function onDateClick(date: CalendarDate) {
   if (date.isCurrentMonth) {
-    selectedDate.value = date.date;
+    d = date.date;
   }
 }
 
 
 function getEmotionColor(emotionTagNo: number | null): string {
-  console.log(emotionTagNo)
   return store.getters.getEmotionColor(emotionTagNo);
 }
 
@@ -232,6 +270,13 @@ generateCalendar(selectedDate.value.getFullYear(), selectedDate.value.getMonth()
 
 .custom-content {
   --background: #f0fff7;
+}
+
+.select-date {
+  text-align: center;
+  font-weight: bold;
+  font-size: 9vw;
+  padding-top: 3vh;
 }
 
 .day-header {
@@ -268,11 +313,7 @@ generateCalendar(selectedDate.value.getFullYear(), selectedDate.value.getMonth()
   height: 10vw;
 }
 
-ion-datetime-button::part(native) {
-  background: white;
-  font-size: 4vh;
 
-}
 
 ion-datetime {
 

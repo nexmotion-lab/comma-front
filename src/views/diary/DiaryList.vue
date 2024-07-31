@@ -295,13 +295,10 @@ async function getDiaries(lastNo:number | null, size:number | null, event?: Infi
     return response.data.length;
   } catch (error) {
     if (error.response) {
-      // 서버가 응답을 반환했지만 상태 코드가 2xx 범위에 있지 않을 때
       console.error('Response error:', error.response.data);
     } else if (error.request) {
-      // 요청이 만들어졌지만 응답을 받지 못했을 때
       console.error('Request error:', error.request);
     } else {
-      // 다른 오류 발생 시
       console.error('Error:', error.message);
     }
   }

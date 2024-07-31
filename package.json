@@ -12,6 +12,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@awesome-cordova-plugins/in-app-browser": "^6.8.0",
     "@capacitor/android": "^6.1.0",
     "@capacitor/app": "^6.0.0",
     "@capacitor/browser": "^6.0.1",
@@ -19,11 +20,13 @@
     "@capacitor/haptics": "^6.0.0",
     "@capacitor/ios": "^6.1.0",
     "@capacitor/keyboard": "^6.0.1",
+    "@capacitor/preferences": "^6.0.1",
     "@capacitor/status-bar": "^6.0.0",
     "@ionic/pwa-elements": "^3.3.0",
     "@ionic/vue": "^8.0.0",
     "@ionic/vue-router": "^8.0.0",
     "axios": "^1.7.2",
+    "cordova-plugin-inappbrowser": "^6.0.0",
     "ionicons": "^7.4.0",
     "qs": "^6.12.3",
     "register-service-worker": "^1.7.2",

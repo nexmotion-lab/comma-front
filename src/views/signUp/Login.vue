@@ -1,9 +1,12 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { IonPage } from '@ionic/vue'
-import axios from 'axios';
 import { useRouter } from "vue-router";
-import { Browser } from "@capacitor/browser";
+
+import {InAppBrowser} from "@awesome-cordova-plugins/in-app-browser";
+import {Preferences} from "@capacitor/preferences";
+import store from "@/store";
+
 
 export default defineComponent({
   name: 'Login',
@@ -16,7 +19,35 @@ export default defineComponent({
     const handleSocialLogin = async (event: Event, provider: string) => {
       event.preventDefault();
 
-      await Browser.open({ url: `https://www.comma-coders.com:8998/oauth2/authorization/${provider}`})
+      const browser = await InAppBrowser.create(`https://www.comma-coders.com:8998/oauth2/authorization/${provider}`)
+      browser.on('loadstop').subscribe(event => {
+
+        const url = new URL(event.url);
+        const params = new URLSearchParams(url.search);
+
+        const name = params.get('name');
+        const birthday = params.get('birthday');
+        const gender = params.get('gender');
+
+        if (name) {
+          store.commit('setName', name);
+        }
+        if (birthday) {
+          store.commit('setBirthday', birthday);
+        }
+        if (gender) {
+          store.commit('setGender', gender);
+        }
+
+
+        if (event.url.startsWith('comma://home')) {
+          browser.close()
+          router.push({ name: 'DiaryList' });
+        } else if (event.url.startsWith('comma://firstLogin')) {
+          browser.close()
+          router.push({ name: 'InitMain' });
+        }
+      })
 
     };
 

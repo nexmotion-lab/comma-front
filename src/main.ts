@@ -26,7 +26,7 @@ import '@ionic/vue/css/palettes/dark.system.css';
 /* Theme variables */
 import './theme/variables.css';
 import './registerServiceWorker.js';
-
+import {Preferences} from "@capacitor/preferences";
 const app = createApp(App)
   .use(IonicVue)
   .use(router)
@@ -37,6 +37,7 @@ router.isReady().then(() => {
   app.mount('#app');
 
   CapacitorApp.addListener('appUrlOpen', (data) => {
+
 
     const url = new URL(data.url);
     const params = new URLSearchParams(url.search);

@@ -5,6 +5,9 @@ const config: CapacitorConfig = {
   appId: 'com.example.app',
   appName: 'COMMA',
   webDir: 'dist',
+  plugins: {
+
+  }
 };
 
 export default config;
