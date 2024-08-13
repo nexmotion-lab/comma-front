@@ -1,9 +1,8 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted, computed } from 'vue'
-import axios from 'axios'
 import NuguriBox from '@/components/NuguriBox.vue'
 import router from "@/router";
-import {IonPage, IonCard} from "@ionic/vue";
+import {IonPage, IonCard, onIonViewWillEnter} from "@ionic/vue";
 
 import psyInfoNuguri1 from "@/assets/center/psyInfo_nuguri1.png";
 import psyInfoNuguri2 from "@/assets/center/psyInfo_nuguri2.png";
@@ -11,12 +10,13 @@ import psyInfoNuguri3 from "@/assets/center/psyInfo_nuguri3.png";
 import psyInfoNuguri4 from "@/assets/center/psyInfo_nuguri4.png";
 import psyInfoNuguri5 from "@/assets/center/psyInfo_nuguri5.png";
 import psyInfoNuguri6 from "@/assets/center/psyInfo_nuguri6.png";
-
+import apiClient from "@/axios";
 interface PsyInfo {
   psy_info_no: number
   title: string
   content: string
   image: string
+  randomImage?: string // 추가: 랜덤 이미지를 저장할 필드
 }
 
 export default defineComponent({
@@ -44,21 +44,24 @@ export default defineComponent({
       return pairs
     })
 
-    onMounted(async () => {
+    const getRandomImage = () => {
+      const randomIndex = Math.floor(Math.random() * images.length)
+      return images[randomIndex]
+    }
+
+    onIonViewWillEnter(async () => {
       try {
-        const response = await axios.get<PsyInfo[]>('http://192.168.0.154:8086/api/v1/psyinfo/')
-        psyInfos.value = response.data
+        const response = await apiClient.get<PsyInfo[]>('/api/psy/psyinfo/')
+        psyInfos.value = response.data.map(info => ({
+          ...info,
+          randomImage: getRandomImage() // 랜덤 이미지 추가
+        }))
         console.log(psyInfos.value)
       } catch (error) {
         console.error('Failed to fetch psyinfo:', error)
         alert('Failed to fetch psyinfo')
       }
     })
-
-    const getRandomImage = () => {
-      const randomIndex = Math.floor(Math.random() * images.length)
-      return images[randomIndex]
-    }
 
     const navigateToDetail = (psyInfo: PsyInfo) => {
       router.push({
@@ -75,8 +78,7 @@ export default defineComponent({
     return {
       psyInfos,
       navigateToDetail,
-      testPairs,
-      getRandomImage
+      testPairs
     }
   },
   data() {
@@ -85,26 +87,28 @@ export default defineComponent({
     }
   }
 })
+
 </script>
 
 <!-- 상담센터 상담 정보 리스트 페이지 -->
 <template>
   <ion-page>
-    <!-- psyInfo start -->
-    <ion-card class="content-wrapper">
-      <div class="psyInfo-list" v-if="testPairs.length > 0">
-        <div v-for="(pair, index) in testPairs" :key="index">
-          <NuguriBox v-for="test in pair" :key="test.psy_info_no" :image="getRandomImage()" @click="navigateToDetail(test)">
-            {{ test.title }}
-          </NuguriBox>
+    <ion-content style="--background: var(--background-color)">
+      <!-- psyInfo start -->
+      <ion-card class="content-wrapper">
+        <div class="psyInfo-list" v-if="testPairs.length > 0">
+          <div v-for="(pair, index) in testPairs" :key="index">
+            <NuguriBox v-for="test in pair" :key="test.psy_info_no" :image="test.randomImage" @click="navigateToDetail(test)">
+              {{ test.title }}
+            </NuguriBox>
+          </div>
         </div>
-      </div>
-      <div v-else>데이터를 불러오는 중입니다...</div>
-      <!-- psyInfo end -->
-    </ion-card>
+        <!-- psyInfo end -->
+      </ion-card>
+    </ion-content>
   </ion-page>
-  <!--  <BaseBottomBar></BaseBottomBar>-->
 </template>
+
 
 <style scoped>
 .content-wrapper {

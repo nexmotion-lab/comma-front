@@ -12,11 +12,12 @@
         <ion-icon :icon="chevronBackCircle" class="custom-color"></ion-icon>
       </ion-fab-button>
       <ion-fab-list side="start" class="custom-fab-list">
-        <ion-fab-button class="fab-button" size="large">
+        <ion-fab-button class="fab-button" size="large" @click="router.replace({path:'/calendar'})">
           <img src="/src/assets/calendar_btn.png" alt="Document Icon" class="fab-icon" />
         </ion-fab-button>
         <ion-fab-button class="fab-button" size="large">
-          <img src="/src/assets/statistics_btn.png" alt="Color Palette Icon" class="fab-icon" />
+          <img src="/src/assets/statistics_btn.png" alt="Color Palette Icon" class="fab-icon"
+               @click="router.replace({path:'/statistics'})"/>
         </ion-fab-button>
       </ion-fab-list>
     </ion-fab>
@@ -35,13 +36,16 @@ import {
   IonFab,
   IonFabButton,
   IonFabList,
-  modalController
+  modalController, useIonRouter
 } from '@ionic/vue';
 import { settingsSharp, chevronBackCircle } from 'ionicons/icons';
+import {useRouter} from "vue-router";
 export default defineComponent({
   components: { IonHeader, IonToolbar, IonButtons, IonButton, IonIcon, IonFab, IonFabButton, IonFabList },
   emits: ['open-settings'],
   setup() {
+
+    const router = useIonRouter();
     const openModal = async () => {
       const modal = await modalController.create({
         component: SettingModal,
@@ -52,7 +56,7 @@ export default defineComponent({
 
     };
 
-    return { openModal, settingsSharp, chevronBackCircle};
+    return { openModal, settingsSharp, chevronBackCircle, router};
   },
 });
 </script>

@@ -8,11 +8,12 @@ import {
   IonCardContent,
   IonCardHeader,
   IonPage,
- IonTextarea,
-    IonButton
+  IonTextarea,
+  IonButton, onIonViewWillEnter, onIonViewWillLeave
 } from "@ionic/vue";
 import router from "@/router";
 import {selectTab} from "@/utils/tabs";
+import {Keyboard} from "@capacitor/keyboard";
 
 const store = useStore();
 const diaryContent = computed({
@@ -31,6 +32,41 @@ const switchTab2 = () => {
   router.push({ path: '/diary/create/emotion', replace: true});
 
 }
+
+const textarearef = ref<HTMLElement | null>(null);
+const adjustTextareaHeight = (keyboardHeight: number) => {
+  const textarea = textarearef.value
+  console.log(textarea)
+  if (textarea) {
+    console.log(textarea.style.height)
+    textarea.style.height = `20vh`;
+    console.log(textarea.style.height)
+  }
+};
+
+const resetTextareaHeight = () => {
+  const textarea = textarearef.value
+
+  if (textarea) {
+    textarea.style.height = '45vh';
+  }
+};
+
+onIonViewWillEnter(() => {
+  Keyboard.addListener('keyboardWillShow', (info) => {
+    console.log("실행")
+    adjustTextareaHeight(info.keyboardHeight);
+  });
+
+  Keyboard.addListener('keyboardWillHide', () => {
+    resetTextareaHeight();
+  });
+})
+
+onIonViewWillLeave(() => {
+  Keyboard.removeAllListeners();
+})
+
 </script>
 
 
@@ -41,7 +77,7 @@ const switchTab2 = () => {
     <ion-card class="emotion-content">
       <ion-card-header class="tab-card"></ion-card-header>
       <ion-card-content class="tab-card-content">
-        <div class="emotion-grid-container">
+        <div class="emotion-grid-container" ref="textarearef">
           <ion-textarea :auto-grow="true" class="content" placeholder="최대 1000자"
           v-model="diaryContent">
           </ion-textarea>
@@ -61,6 +97,18 @@ const switchTab2 = () => {
 
 <style scoped>
 
+
+
+.button-container {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -8vh;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 5.55vw; /* 버튼이 카드의 양쪽 끝에 정렬되도록 패딩 설정 */
+}
+
 .content {
   padding-left: 4vw;
   padding-right: 4vw;
@@ -69,19 +117,16 @@ const switchTab2 = () => {
 }
 
 .button-container {
-  padding-top: 1.75vh;
   display: flex;
   justify-content: space-between;
 
 }
 
 .back-btn {
-  margin-left: 5.55vw;
   --background: green;
 }
 
 .next-btn {
-  margin-right: 5.55vw;
   --background: green;
 }
 
@@ -94,6 +139,7 @@ const switchTab2 = () => {
   border-radius: 30px;
   --background: white;
   height: 60vh;
+  position: relative;
 }
 
 .tab-card-content {

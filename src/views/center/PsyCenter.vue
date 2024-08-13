@@ -18,8 +18,8 @@ const isCurrentRoute = (routeName: string) => {
 </script>
 
 <template>
-  <BaseView />
   <ion-page>
+    <ion-content>
     <div class="header">
       <div class="nav-bar">
         <CenterTopButton :isActive="isCurrentRoute('CenterPsyInfo').value" @click="navigate('CenterPsyInfo')">심리정보</CenterTopButton>
@@ -29,11 +29,13 @@ const isCurrentRoute = (routeName: string) => {
     </div>
     <ion-router-outlet></ion-router-outlet>
     <BaseBottomBar></BaseBottomBar>
+    </ion-content>
   </ion-page>
 </template>
 
 <style scoped>
 .header {
+  background: var(--background-color);
   height: 10%;
   width: 100%;
   display: flex;

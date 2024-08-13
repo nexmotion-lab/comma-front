@@ -6,6 +6,7 @@ import 'swiper/swiper-bundle.min.css'
 import {  IonModal,IonIcon,IonPage } from '@ionic/vue';
 import {closeOutline} from "ionicons/icons";
 import SamyookLogo from "@/assets/common/sahmyook.png";
+import apiClient from "@/axios";
 
 
 interface PsyTest {
@@ -60,7 +61,7 @@ export default defineComponent({
 
     const fetchPsyTests = async () =>{
       try{
-        const response = await axios.get('http://192.168.0.154:8086/api/v1/psytest/')
+        const response = await apiClient.get('api/psy/psytest/')
         const data = response.data
         testCategories.value = Object.keys(data).map(key =>({
           name:key,

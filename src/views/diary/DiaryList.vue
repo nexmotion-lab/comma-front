@@ -18,8 +18,15 @@ import {
   IonFooter,
   IonToolbar,
   IonRouterOutlet,
-  IonSearchbar, IonList, IonAvatar,
-  InfiniteScrollCustomEvent, IonInfiniteScroll, IonInfiniteScrollContent, modalController
+  IonSearchbar,
+  IonList,
+  IonAvatar,
+  InfiniteScrollCustomEvent,
+  IonInfiniteScroll,
+  IonInfiniteScrollContent,
+  modalController,
+  onIonViewWillEnter,
+  onIonViewWillLeave
 } from "@ionic/vue";
 import {searchCircleOutline, filter, swapVertical, infinite} from "ionicons/icons";
 import {computed, onMounted, reactive, ref, watch} from "vue";
@@ -29,22 +36,31 @@ import {useStore} from "vuex";
 import apiClient from "@/axios";
 import DiaryDetail from "@/components/diary/DiaryDetail.vue";
 import BaseBottomBar from "@/components/common/BaseBottomBar.vue";
+import router from "@/router";
+import {useRoute} from "vue-router";
 
 
-const getFormattedDate = (date) => {
+const getFormattedDateDot = (date) => {
   const year = date.getFullYear();
   const month = ('0' + (date.getMonth() + 1)).slice(-2);
   const day = ('0' + date.getDate()).slice(-2);
   return `${year}.${month}.${day}`;
 };
 
+const getFormattedDateMinus = (date) => {
+  const year = date.getFullYear();
+  const month = ('0' + (date.getMonth() + 1)).slice(-2);
+  const day = ('0' + date.getDate()).slice(-2);
+  return `${year}-${month}-${day}`;
+};
+
 const getCurrentAndPreviousMonthDate = () => {
   const currentDate = new Date();
-  const formattedCurrentDate = getFormattedDate(currentDate);
+  const formattedCurrentDate = getFormattedDateDot(currentDate);
 
   const previousMonthDate = new Date();
   previousMonthDate.setMonth(previousMonthDate.getMonth() - 1);
-  const formattedPreviousMonthDate = getFormattedDate(previousMonthDate);
+  const formattedPreviousMonthDate = getFormattedDateDot(previousMonthDate);
 
   return {
     currentDate: formattedCurrentDate,
@@ -187,6 +203,7 @@ const isSelected = (tag: EmotionTag) => {
 };
 
 const toggleTag = async (tag: EmotionTag) => {
+
   const tagIndex = selectedEmotionTags.value.findIndex(
       (selectedTag: EmotionTag) => selectedTag.emotion_tag_no === tag.emotion_tag_no
   );
@@ -218,6 +235,7 @@ const filterConfirm = () => {
 };
 
 
+
 const eventTags = ref<EventTag[]>([]);
 const selectedEventTags = ref<EventTag[]>([]);
 const filterEventTags = ref<EventTag[]>([]);
@@ -233,23 +251,92 @@ const eventToggleTag = async (tag: EventTag) => {
   }
 };
 
+const route = useRoute();
+const diaries = reactive<Diary[]>([]);
+
 const eventIsSelected = (tag: EventTag) => {
   return computed(() => {
     return selectedEventTags.value.some((selectedTag: EventTag) => selectedTag.eventTagNo === tag.eventTagNo);
   });
 };
 
-onMounted(async () => {
+onIonViewWillEnter(async () => {
   try {
-    await getDiaries(null, 20);
+    await emotionQuery();
+
     const response = await apiClient.get('/api/diary/diary/eventTag', {
 
     });
+
     eventTags.value = response.data;
+    await eventQuery();
+
+    await getDiaries(null, 20);
+
   } catch (error) {
     console.error('Failed to fetch event tags:', error);
   }
 })
+
+onIonViewWillLeave(() => {
+  console.log('나감')
+  selectedEventTags.value = [];
+  filterEventTags.value = [];
+  selectedEmotionTags.value = [];
+  filterEmotionTags.value = [];
+  diaries.splice(0, diaries.length);
+})
+
+async function emotionQuery() {
+  const queryEmotionTag = route.query.emotionTag;
+  const queryYearMonth = route.query.yearMonth;
+  if (queryEmotionTag && queryYearMonth) {
+    await toggleTag(store.state.emotionTags.find(tag => tag.emotion_tag_no === parseInt(queryEmotionTag as string)));
+    filterEmotionTags.value = [...selectedEmotionTags.value];
+    const yearMonthString = queryYearMonth as string;
+    const [year, month] = yearMonthString.split('-').map(Number);
+
+    // 해당 월의 첫 번째 날짜
+    startDate.value = getFormattedDateMinus(new Date(year, month - 1, 1));
+    // 해당 월의 마지막 날짜
+    lastDate.value = getFormattedDateMinus(new Date(year, month, 0));
+    
+    
+
+    originalStartDate = startDate.value
+    originalLastDate = lastDate.value
+
+    dates.value.startDate = convertDateFormatToDisplay(originalStartDate);
+    dates.value.lastDate = convertDateFormatToDisplay(originalLastDate);
+  }
+}
+
+async function eventQuery() {
+  const queryEventTag = route.query.eventTagName;
+  const queryYearMonth = route.query.yearMonth;
+  if (queryEventTag && queryYearMonth) {
+    const eventTag = eventTags.value.find(tag => tag.name == queryEventTag);
+    if (eventTag != undefined){
+      await eventToggleTag(eventTag)
+    }
+    filterEventTags.value = [...selectedEventTags.value];
+    console.log(filterEventTags.value);
+    const yearMonthString = queryYearMonth as string;
+    const [year, month] = yearMonthString.split('-').map(Number);
+
+    // 해당 월의 첫 번째 날짜
+    startDate.value = getFormattedDateMinus(new Date(year, month - 1, 1));
+    // 해당 월의 마지막 날짜
+    lastDate.value = getFormattedDateMinus(new Date(year, month, 0));
+
+
+
+    originalStartDate = startDate.value
+    originalLastDate = lastDate.value
+
+    dates.value.startDate = convertDateFormatToDisplay(originalStartDate);
+    dates.value.lastDate = convertDateFormatToDisplay(originalLastDate);
+  }}
 
 
 
@@ -265,7 +352,7 @@ export interface Diary {
 const lastDiaryNo = ref<number | null>(null);
 const isLoading = ref<boolean>(false);
 
-const diaries = reactive<Diary[]>([]);
+
 
 async function getDiaries(lastNo:number | null, size:number | null, event?: InfiniteScrollCustomEvent) {
 
@@ -452,7 +539,7 @@ watch([searchQuery, eventTags], filterTags)
         <ion-card class="date-modal-card">
           <ion-label class="date-text">시작일</ion-label>
           <ion-datetime id="startDate" :value="startDate" presentation="date" :prefer-wheel="true"
-                         @ionChange="dateChange">
+                        locale="ko-KR" @ionChange="dateChange">
           </ion-datetime>
         </ion-card>
       </ion-content>
@@ -469,7 +556,8 @@ watch([searchQuery, eventTags], filterTags)
       <ion-content class="date-modal-content" scroll-y="false">
         <ion-card class="date-modal-card">
           <ion-label class="date-text">종료일</ion-label>
-          <ion-datetime id="lastDate" :value="lastDate" @ionChange="dateChange" presentation="date" :prefer-wheel="true">
+          <ion-datetime id="lastDate" :value="lastDate" @ionChange="dateChange"
+                        locale="ko-KR" presentation="date" :prefer-wheel="true">
           </ion-datetime>
         </ion-card>
       </ion-content>

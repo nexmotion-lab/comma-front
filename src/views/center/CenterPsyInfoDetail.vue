@@ -39,6 +39,7 @@ export default defineComponent({
 <!-- 상담센터 상담 정보 상세 페이지-->
 <template>
   <ion-page>
+    <ion-content style="--background: var(--background-color)">
     <ion-card class="content-wrapper">
       <div class="content">
         <div class="content-header">
@@ -84,6 +85,7 @@ export default defineComponent({
         </div>
       </div>
     </ion-card>
+    </ion-content>
   </ion-page>
 </template>
 
@@ -138,9 +140,12 @@ export default defineComponent({
   padding-left: 1vh;
   padding-right: 1vh;
   padding-bottom: 0.5vh;
+  margin-top: 1vh;
   border-radius: 50%;
   font-weight: 800;
   font-size: 20px;
+  height: 3vh;
+
   color: rgb(85, 163, 85);
 }
 

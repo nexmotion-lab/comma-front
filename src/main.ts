@@ -6,7 +6,7 @@ import { App as CapacitorApp } from "@capacitor/app";
 import './global.scss'
 
 
-import { IonicVue } from '@ionic/vue';
+import {IonContent, IonicVue, IonPage} from '@ionic/vue';
 
 import '@ionic/vue/css/core.css';
 
@@ -27,39 +27,36 @@ import '@ionic/vue/css/palettes/dark.system.css';
 import './theme/variables.css';
 import './registerServiceWorker.js';
 import {Preferences} from "@capacitor/preferences";
+import bgmFile from '@/assets/bgm.mp3'
+
+const bgm = new Audio(bgmFile);
+bgm.loop = true;
+
+if (store.state.bgmPlaying) {
+  bgm.play();
+}
+
+store.watch(
+    (state) => state.bgmPlaying,
+    (newVal) => {
+      if (newVal) {
+        bgm.play();
+      } else {
+        bgm.pause();
+      }
+    }
+)
+
 const app = createApp(App)
   .use(IonicVue)
   .use(router)
+    .component('ion-page', IonPage)
+    .component('ion-content', IonContent)
+
     .use(store);
 
 router.isReady().then(() => {
   app.use(store);
   app.mount('#app');
 
-  CapacitorApp.addListener('appUrlOpen', (data) => {
-
-
-    const url = new URL(data.url);
-    const params = new URLSearchParams(url.search);
-
-    const name = params.get('name');
-    const birthday = params.get('birthday');
-    const gender = params.get('gender');
-
-    if (name) {
-      store.commit('setName', name);
-    }
-    if (birthday) {
-      store.commit('setBirthday', birthday);
-    }
-    if (gender) {
-      store.commit('setGender', gender);
-    }
-
-    if (data.url.includes('comma://home')) {
-      router.push({ name: 'DiaryList' });
-    } else if (data.url.includes('comma://firstLogin')) {
-      router.push({ name: 'InitNickName'});
-    }
-  })
 });

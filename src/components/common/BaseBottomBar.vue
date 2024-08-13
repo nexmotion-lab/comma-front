@@ -1,8 +1,29 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
-
+import { IonToolbar, IonFooter, IonImg } from "@ionic/vue";
+import letter from '@/assets/home/letter.png'
+import house from '@/assets/home/house.png'
+import memo from '@/assets/home/memo.png'
+import {useIonRouter} from "@ionic/vue";
 export default defineComponent({
-  name: 'BaseBottomBar'
+  components: {IonToolbar, IonFooter, IonImg},
+  name: 'BaseBottomBar',
+  data() {
+    return {
+      letter, house, memo
+    }
+  },
+  setup() {
+    const router = useIonRouter();
+
+    const navigateTo = (routeName: string) => {
+      router.replace({ path: routeName });
+    };
+
+    return {
+      navigateTo
+    };
+  }
 })
 </script>
 
@@ -10,9 +31,9 @@ export default defineComponent({
   <ion-footer >
     <ion-toolbar class="footer">
     <div class="image-container">
-      <ion-img class="nav-btn" src="/public/letter.png"></ion-img>
-      <ion-img class="nav-btn" src="/public/house.png"></ion-img>
-      <ion-img class="nav-btn" src="/public/memo.png"></ion-img>
+      <ion-img class="nav-btn" :src=letter @click="navigateTo('/psyCenter')"></ion-img>
+      <ion-img class="nav-btn" :src="house" @click="navigateTo('/home')"></ion-img>
+      <ion-img class="nav-btn" :src="memo" @click="navigateTo('/diary')"></ion-img>
     </div>
     </ion-toolbar>
   </ion-footer>

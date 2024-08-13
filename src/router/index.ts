@@ -17,11 +17,14 @@ import CenterPsyInfoDetail from "@/views/center/CenterPsyInfoDetail.vue";
 import CenterPsyInfo from "@/views/center/CenterPsyInfo.vue";
 import PsyCenter from "@/views/center/PsyCenter.vue";
 import Statistics from "@/views/statistics/Statistics.vue";
+import {Preferences} from "@capacitor/preferences";
+import {getAccessToken, isLogin} from "@/axios";
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    redirect: '/login'
+    redirect: '/home',
+
   },
   {
     path: '/home',
@@ -42,11 +45,6 @@ const routes: Array<RouteRecordRaw> = [
     path: '/home',
     name: 'Home',
     component: HomeView,
-  },
-  {
-    path: '/diaryListItem',
-    name: 'DiaryListItem',
-    component: DiaryListItem,
   },
   {
     path: '/diary',
@@ -146,5 +144,8 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes
 })
+
+
+
 
 export default router

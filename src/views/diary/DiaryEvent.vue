@@ -66,11 +66,8 @@ const isSelected = (tag: EventTag) => {
 };
 
 onMounted(async () => {
-    const response = await apiClient.get('/api/v1/diary/eventTag', {
-      headers: {
-        'X-User-Id': '4'
-      }
-    });
+    const response = await apiClient.get('/api/diary/diary/eventTag', {}
+    );
     eventTags.value = response.data;
     console.log(eventTags.value)
 })
@@ -106,13 +103,10 @@ const alertButtons = [
     role: 'confirm',
     handler: async (data: { eventTagInput: string }) => {
       const inputValue = data.eventTagInput;
-      const response = await apiClient.post('/api/v1/diary/eventTag', {}, {
+      const response = await apiClient.post('/api/diary/diary/eventTag', {}, {
         params: {
           eventTagName: inputValue
         },
-        headers: {
-          'X-User-Id': '4',
-        }
       });
 
       if (response.status === 200) {
@@ -163,9 +157,12 @@ const switchTab = () => {
             <ion-ripple-effect style="color: #0c8c42"></ion-ripple-effect>
          </div>
         </div>
-        <ion-button @click="switchTab" class="next-btn">
-          다음
-        </ion-button>
+        <div class="button-container">
+          <ion-button @click="switchTab" class="next-btn">
+            다음
+          </ion-button>
+        </div>
+
       </ion-card-content>
     </ion-card>
   </ion-page>
@@ -180,14 +177,24 @@ const switchTab = () => {
 }
 
 .next-btn {
-  margin-left: 70vw;
   --background: green;
+}
+
+.button-container {
+  position: absolute;
+  bottom: -5vh; /* ion-card의 아래쪽에서 1vh 위로 위치시킵니다 */
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 5.55vw; /* 버튼이 카드의 양쪽 끝에 정렬되도록 패딩 설정 */
 }
 
 .emotion-content {
   border-radius: 30px;
   --background: white;
   height: 60vh;
+  position: relative;
 }
 
 .tab-card-content {

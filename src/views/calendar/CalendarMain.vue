@@ -11,7 +11,7 @@
         <ion-modal ref="datemodal" trigger="calendarLabel" class="date-modal" :keep-contents-mounted="true" >
           <ion-content class="date-modal-content">
           <ion-card class="date-modal-card">
-          <ion-datetime id="datetime" ref="datetime" :value="selectDate"
+          <ion-datetime id="datetime" ref="datetime" :value="selectDate" locale="ko-KR"
                         presentation="month-year" @ionChange="dateChange"
                         ></ion-datetime>
           </ion-card>
@@ -33,9 +33,8 @@
           </ion-row>
           <ion-row v-for="(week, index) in calendar" :key="index">
             <ion-col v-for="date in week" :key="date.date" class="day-cell" :class="{ 'bold' : date.isCurrentMonth }">
-              <div @click="onDateClick(date)" >
                 <span class="date">{{ date.day }}</span>
-                <svg v-if="date.emotionTagNo" :style="{ fill: getEmotionColor(date.emotionTagNo) }" xmlns="http://www.w3.org/2000/svg"
+                <svg @click="onDateClick(date)" v-if="date.emotionTagNo" :style="{ fill: getEmotionColor(date.emotionTagNo) }" xmlns="http://www.w3.org/2000/svg"
                      width="10.000000vw" height="10.000000vw" viewBox="0 0 324.000000 320.000000"
                      preserveAspectRatio="xMidYMid meet" class="svg-transform">
                   <g transform="translate(0.000000,320.000000) scale(0.100000,-0.100000)" stroke="none">
@@ -57,7 +56,7 @@
                   </g>
                 </svg>
                 <ion-icon v-else :icon="ellipse" class="icon"></ion-icon>
-              </div>
+
             </ion-col>
           </ion-row>
         </ion-grid>
@@ -100,6 +99,7 @@ import BaseHeader from "@/components/common/BaseHeader.vue";
 import {useStore} from 'vuex';
 import apiClient from "@/axios";
 import DiaryDetail from "@/components/diary/DiaryDetail.vue";
+import {Diary} from "@/views/diary/DiaryList.vue";
 
 const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
 const selectedDate = ref(new Date());
@@ -225,25 +225,43 @@ async function onDateSelected(date: Date) {
   calendar.value = newCalendar;
 }
 
+const diary = ref<Diary[]>([])
+
 const openDiary = async (date: Date) => {
-  const diary = apiClient.get('/api/diary/')
-  if (diary) {
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
+  const day = String(date.getDate()).padStart(2, '0'); // 일자
+
+  const formattedDate = `${year}-${month}-${day}`;
+  console.log(formattedDate); // 변환된 날짜 출력
+
+  const response = await apiClient.get<Diary[]>('/api/diary/diary', {
+    params: {
+      startDate: formattedDate,
+      endDate: formattedDate,
+      orderByDesc: true,
+    }
+  });
+
+  if (response.data) {
+    diary.value = response.data
     const modal = await modalController.create({
       component: DiaryDetail,
       componentProps: {
-        diary: diary
+        diary: diary.value[0]
       },
       cssClass: 'diary-modal'
     });
     modal.present();
-  } else {
-    console.error('Diary not found');
   }
+
 };
 
 async function onDateClick(date: CalendarDate) {
   if (date.isCurrentMonth) {
-    d = date.date;
+
+    openDiary(date.date);
   }
 }
 

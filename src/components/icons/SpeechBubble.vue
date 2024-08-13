@@ -23,5 +23,6 @@ export default defineComponent({
     padding-top: 1.5rem;
     padding-bottom: 1.5rem;
     text-align: center;
+    font-size: 5vw;
   }
 </style>

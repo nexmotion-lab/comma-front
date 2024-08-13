@@ -12,6 +12,7 @@
               :value="tempSelectedDate"
               @ionChange="handleDateChange"
               :prefer-wheel="true"
+              locale="ko-KR"
           ></ion-datetime>
         </ion-card>
       </ion-content>
@@ -39,7 +40,7 @@
         </div>
         <ion-card class="events-modal-content-wrapper">
           <ion-list lines="none" class="events-list">
-            <ion-item class="event-item" v-for="(event, index) in eventData" :key="index" @click="goToDiary">
+            <ion-item class="event-item" v-for="(event, index) in eventData" :key="index" @click="goToDiaryEvent(event.name)">
               <ion-label class="event-title">
                 <span>{{ index + 1 }}. {{ event.name }}</span>
               </ion-label>
@@ -69,7 +70,7 @@
         </div>
         <ion-card class="emotions-modal-content-wrapper">
           <ion-list lines="none" class="emotions-list">
-            <ion-item class="emotion-item" v-for="(emotion, index) in emotions" :key="index" @click="goToDiary">
+            <ion-item class="emotion-item" v-for="(emotion, index) in emotions" :key="index" @click="goToDiaryEmotion(emotion)">
               <ion-label class="emotion-title">
                 <span>{{ index + 1 }}. {{ emotion.name }}</span>
               </ion-label>
@@ -108,7 +109,7 @@
       <!--  emotionsList 부분 start  -->
       <div class="topEmotions-list-wrapper">
         <ion-label class="topEmotions-question" color="dark">
-          이번 달 (닉네임)가 가장 많이 선택한 감정은?
+          이번 달 ({{nickname}})가 가장 많이 선택한 감정은?
         </ion-label>
         <ion-list class="topEmotions-list" lines="none">
           <ion-item class="topEmotions-item" v-for="(emotion, index) in topEmotions" :key="index">
@@ -134,12 +135,27 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, watch } from "vue";
+import {defineComponent, ref, onMounted, watch, computed} from "vue";
 import axios from 'axios';
 import { useStore } from 'vuex';
 import EmotionChart from "@/components/EmotionChart.vue";
 import BaseBottomBar from '@/components/common/BaseBottomBar.vue';
-import {IonPage, IonHeader,IonCard, IonModal, IonImg, IonList, IonItem ,IonContent, IonCardTitle ,IonCardHeader, IonButton, IonDatetime,IonToolbar} from "@ionic/vue";
+import {
+  IonPage,
+  IonHeader,
+  IonCard,
+  IonModal,
+  IonImg,
+  IonList,
+  IonItem,
+  IonContent,
+  IonCardTitle,
+  IonCardHeader,
+  IonButton,
+  IonDatetime,
+  IonToolbar,
+  onIonViewWillEnter
+} from "@ionic/vue";
 import {useRouter} from "vue-router";
 import {IonFooter} from "@ionic/vue";
 import {EmotionTag} from "@/store";
@@ -174,7 +190,9 @@ export default defineComponent({
     const topEmotions = ref<(EmotionTag & { count: number })[]>([]);
     const eventData = ref([] as { name: string; count: number; color: string }[]); // 이벤트 데이터를 저장할 상태
     const originalSelectedDate = ref(tempSelectedDate.value);
-    const nickname = ref("홍길동");
+    const nickname = computed(
+        () => store.state.name
+    )
 
     const showDateModal = () => {
       if(dateModal.value){
@@ -261,7 +279,7 @@ export default defineComponent({
 
         // 최종적으로 상위 N개의 감정을 추출
         const topNEmotions = sortedEmotions.slice(0, 3); // 상위 3개만 추출 (필요에 따라 조정 가능)
-
+        console.log(sortedEmotions)
         emotions.value = sortedEmotions;
         topEmotions.value = topNEmotions as (EmotionTag & { count: number })[]; // 최종 상위 N개만 저장
       } catch (error) {
@@ -272,7 +290,7 @@ export default defineComponent({
     const fetchEvents = async () => {
       try {
         const yearMonth = `${selectedYear.value}-${selectedMonth.value}`;
-        const response = await axios.get('http://192.168.0.154:8092/api/v1/statistics/event', {
+        const response = await apiClient.get('/api/diary/statistics/event', {
           params: {
             yearMonth,
             emotionId: selectedEmotionId.value // 선택된 감정의 ID 추가
@@ -295,7 +313,7 @@ export default defineComponent({
       }
     };
 
-    onMounted(() => {
+    onIonViewWillEnter(() => {
       fetchEmotions();
     });
 
@@ -340,8 +358,22 @@ export default defineComponent({
       }
     };
 
-    const goToDiary = () => {
-      router.push('');
+    const goToDiaryEmotion = (emotion: EmotionTag) => {
+      dismissEmotionsListModal();
+      router.push({ path: '/diary/list', query:
+            { emotionTag: emotion.emotion_tag_no,
+              yearMonth: selectedYear.value + '-' + selectedMonth.value
+            }
+      })
+    };
+
+    const goToDiaryEvent = (event: string) => {
+      dismissEventsListModal();
+      router.push({ path: '/diary/list', query:
+            { eventTagName: event,
+              yearMonth: selectedYear.value + '-' + selectedMonth.value
+            }
+      })
     };
 
     return {
@@ -369,7 +401,8 @@ export default defineComponent({
       handleBubbleClick,
       getEmotionColor, // 감정 색상 가져오기 함수 추가
       topEmotions,
-      goToDiary,
+      goToDiaryEmotion,
+      goToDiaryEvent,
       DoreImg,
     };
   },
@@ -571,7 +604,7 @@ ion-modal#emotions-list-modal, ion-modal#events-list-modal {
 }
 
 .topEmotions-list-wrapper {
-  margin-top: 2vh;
+  margin-top: 0;
   text-align: left;
   padding: 0 1vh;
 }

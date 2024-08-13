@@ -2,7 +2,7 @@
 import { defineComponent, ref } from 'vue'
 import BaseBottomBar from '@/components/common/BaseBottomBar.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
-import {IonPage, IonContent, IonCard, IonFooter} from "@ionic/vue";
+import {IonPage, IonContent, IonCard, IonFooter, onIonViewDidEnter} from "@ionic/vue";
 import SettingModal from "@/components/SettingModal.vue";
 import selectImg from "@/assets/diary/select.png";
 import dotoImg from "@/assets/diary/select_doto.png";
@@ -27,6 +27,7 @@ export default defineComponent({
     };
   },
   setup() {
+
     return {
       selectImg,
       dotoImg,
@@ -37,19 +38,12 @@ export default defineComponent({
 </script>
 
 <template>
-  <ion-page class="custom-page">
+  <ion-page>
+    <BaseHeader></BaseHeader>
     <ion-content scroll-y="false" class="background">
       <div class="content-container">
         <div class="user-container">
-          <!-- 설정 아이콘 -->
-          <div class="setting-container" @click="showModal = true">
-            <ion-img src="/public/select.png" class="setting-img"/>
-          </div>
 
-          <!-- 닉네임 영역 -->
-          <div class="nickname-container">
-            <ion-chip color="medium" style="height: 6vh"><ion-text class="nickname" color="success">{{ nickname }}</ion-text></ion-chip>
-          </div>
         </div>
         <ion-card class="speech-bubble"><ion-card-content class="text">누구랑 일기 쓸래?</ion-card-content></ion-card>
         <div class="img-container">
@@ -62,17 +56,13 @@ export default defineComponent({
         </div>
       </div>
     </ion-content>
-    <ion-footer>
       <BaseBottomBar></BaseBottomBar>
-    </ion-footer>
+    <ModalComponent :isVisible="showModal" @close="showModal = false" />
   </ion-page>
-  <ModalComponent :isVisible="showModal" @close="showModal = false" />
 </template>
 
 <style scoped>
-.custom-page{
-  justify-content: normal;
-}
+
 
 ion-content{
   align-items: center;
@@ -125,6 +115,7 @@ ion-content{
 
 .text {
   flex: 1;
+  font-size: 5vw;
 }
 
 .img-container {

@@ -1,17 +1,30 @@
 <script lang="ts">
-import { defineComponent } from 'vue'
+import {defineComponent, ref} from 'vue'
 import BaseView from '@/components/common/BaseView.vue'
 import BaseBottomBar from '@/components/common/BaseBottomBar.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
-import {IonPage} from "@ionic/vue";
+import {
+  IonPage,
+  modalController,
+  onIonViewWillEnter,
+  onIonViewWillLeave,
+  useBackButton,
+  useIonRouter
+} from "@ionic/vue";
 import ModalComponent from "@/components/SettingModal.vue";
 import selectImg from "@/assets/diary/select.png"
 import dotoImg from "@/assets/diary/doto-diary-finish.png";
 import doreImg from "@/assets/diary/dore-diary-finish.png";
+import BaseHeader from "@/components/common/BaseHeader.vue";
+import { App } from '@capacitor/app'
+import apiClient from "@/axios";
+import DiaryDetail from "@/components/diary/DiaryDetail.vue";
+import {Diary} from "@/views/diary/DiaryList.vue";
 
 export default defineComponent({
   name: 'SelectCharacter',
   components: {
+    BaseHeader,
     'ion-page':IonPage,
     'BaseButton': BaseButton,
     'BaseBottomBar': BaseBottomBar,
@@ -23,24 +36,68 @@ export default defineComponent({
       showModal: false,
       selectImg, dotoImg, doreImg
     }
+  },
+  setup() {
+
+    const diary = ref<Diary[]>([])
+
+
+    async function onDateClick() {
+
+      const date = new Date();
+
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
+      const day = String(date.getDate()).padStart(2, '0'); // 일자
+
+      const formattedDate = `${year}-${month}-${day}`;
+
+      const response = await apiClient.get<Diary[]>('/api/diary/diary', {
+        params: {
+          startDate: formattedDate,
+          endDate: formattedDate,
+          orderByDesc: true,
+        }
+      });
+
+      if (response.data) {
+        diary.value = response.data
+        const modal = await modalController.create({
+          component: DiaryDetail,
+          componentProps: {
+            diary: diary.value[0]
+          },
+          cssClass: 'diary-modal'
+        });
+        modal.present();
+      }
+
+    }
+
+    const router = useIonRouter();
+    const handleBackButton = () => {
+      // 뒤로가기 버튼을 누르면 홈 페이지로 이동
+      router.replace({ path: '/home' });
+    };
+
+    useBackButton(10, (processNextHandler) => {
+      handleBackButton();
+    });
+
+    return {
+      handleBackButton, onDateClick
+    };
   }
 })
 </script>
 
 <template>
   <ion-page class="custom-page">
+    <BaseHeader></BaseHeader>
     <ion-content scroll-y="false" class="background">
       <div class="content-container">
         <div class="user-container">
-          <!-- 설정 아이콘 -->
-          <div class="setting-container" @click="showModal = true">
-            <ion-img :src="selectImg" class="setting-img"/>
-          </div>
 
-          <!-- 닉네임 영역 -->
-          <div class="nickname-container">
-            <ion-chip color="medium"><ion-text class="nickname" color="success">{{ nickname }}</ion-text></ion-chip>
-          </div>
         </div>
 
 
@@ -50,16 +107,13 @@ export default defineComponent({
           <ion-img class="img" :src="doreImg" alt="도레 이미지" />
         </div>
         <div class="btn-wrap">
-          <BaseButton class="diary-finish-btn" @click="$router.push({path: '/diary/list'})">타임라인</BaseButton>
-          <BaseButton class="diary-finish-btn" @click="$router.push({path: '/createDiary', query: { character: 'dore' }})">일기보기</BaseButton>
+          <BaseButton class="diary-finish-btn" @click="$router.replace({path: '/diary/list'})">타임라인</BaseButton>
+          <BaseButton class="diary-finish-btn" @click="onDateClick">일기보기</BaseButton>
         </div>
       </div>
     </ion-content>
-    <ion-footer>
       <BaseBottomBar></BaseBottomBar>
-    </ion-footer>
   </ion-page>
-  <ModalComponent :isVisible="showModal" @close="showModal = false" />
 </template>
 
 <style scoped>

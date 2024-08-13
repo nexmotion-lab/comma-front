@@ -5,7 +5,8 @@ import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
 import 'swiper/css'
 import BaseButton from '@/components/common/BaseButton.vue'
 import 'vue-router/dist/vue-router'
-import {IonPage} from "@ionic/vue";
+import {IonPage, onIonViewWillEnter} from "@ionic/vue";
+import apiClient from "@/axios";
 
 interface CenterInfo {
   psy_center_no: number
@@ -38,16 +39,15 @@ export default defineComponent({
       activeSlideIndex.value = swiper.realIndex
     }
 
-    onMounted(async () => {
+    onIonViewWillEnter(async () => {
       try {
-        const response = await axios.get<CenterInfo[]>(
-            'http://192.168.0.154:8086/api/v1/psycenter/'
+        const response = await apiClient.get<CenterInfo[]>(
+            '/api/psy/psycenter/'
         )
         centerInfo.value = response.data // API 응답을 직접 할당
         console.log(centerInfo.value)
       } catch (error) {
         console.error('Failed to fetch center info:', error)
-        alert('Failed to fetch center info' + error)
       }
     })
 
@@ -80,7 +80,6 @@ export default defineComponent({
     <ion-content :scroll-y="false">
       <!-- centerInfo start -->
       <div v-if="centerInfo.length === 0">
-        <h2>정보가 없습니다.</h2>
       </div>
       <div class="mm">
         <swiper :options="swiperOptions" @slideChange="onSlideChange">

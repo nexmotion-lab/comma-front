@@ -1,25 +1,26 @@
 import axios from "axios";
-import { alertController } from "@ionic/vue";
+import {alertController, useIonRouter} from "@ionic/vue";
 import {Preferences} from "@capacitor/preferences";
+
 
 const apiClient = axios.create({
     baseURL: 'https://www.comma-coders.com:8998',
     timeout: 10000,
-    withCredentials: true
+    withCredentials: false
 })
 
-async function setTokens(accessToken, refreshToken) {
+export async function setTokens(accessToken, refreshToken) {
     await Preferences.set({key: 'access_token', value: accessToken})
     await Preferences.set({key: 'refresh_token', value: refreshToken})
     console.log(`엑세스토큰: ${accessToken}, 리프레시토큰: ${refreshToken}`);
 }
 
-async function getAccessToken() {
-    const { value } = await Preferences.get({key: 'access_token '})
+export async function getAccessToken() {
+    const { value } = await Preferences.get({key: 'access_token'})
     return value;
 }
 
-async function getRefreshToken() {
+export async function getRefreshToken() {
     const { value } = await Preferences.get({key: 'refresh_token'})
     return value;
 }
@@ -35,19 +36,31 @@ async function showAlert(header, message) {
     await alert.present();
 }
 
-apiClient.interceptors.request.use(async config => {
-    let token = await getAccessToken();
-    let tokenName = "accessToken";
+export async function isLogin() {
+    console.log("첫 로그인 로직 시작")
+    const accessToken = await getAccessToken();
+    const refreshToken = await getRefreshToken();
+    console.log("엑세스토큰, 리프레시토큰", accessToken, refreshToken)
+    if (!accessToken && !refreshToken) {
+        return false;
+    }
+    return (!isTokenExpired(accessToken) || !isTokenExpired(refreshToken));
+}
 
-    if (token && isTokenExpired(token)) {
+apiClient.interceptors.request.use(async config => {
+    console.log("axios request 로직 시작")
+
+    let token = await getAccessToken();
+
+    if (isTokenExpired(token)) {
         token = await getRefreshToken();
-        tokenName = 'refreshToken';
+        console.log("axios 리프레시 토큰")
     }
 
     if (token) {
-        config.headers['Cookie'] = `${tokenName}=${token}`;
+        config.headers['Authorization'] = `Bearer ${token}`;
     }
-    console.log(`쿠키 보냈음 ${tokenName} ${token}`)
+
     return config;
 }, error => {
     return Promise.reject(error);
@@ -60,7 +73,11 @@ function parseJwt(token) {
     return JSON.parse(window.atob(base64));
 }
 
-function isTokenExpired(token) {
+function isTokenExpired(token: string) {
+    console.log("넘어온 토큰", token)
+    if (!token) {
+        return true;
+    }
     const decoded = parseJwt(token);
     if (!decoded || !decoded.exp) return true;
     return (decoded.exp * 1000) < Date.now();
@@ -68,27 +85,47 @@ function isTokenExpired(token) {
 
 apiClient.interceptors.response.use(
     async response => {
-        const setCookieHeader = response.headers['Set-Cookie'];
+        const authorizationHeader = response.headers['authorization'];
 
-        if (setCookieHeader) {
+        console.log(response.headers, "헤더값");
+
+        if (authorizationHeader) {
             let newAccessToken = '';
             let newRefreshToken = '';
 
-            setCookieHeader.forEach((cookie: string) => {
-                if (cookie.includes('accessToken')) {
-                    newAccessToken = cookie.split('=')[1].split(';')[0];
-                    console.log(`add accesstoken ${newAccessToken}`)
-                }
-                if (cookie.includes('refreshToken')) {
-                    newRefreshToken = cookie.split('=')[1].split(';')[0];
-                    console.log(`add refreshtoken ${newRefreshToken}`)
+            const tokens = authorizationHeader.split(',');
 
+            tokens.forEach((token: string) => {
+                token = token.trim();
+
+                // Access Token 처리 (Bearer로 시작하는 토큰)
+                if (token.startsWith('Bearer ')) {
+                    const jwtToken = token.replace('Bearer ', '').trim();
+                    const decodedToken = parseJwt(jwtToken);
+
+                    if (decodedToken && decodedToken.sub === 'AccessToken') {
+                        newAccessToken = jwtToken;
+                        console.log(`add accesstoken ${newAccessToken}`);
+                    }
+                }
+                // Refresh Token 처리 (Bearer 없이 그냥 오는 토큰)
+                else {
+                    const jwtToken = token.trim();
+                    const decodedToken = parseJwt(jwtToken);
+
+                    if (decodedToken && decodedToken.sub === 'RefreshToken') {
+                        newRefreshToken = jwtToken;
+                        console.log(`add refreshtoken ${newRefreshToken}`);
+                    }
                 }
             });
+
+            // 토큰이 모두 있는 경우 저장
             if (newAccessToken && newRefreshToken) {
                 await setTokens(newAccessToken, newRefreshToken);
             }
         }
+
         return response;
     },
     error => {
@@ -99,7 +136,8 @@ apiClient.interceptors.response.use(
             if (errorData.errorCode) {
                 handleGlobalError(errorData.errorCode, errorData.detail);
             } else {
-                showAlert(status, errorData.detail);
+                showAlert(status, errorData.message);
+                console.log(error)
             }
 
         } else {

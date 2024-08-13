@@ -11,15 +11,16 @@ import {
   IonAvatar,
   IonChip,
   IonModal,
-  IonDatetime, IonButton, IonInput
+  IonDatetime, IonButton, IonInput, onIonViewWillEnter, useIonRouter
 } from "@ionic/vue";
 import {onMounted, ref, watch} from "vue";
 import { calendarNumberOutline } from "ionicons/icons";
 import store from "@/store";
 import apiClient from "@/axios";
-import router from "@/router";
 import {useStore} from "vuex";
 
+
+const router = useIonRouter()
 const isOpen = ref(false);
 const selectedSegment = ref('');
 const selectedDate = ref('');
@@ -60,22 +61,24 @@ async function startProcess() {
     openPopover('name');
   } else if (!selectedDate.value) {
     openPopover('date');
-  } try {
-    const response = await apiClient.post('/account/info', {}, {
-      params: {
-        nickname: name.value,
-        birthdate: selectedDate.value,
-        gender: selectedSegment.value.toUpperCase()
-      }
-    });
+  } else {
+    try {
+      const response = await apiClient.post('/api/account/info', {}, {
+        params: {
+          nickname: name.value,
+          birthdate: selectedDate.value,
+          gender: selectedSegment.value.toUpperCase()
+        }
+      });
 
-    if (response.status === 200) {
-      res
-      router.push({path: "/firstLogin"})
+      if (response.status === 200) {
+        router.replace({path: "/firstLogin"})
+      }
+    } catch (error) {
+      console.log(error);
     }
-  } catch (error) {
-    console.log(error);
   }
+
 }
 
 watch(name, (newValue) => {
@@ -91,11 +94,21 @@ watch(selectedDate, (newDate) => {
 })
 
 
-onMounted(async () => {
+onIonViewWillEnter(async () => {
 
-  selectedSegment.value = useStore().state.name
-  selectedDate.value = useStore().state.birthday
-  name.value = useStore().state.name
+  try {
+    const response = await apiClient.get('/api/account/info', {});
+
+    if (response.data) {
+      selectedSegment.value = response.data.gender.toLowerCase();
+      selectedDate.value = response.data.birthdate;
+      name.value = response.data.nickname;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+
+
 });
 </script>
 
@@ -125,7 +138,7 @@ onMounted(async () => {
             </ion-segment-button>
           </ion-segment>
           <ion-input v-model="name" :class="inputClass" label="닉네임 입력" label-placement="stacked" fill="outline" :clear-input="true" placeholder="이름"
-                     helper-text="실명 사용을 추천합니다." counter="true" maxlength="20" class="input-name"></ion-input>
+                     helper-text="실명 사용을 추천합니다." counter="true" maxlength="12" class="input-name"></ion-input>
           <ion-chip :class="dateClass" outline="true" id="datetime-modal" @click="setOpen(true)" class="date-chip">
             <ion-avatar class="calendar-avatar">
               <ion-icon :icon="calendarNumberOutline" class="calendar-icon"></ion-icon>
@@ -133,7 +146,7 @@ onMounted(async () => {
             <ion-label>출생년도 : &nbsp;&nbsp;&nbsp;&nbsp;{{ selectedDate }}</ion-label>
           </ion-chip>
           <ion-modal :is-open="isOpen" @willDismiss="setOpen(false)" id="example-modal">
-            <ion-datetime presentation="date" :prefer-wheel="true" @ionChange="handleDateChange" :value="selectedDate"></ion-datetime>
+            <ion-datetime locale="ko-KR" presentation="date" :prefer-wheel="true" @ionChange="handleDateChange" :value="selectedDate"></ion-datetime>
           </ion-modal>
           <ion-button class="start-button" @click="startProcess">시작하기</ion-button>
 

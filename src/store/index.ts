@@ -16,12 +16,15 @@ export interface EventTag {
 }
 
 interface State {
+    alarmPermission: boolean;
+    bgmPlaying: boolean;
     name: string;
     gender: string;
     birthday: string;
     emotionTags: EmotionTag[];
     diary: Diary
     diaryChar: string
+    isDiaryWrite: boolean
 }
 
 interface Diary {
@@ -33,9 +36,11 @@ interface Diary {
 
 export default new Vuex.Store<State>({
     state: {
+        alarmPermission: false,
+        bgmPlaying: false,
         name: '',
         gender: '',
-        birthday: '2004-04-27',
+        birthday: '',
         diary: {
           selectedEmotionTags: [],
             selectedEventTags: [],
@@ -49,6 +54,7 @@ export default new Vuex.Store<State>({
             },
         },
         diaryChar: '',
+        isDiaryWrite: false,
         emotionTags: [
             { xvalue: -1, yvalue: 4, emotion_tag_no: 1, name: '충격받은', color: '#F04F3D' },
             { xvalue: -1, yvalue: 3, emotion_tag_no: 2, name: '두려운', color: '#F26757' },
@@ -113,23 +119,23 @@ export default new Vuex.Store<State>({
             { xvalue: 1, yvalue: -4, emotion_tag_no: 61, name: '편안한', color: '#88BB56' },
             { xvalue: 1, yvalue: -3, emotion_tag_no: 62, name: '편한', color: '#92BE67' },
             { xvalue: 1, yvalue: -2, emotion_tag_no: 63, name: '홀가분한', color: '#A0C57C' },
-            { xvalue: 1, yvalue: -1, emotion_tag_no: 64, name: '무기력한', color: '#A4C385' },
-            { xvalue: 2, yvalue: -4, emotion_tag_no: 65, name: '따뜻한', color: '#8EC63E' },
-            { xvalue: 2, yvalue: -3, emotion_tag_no: 66, name: '안정된', color: '#97D045' },
-            { xvalue: 2, yvalue: -2, emotion_tag_no: 67, name: '차분한', color: '#99C659' },
-            { xvalue: 2, yvalue: -1, emotion_tag_no: 68, name: '평화로운', color: '#A1C66C' },
-            { xvalue: 3, yvalue: -4, emotion_tag_no: 69, name: '신뢰하는', color: '#2DAC47' },
-            { xvalue: 3, yvalue: -3, emotion_tag_no: 70, name: '고요한', color: '#3FB357' },
-            { xvalue: 3, yvalue: -2, emotion_tag_no: 71, name: '뿌듯한', color: '#4EB964' },
-            { xvalue: 3, yvalue: -1, emotion_tag_no: 72, name: '차가운', color: '#6CB47B' },
-            { xvalue: 4, yvalue: -4, emotion_tag_no: 73, name: '가벼운', color: '#009D48' },
-            { xvalue: 4, yvalue: -3, emotion_tag_no: 74, name: '정적인', color: '#1E9D58' },
-            { xvalue: 4, yvalue: -2, emotion_tag_no: 75, name: '평온한', color: '#389864' },
-            { xvalue: 4, yvalue: -1, emotion_tag_no: 76, name: '보송보송한', color: '#4C9D71' },
-            { xvalue: 5, yvalue: -4, emotion_tag_no: 77, name: '몽롱한', color: '#377C46' },
-            { xvalue: 5, yvalue: -3, emotion_tag_no: 78, name: '만족스러운', color: '#4D8258' },
-            { xvalue: 5, yvalue: -2, emotion_tag_no: 79, name: '기대지않은', color: '#4D7D58' },
-            { xvalue: 5, yvalue: -1, emotion_tag_no: 80, name: '덜렁이는', color: '#577F60' }
+            { xvalue: 1, yvalue: -1, emotion_tag_no: 64, name: '괜찮은', color: '#A4C385' },
+            { xvalue: 2, yvalue: -4, emotion_tag_no: 65, name: '나른한', color: '#8EC63E' },
+            { xvalue: 2, yvalue: -3, emotion_tag_no: 66, name: '한가로운', color: '#97D045' },
+            { xvalue: 2, yvalue: -2, emotion_tag_no: 67, name: '여유로운', color: '#99C659' },
+            { xvalue: 2, yvalue: -1, emotion_tag_no: 68, name: '후련한', color: '#A1C66C' },
+            { xvalue: 3, yvalue: -4, emotion_tag_no: 69, name: '몽롱한', color: '#2DAC47' },
+            { xvalue: 3, yvalue: -3, emotion_tag_no: 70, name: '차분한', color: '#3FB357' },
+            { xvalue: 3, yvalue: -2, emotion_tag_no: 71, name: '안정적인', color: '#4EB964' },
+            { xvalue: 3, yvalue: -1, emotion_tag_no: 72, name: '느긋한', color: '#6CB47B' },
+            { xvalue: 4, yvalue: -4, emotion_tag_no: 73, name: '평화로운', color: '#009D48' },
+            { xvalue: 4, yvalue: -3, emotion_tag_no: 74, name: '잔잔한', color: '#1E9D58' },
+            { xvalue: 4, yvalue: -2, emotion_tag_no: 75, name: '감사하는', color: '#389864' },
+            { xvalue: 4, yvalue: -1, emotion_tag_no: 76, name: '만족스러운', color: '#4C9D71' },
+            { xvalue: 5, yvalue: -4, emotion_tag_no: 77, name: '침착한', color: '#377C46' },
+            { xvalue: 5, yvalue: -3, emotion_tag_no: 78, name: '안심되는', color: '#4D8258' },
+            { xvalue: 5, yvalue: -2, emotion_tag_no: 79, name: '감동받은', color: '#4D7D58' },
+            { xvalue: 5, yvalue: -1, emotion_tag_no: 80, name: '사랑하는', color: '#577F60' }
         ] as EmotionTag[]
     },
     mutations: {
@@ -164,6 +170,29 @@ export default new Vuex.Store<State>({
         },
         SET_DIARYCHAR(state, character) {
             state.diaryChar = character;
+        },
+        RESET_DIARY(state) {
+            state.diary = {
+                selectedEmotionTags: [],
+                selectedEventTags: [],
+                content: '',
+                coreEmotionTag: {
+                    xvalue: 0,
+                    yvalue: 0,
+                    emotion_tag_no: 0,
+                    name: '',
+                    color: ''
+                }
+            }
+        },
+        SET_IS_DIARY_WRITE(state, value: boolean) {
+            state.isDiaryWrite = value;
+        },
+        SET_ALARM_PERMISSION(state, value: boolean) {
+            state.alarmPermission = value;
+        },
+        SET_BGM_PLAYING(state, value: boolean) {
+            state.bgmPlaying = value;
         },
     },
     actions: {
@@ -222,6 +251,18 @@ export default new Vuex.Store<State>({
         },
         setDiaryChar({commit}, character) {
             commit('SET_DIARYCHAR', character)
+        },
+        resetDiary({ commit }) {
+            commit('RESET_DIARY');
+        },
+        setIsDiaryWrite({commit}, value) {
+            commit('SET_IS_DIARY_WRITE', value);
+        },
+        setAlarmPermission({commit}, value) {
+            commit('SET_ALARM_PERMISSION', value);
+        },
+        setBgmPlaying({commit}, value) {
+            commit('SET_BGM_PLAYING', value);
         },
     },
     getters: {

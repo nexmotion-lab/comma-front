@@ -3,7 +3,19 @@
 import DiaryInformation from "@/components/diary/DiaryInformation.vue";
 import {ref, computed, onMounted} from "vue";
 import { EmotionTag } from "@/store"
-import {IonPage, IonCard, IonCardContent, IonCardHeader, IonGrid, IonRow, IonCol, IonChip, alertController, IonButton} from "@ionic/vue";
+import {
+  IonPage,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonChip,
+  alertController,
+  IonButton,
+  onIonViewWillEnter
+} from "@ionic/vue";
 import { useStore } from "vuex";
 import router from "@/router";
 import {selectTab} from "@/utils/tabs";
@@ -52,7 +64,7 @@ const toggleTag = async (tag: EmotionTag) => {
   }
 };
 
-onMounted(() => {
+onIonViewWillEnter(() => {
   requestAnimationFrame(() => {
     const element = document.querySelector(".emotion-grid-container");
     if (element) {
@@ -129,7 +141,6 @@ const chipStyle = (tag : EmotionTag) => {
 }
 
 .button-container {
-  padding-top: 3.2vh;
   display: flex;
   justify-content: space-between;
 

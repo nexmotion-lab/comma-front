@@ -15,11 +15,12 @@ import {
 } from "@ionic/vue";
 import {useStore} from "vuex";
 import {EmotionTag} from "@/store";
-import router from "@/router";
+import {useIonRouter} from "@ionic/vue";
 import {selectTab} from "@/utils/tabs";
 import apiClient from "@/axios";
 
 const store = useStore();
+const router = useIonRouter();
 
 const text = ref("선택한 감정중 어떤 감정이\n제일 기억에 남아?");
 
@@ -68,21 +69,23 @@ const createDiary = async () => {
     return;
   }
 
-  const response = await apiClient.post('/api/v1/diary', {
+  const response = await apiClient.post('/api/diary/diary', {
     content: diary.value.content,
     coreEmotionTagId : diary.value.coreEmotionTag.emotion_tag_no,
     eventTagIds: diary.value.selectedEventTags.map(tag => tag.eventTagNo),
     emotionTagIds: diary.value.selectedEmotionTags.map(tag => tag.emotion_tag_no)
   }, {
-    headers: {
-      'X-User-Id': '4',
-    }
+
+
   });
 
   if (response.status === 200) {
-    router.push("/diary/finish")
+    await store.dispatch("setIsDiaryWrite", true);
+    router.replace("/diary/finish")
   }
 }
+
+
 
 </script>
 

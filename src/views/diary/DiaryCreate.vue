@@ -1,9 +1,21 @@
 <script setup lang="ts">
-import {IonRouterOutlet, IonPage, IonCard, IonLabel, IonTabs, IonTabBar, IonTabButton, IonChip, IonContent} from "@ionic/vue";
+import {
+  IonRouterOutlet,
+  IonPage,
+  IonCard,
+  IonLabel,
+  IonTabs,
+  IonTabBar,
+  IonTabButton,
+  IonChip,
+  IonContent,
+  onIonViewWillEnter, onIonViewWillLeave
+} from "@ionic/vue";
 import {computed, ref, watch} from "vue";
 import {selectedTab, selectTab } from "@/utils/tabs";
 import {useStore} from "vuex";
-import {useRoute} from "vue-router";
+import {onBeforeRouteLeave, useRoute} from "vue-router";
+import BaseBottomBar from "@/components/common/BaseBottomBar.vue";
 
 const store = useStore();
 const route = useRoute()
@@ -28,13 +40,37 @@ const isSetCoreEmotionTag = computed(() => {
   return store.state.diary.selectedEmotionTags.length >= 1;
 })
 
-const character = route.query.character;
-store.dispatch('setDiaryChar', character);
+onIonViewWillEnter(() => {
+  const character = route.query.character;
+  store.dispatch('setDiaryChar', character);
+})
+
+onIonViewWillLeave(() => {
+  store.dispatch('resetDiary');
+
+})
+
+onBeforeRouteLeave((to, from, next) => {
+
+  if (store.state.isDiaryWrite) {
+    // 플래그 초기화
+    store.dispatch('setIsDiaryWrite', false);
+    next();
+    return;
+  }
+
+  const answer = window.confirm('정말로 이 페이지를 떠나시겠습니까? 변경 사항이 저장되지 않을 수 있습니다.');
+  if (answer) {
+    next(); // 사용자가 확인을 누르면 라우팅을 계속 진행
+  } else {
+    next(false); // 사용자가 취소를 누르면 라우팅을 취소
+  }
+});
 
 </script>
 
 <template>
-  <ion-page>
+  <ion-page >
     <ion-content scroll-y="false">
       <ion-card class="date-card">
         {{ date }}
@@ -77,6 +113,7 @@ store.dispatch('setDiaryChar', character);
           </ion-tab-bar>
         </ion-tabs>
       </ion-card>
+      <BaseBottomBar></BaseBottomBar>
     </ion-content>
   </ion-page>
 </template>

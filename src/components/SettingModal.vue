@@ -8,9 +8,9 @@
         <h2 class="modal-header">설정</h2>
         <div class="modal-body">
           <div class="setting-item">
-            <span>효과음</span>
-            <div class="switch" @click="effectsSound = !effectsSound">
-              <input type="checkbox" v-model="effectsSound" />
+            <span>알림</span>
+            <div class="switch" @click="alarmSetUp()">
+              <input type="checkbox" v-model="alarmPermission" />
               <span class="slider"></span>
             </div>
           </div>
@@ -24,12 +24,9 @@
         </div>
         <div class="modal-footer">
           <button
-              class="footer-button"
-              :class="{ linked: isLinked }"
-              @click="!isLinked && (showAccountLinking = true)"
-              :disabled="isLinked"
-          >
-            {{ isLinked ? '연동 완료' : '계정연동' }}
+              @click="logoutBtn()"
+              class="footer-button">
+            로그아웃
           </button>
           <button class="footer-button" @click="showAppInfo = true">앱 정보</button>
           <button class="footer-button" @click="showNameChange = true">이름 변경</button>
@@ -75,7 +72,7 @@
         </div>
         <h2 class="modal-header">닉네임 변경</h2>
         <div class="modal-body">
-          <input type="text" v-model="newNickname" placeholder="한글 2-6자, 영어 12자 이내" />
+          <input type="text" v-model="newNickname" maxlength="12" />
         </div>
         <div class="modal-footer">
           <button class="footer-button" @click="changeNickname">결정</button>
@@ -87,10 +84,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import {modalController} from "@ionic/vue"
+import {computed, defineComponent} from 'vue';
+import {alertController, IonModal, modalController, useIonRouter} from "@ionic/vue"
+import {useStore} from "vuex";
+import store from "@/store";
+import apiClient from "@/axios";
+import {LocalNotifications} from "@capacitor/local-notifications";
+import {Preferences} from "@capacitor/preferences";
 
 export default defineComponent({
+  components: { IonModal, modalController },
   name: 'ModalComponent',
   props: {
     isVisible: {
@@ -100,18 +103,129 @@ export default defineComponent({
   },
   data() {
     return {
-      effectsSound: true,
-      bgmSound: false,
+      alarmPermission: computed({
+        get: () => store.state.alarmPermission,
+        set: (value) => store.commit('SET_ALARM_PERMISSION', value),
+      }),
+      bgmSound: computed({
+        get: () => store.state.bgmPlaying,
+        set: (value) => store.commit('SET_BGM_PLAYING', value),
+      }),
       showAccountLinking: false,
       showNameChange: false,
       showAppInfo: false,
       studentId: '',
       password: '',
       isLinked: false,
-      newNickname: '',
+      newNickname: store.state.name,
     };
   },
+  setup() {
+    const store = useStore();
+    const router = useIonRouter();
+    return {
+      store, router
+    }
+  },
   methods: {
+
+    async logoutBtn() {
+      const alert = await alertController.create({
+        header: '로그아웃',
+        message: '로그아웃 하시겠습니까?',
+        buttons: [
+          {
+            text: '취소',
+            role: 'cancel',
+          },
+          {
+            text: '확인',
+            handler: () => {
+              this.closeSettingModal();
+              this.logout();
+            }
+          }
+        ],
+        cssClass: 'my-custom-alert-class'
+      });
+      await alert.present();
+    },
+
+    async logout() {
+      await Preferences.clear();
+      this.router.replace({path: '/login'});
+
+    },
+
+    async alarmSetUp() {
+      if (this.alarmPermission) {
+        const pending = await LocalNotifications.getPending();
+
+        if (pending.notifications.length > 0) {
+          await LocalNotifications.cancel({notifications: pending.notifications});
+        }
+
+        this.alarmPermission = false;
+      } else {
+        this.alarmPermission = true;
+
+        if ((await LocalNotifications.checkPermissions()).display !== 'granted') {
+          const permission = await LocalNotifications.requestPermissions();
+          if (permission.display !== 'granted') {
+            this.alarmPermission = false;
+            return;
+          }
+        }
+
+        await LocalNotifications.schedule({
+          notifications: [
+            {
+              id: 1,
+              title: '감정일기',
+              body: '오늘 하루는 어땠어? 가',
+              schedule: {
+                every: 'day',
+                at: new Date(new Date().setHours(22, 0, 0, 0)), // 저녁 10시
+                allowWhileIdle: true,
+              },
+              sound: undefined
+            },
+            {
+              id: 2,
+              title: '생일 축하 알림',
+              body: '생일을 축하드립니다!',
+              schedule: {
+                repeats: true,
+                on: {
+                  month: parseInt(store.state.birthday.split('-')[1], 10), // 월
+                  day: parseInt(store.state.birthday.split('-')[2], 10), // 일
+                  hour: 10,
+                },
+                allowWhileIdle: true,
+              },
+              sound: undefined
+            },
+            {
+              id: 3,
+              title: '매월 1일 알림',
+              body: '이것은 매월 1일에 오는 알림입니다.',
+              schedule: {
+                repeats: true,
+                on: {
+                  day: 1,
+                },
+                allowWhileIdle: true,
+              },
+              sound: undefined
+            },
+          ],
+        });
+        console.log('New notifications scheduled');
+        console.log((await LocalNotifications.getPending()).notifications)
+      }
+    }
+
+    ,
 
     closeSettingModal() {
       modalController.dismiss(null, 'cancel');
@@ -125,14 +239,42 @@ export default defineComponent({
         alert("모든 필드를 입력해주세요.");
       }
     },
-    changeNickname() {
-      if (this.newNickname) {
-        // 여기에 닉네임 변경 로직 추가
-        alert(`닉네임이 ${this.newNickname}로 변경되었습니다.`);
-        this.newNickname = "";
+    async changeNickname() {
+      if (this.newNickname != store.state.name) {
+        console.log(this.newNickname)
+
+        try {
+          const response = await apiClient.post('/api/account/name', {}, {
+            params: {
+              nickname: this.newNickname
+            }
+          });
+
+          if (response.data) {
+            store.dispatch('setUser', response.data)
+            console.log(response.data)
+            const message = `닉네임이 ${this.newNickname}로 변경되었습니다.`;
+            const alert = await alertController.create({
+              header: '설정',
+              message: message,
+              buttons: ['확인'],
+              cssClass: 'my-custom-alert-class'
+            });
+            await alert.present();
+          }
+        } catch (error) {
+          console.log(error);
+        }
         this.showNameChange = false;
       } else {
-        alert("닉네임을 입력해주세요.");
+        const message = `닉네임을 변경해주세요.`;
+        const alert = await alertController.create({
+          header: '설정',
+          message: message,
+          buttons: ['확인'],
+          cssClass: 'my-custom-alert-class'
+        });
+        await alert.present();
       }
     }
   }

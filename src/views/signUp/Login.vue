@@ -1,11 +1,12 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { IonPage } from '@ionic/vue'
+import {IonPage, useIonRouter} from '@ionic/vue'
 import { useRouter } from "vue-router";
 
 import {InAppBrowser} from "@awesome-cordova-plugins/in-app-browser";
 import {Preferences} from "@capacitor/preferences";
 import store from "@/store";
+import apiClient, {setTokens} from "@/axios";
 
 
 export default defineComponent({
@@ -14,38 +15,35 @@ export default defineComponent({
     IonPage
   },
   setup() {
-    const router = useRouter();
+    const router = useIonRouter();
 
     const handleSocialLogin = async (event: Event, provider: string) => {
       event.preventDefault();
 
+
+
       const browser = await InAppBrowser.create(`https://www.comma-coders.com:8998/oauth2/authorization/${provider}`)
-      browser.on('loadstop').subscribe(event => {
-
-        const url = new URL(event.url);
-        const params = new URLSearchParams(url.search);
-
-        const name = params.get('name');
-        const birthday = params.get('birthday');
-        const gender = params.get('gender');
-
-        if (name) {
-          store.commit('setName', name);
-        }
-        if (birthday) {
-          store.commit('setBirthday', birthday);
-        }
-        if (gender) {
-          store.commit('setGender', gender);
-        }
-
+      browser.on('loadstop').subscribe(async event => {
 
         if (event.url.startsWith('comma://home')) {
           browser.close()
-          router.push({ name: 'DiaryList' });
+          const response = await apiClient.get('/token/resend/', {withCredentials: true});
+          if (response.data) {
+            console.log("재전송된 토큰",response.data)
+            await setTokens(response.data.accessToken, response.data.refreshToken);
+            console.log("첫 로그인 토큰 저장")
+            router.replace({name: 'Home'});
+          }
+
         } else if (event.url.startsWith('comma://firstLogin')) {
           browser.close()
-          router.push({ name: 'InitMain' });
+          const response = await apiClient.get('/token/resend/', {withCredentials: true});
+          if (response.data) {
+            console.log("재전송된 토큰",response.data)
+            await setTokens(response.data.accessToken, response.data.refreshToken);
+            console.log("첫 로그인 토큰 저장")
+            router.replace({name: 'InitMain'});
+          }
         }
       })
 
@@ -75,8 +73,7 @@ export default defineComponent({
       <button
         @click="handleSocialLogin($event, 'google')"
         class="social-buttons"
-        id="google-connect"
-      >
+        id="google-connect">
         <span>Google 로그인</span>
       </button>
     </div>
@@ -107,7 +104,7 @@ body {
     margin: 15px;
   }
   & .login-title-comma {
-    background: url('src/assets/comma_icon.png') no-repeat center;
+    background: url('../../assets/comma_icon.png') no-repeat center;
     height: 50px;
     background-size: 70px;
     filter: invert(26%) sepia(38%) saturate(7498%) hue-rotate(326deg) brightness(92%) contrast(99%);
@@ -138,7 +135,7 @@ body {
 }
 
 #naver-connect {
-  background: #03c75a url('src/assets/naver_login.png') no-repeat scroll 5px 0 / 50px 50px
+  background: #03c75a url('../../assets/signUp/naver_login.png') no-repeat scroll 5px 0 / 50px 50px
     padding-box border-box;
 }
 
@@ -158,7 +155,7 @@ body {
 }
 
 #google-connect {
-  background: rgb(255, 255, 255) url('src/assets/google_login.png') no-repeat scroll 5px 0px / 50px
+  background: rgb(255, 255, 255) url('../../assets/signUp/google_login.png') no-repeat scroll 5px 0px / 50px
     50px padding-box border-box;
 }
 
@@ -178,7 +175,7 @@ body {
 }
 
 #kakao-connect {
-  background: #fee500 url('src/assets/kakao_login.png') no-repeat scroll 5px 0px / 50px 50px
+  background: #fee500 url('../../assets/signUp/kakao_login.png') no-repeat scroll 5px 0px / 50px 50px
     padding-box border-box;
 }
 

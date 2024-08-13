@@ -89,8 +89,10 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import {IonModal} from "@ionic/vue";
 
 export default defineComponent({
+  components: IonModal,
   name: 'ModalComponent',
   props: {
     isVisible: {

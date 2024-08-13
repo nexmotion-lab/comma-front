@@ -3,9 +3,12 @@
    <ion-content scroll-y="false" style="--background: var(--background-color)">
 
      <div class="user-container">
-       <!-- 설정 아이콘 -->
-       <div class="setting-container" @click="showModal = true">
-         <ion-img src="/public/select.png" class="setting-img"/>
+       <div class="setting-container">
+       <ion-buttons slot="start" class="settings-button">
+         <ion-button @click="openModal" class="settings-button">
+           <ion-icon :icon="settingSharp"></ion-icon>
+         </ion-button>
+       </ion-buttons>
        </div>
 
        <!-- 닉네임 영역 -->
@@ -33,18 +36,33 @@
          </div>
        </div>
        <ion-img class="interaction-img" :src="currentInteraction.imageUrl"></ion-img>
-       <ion-img class="background-img" src="/public/ground.png"></ion-img>
+       <ion-img class="background-img" :src="groundImg"></ion-img>
      </div>
-   </ion-content>
    <BaseBottomBar></BaseBottomBar>
+   </ion-content>
  </ion-page>
-  <ModalComponent :isVisible="showModal" @close="showModal = false" />
+
 </template>
 
 <script lang="ts">
-import { IonPage, IonContent} from '@ionic/vue';
+import {computed, defineComponent} from "vue";
+import {
+  IonPage,
+  IonContent,
+  IonImg,
+  IonText,
+  IonChip,
+  onIonViewWillEnter,
+  IonIcon,
+  IonButton,
+  modalController, IonButtons, useIonRouter
+} from '@ionic/vue';
 import BaseBottomBar from "@/components/common/BaseBottomBar.vue";
 import ModalComponent from '@/components/home/SettingModal.vue';
+import ground from '@/assets/home/ground.png'
+import chart from '@/assets/home/chart.png';
+import calendar from '@/assets/home/callender.png';
+import {settingsSharp} from "ionicons/icons";
 import action1_1 from '@/assets/home/action1-1.png';
 import action2_2 from '@/assets/home/action2-2.png';
 import action3_2 from '@/assets/home/action3-2.png';
@@ -64,11 +82,17 @@ import action16_3 from '@/assets/home/action16-3.png';
 import action17_2 from '@/assets/home/action17-2.png';
 import action18_2 from '@/assets/home/action18-2.png';
 import {ref} from "vue";
+import SettingModal from "@/components/SettingModal.vue";
+import apiClient, {isLogin} from "@/axios";
+import {useStore} from "vuex";
+import {Preferences} from "@capacitor/preferences";
+import {LocalNotifications} from "@capacitor/local-notifications";
 
-interface ListItem{
-  id:number;
+
+interface ListItem {
+  id: number;
   imageUrl: string;
-  routerLink:string;
+  routerLink: string;
 }
 
 interface Interaction {
@@ -77,65 +101,128 @@ interface Interaction {
   text: string;
 }
 
-export default {
-  components: {ModalComponent, BaseBottomBar, IonPage, IonContent},
-  data() {
-    return {
-      showModal: false,
-      nickname: "아아아아아"
-    };
+export default defineComponent({
+  name: 'MyComponent',
+  components: {
+    IonButtons,
+    IonButton,
+    ModalComponent,
+    BaseBottomBar,
+    IonPage,
+    IonContent,
+    IonImg,
+    IonText,
+    IonChip, IonIcon
   },
-  setup() {
+  setup: function () {
+    const router = useIonRouter();
+    const showModal = ref(false);
+    const nickname = computed(
+        () => store.state.name
+    )
+    const groundImg = ground;
+    const settingSharp = settingsSharp;
+    const store = useStore();
+
     const itemList: ListItem[] = [
-      { id: 1, imageUrl: "/public/chart.png", routerLink: "/statichome" },
-      { id: 2, imageUrl: "/public/callender.png", routerLink: "/calendar" }
+      {id: 1, imageUrl: chart, routerLink: "/statistics"},
+      {id: 2, imageUrl: calendar, routerLink: "/calendar"}
     ];
 
     const interactions: Interaction[] = [
-      { id: 1, imageUrl: action1_1, text: "무엇보다 너가 가장 소중한 사실<br>절대 잊지마" },
-      { id: 2, imageUrl: action2_2, text: "슬픔이란 누구나 느낄 수 있는<br>자연스러운 감정이야" },
-      { id: 3, imageUrl: action3_2, text: "너의 약점을 잘 살펴봐.<br>분명 너를 강하게 해줄테니" },
-      { id: 4, imageUrl: action4_2, text: "'어떡하지'보다 '어쩌겠어'로<br>어차피 할 거 기분 좋게<br>해보는거 어때?" },
-      { id: 5, imageUrl: action5_3, text: "오늘도 나는 널<br>사랑해 사랑해 사랑해" },
-      { id: 6, imageUrl: action6_2, text: "너의 웃음 하나에 살아갈 힘을 얻는 사람이 있다는 사실을 잊지마~" },
-      { id: 7, imageUrl: action7_2, text: "잘 살아라, 그게 최고의 복수다.<br>-탈무드-" },
-      { id: 8, imageUrl: action8_2, text: "오래 살아보니 알겠다.<br>꾸준함이 재능이고, 그 꾸준함은<br>좋아하는 마음에서 나온다는 것을.<br>좋아하는 것을 찾으세요.<br>당신은 천재가 됩니다." },
-      { id: 9, imageUrl: action9_2, text: "지각했다고?<br>아니야 세상이 빨랐던거야" },
-      { id: 10, imageUrl: action10_2, text: "또! 너무 과하게 생각하고 있네<br>생각 스탑" },
-      { id: 11, imageUrl: action11_2, text: "너의 약점을 잘 살펴봐.<br>분명 너를 강하게 해줄테니" },
-      { id: 12, imageUrl: action12_2, text: "이젠 나를 좀 더 사랑할거야<br>[버즈 - 나에게로 떠나는 여행]" },
-      { id: 13, imageUrl: action13_1, text: "보고 싶었어!!<br>왜 이제 왔어" },
-      { id: 14, imageUrl: action14_2, text: "삶이 있는 한 희망은 존재한다" },
-      { id: 15, imageUrl: action15_2, text: "혹시 일기 썼어?<br>안 썼으면 같이 쓰러 가자" },
-      { id: 16, imageUrl: action16_3, text: "일기 안 썼으면<br>지금 당장 쓰러 가자!!!" },
-      { id: 17, imageUrl: action17_2, text: "같이 일기 쓰러 가자~~~~" },
-      { id: 18, imageUrl: action18_2, text: "일기 쓰러 가지 않을래?<br>(๑•᎑<๑)ｰ☆" }
+      {id: 1, imageUrl: action1_1, text: "무엇보다 너가 가장 소중한 사실<br>절대 잊지마"},
+      {id: 2, imageUrl: action2_2, text: "슬픔이란 누구나 느낄 수 있는<br>자연스러운 감정이야"},
+      {id: 3, imageUrl: action3_2, text: "너의 약점을 잘 살펴봐.<br>분명 너를 강하게 해줄테니"},
+      {id: 4, imageUrl: action4_2, text: "'어떡하지'보다 '어쩌겠어'로<br>어차피 할 거 기분 좋게<br>해보는거 어때?"},
+      {id: 5, imageUrl: action5_3, text: "오늘도 나는 널<br>사랑해 사랑해 사랑해"},
+      {id: 6, imageUrl: action6_2, text: "너의 웃음 하나에 살아갈 힘을 얻는 사람이 있다는 사실을 잊지마~"},
+      {id: 7, imageUrl: action7_2, text: "잘 살아라, 그게 최고의 복수다.<br>-탈무드-"},
+      {
+        id: 8,
+        imageUrl: action8_2,
+        text: "오래 살아보니 알겠다.<br>꾸준함이 재능이고, 그 꾸준함은<br>좋아하는 마음에서 나온다는 것을.<br>좋아하는 것을 찾으세요.<br>당신은 천재가 됩니다."
+      },
+      {id: 9, imageUrl: action9_2, text: "지각했다고?<br>아니야 세상이 빨랐던거야"},
+      {id: 10, imageUrl: action10_2, text: "또! 너무 과하게 생각하고 있네<br>생각 스탑"},
+      {id: 11, imageUrl: action11_2, text: "너의 약점을 잘 살펴봐.<br>분명 너를 강하게 해줄테니"},
+      {id: 12, imageUrl: action12_2, text: "이젠 나를 좀 더 사랑할거야<br>[버즈 - 나에게로 떠나는 여행]"},
+      {id: 13, imageUrl: action13_1, text: "보고 싶었어!!<br>왜 이제 왔어"},
+      {id: 14, imageUrl: action14_2, text: "삶이 있는 한 희망은 존재한다"},
+      {id: 15, imageUrl: action15_2, text: "혹시 일기 썼어?<br>안 썼으면 같이 쓰러 가자"},
+      {id: 16, imageUrl: action16_3, text: "일기 안 썼으면<br>지금 당장 쓰러 가자!!!"},
+      {id: 17, imageUrl: action17_2, text: "같이 일기 쓰러 가자~~~~"},
+      {id: 18, imageUrl: action18_2, text: "일기 쓰러 가지 않을래?<br>(๑•᎑<๑)ｰ☆"}
     ];
 
+    const currentInteraction = ref<Interaction>({id: 0, imageUrl: '', text: ''});
 
-    const currentInteraction = ref<Interaction>({ id: 0, imageUrl: '', text: '' });
-
-    // 페이지가 생성될 때 랜덤으로 이미지와 텍스트를 선택
     const selectRandomInteraction = () => {
       const randomIndex = Math.floor(Math.random() * interactions.length);
       currentInteraction.value = interactions[randomIndex];
     };
 
-    // 컴포넌트가 생성될 때 랜덤 이미지 설정
-    selectRandomInteraction();
+
+
+    const updateInfo = async () => {
+
+      try {
+        const response = await apiClient.get('/api/account/info', {
+
+        });
+
+        if (response.data) {
+          store.dispatch('setUser', response.data.nickname);
+          store.dispatch('setBirthday', response.data.birthdate);
+          store.dispatch('setGender', response.data.gender.toLowerCase());
+
+        }
+      } catch (error) {
+        console.error(error)
+      }
+
+    }
+
+    onIonViewWillEnter(async () => {
+      if (!await isLogin()) {
+        console.log("라우팅")
+        router.replace({path: '/login'})
+        return
+      }
+      selectRandomInteraction();
+      await updateInfo();
+    });
+
+    const openModal = async () => {
+      const modal = await modalController.create({
+        component: SettingModal,
+        cssClass: 'setting-modal'
+      });
+
+      modal.present();
+
+    };
 
     return {
+      openModal,
+      nickname,
       itemList,
       currentInteraction,
+      groundImg, settingSharp
     };
   }
-}
+});
 </script>
 
 <style scoped>
-.custom-page{
-  justify-content: normal;
+
+.settings-button {
+  --background: rgba(255, 255, 255, 0);
+  --color: #595656;
+  --padding: 0;
+  font-size: 10vw;
 }
+
+
 
 ion-content{
   align-items: center;
@@ -163,7 +250,10 @@ ion-content{
 }
 
 .setting-img{
-  width: auto;
+  --background: rgba(255, 255, 255, 0);
+  --color: #595656;
+  --padding: 0;
+  font-size: 10vw;
 }
 
 .right-navbar {
