@@ -7,6 +7,7 @@ import {  IonModal,IonIcon,IonPage } from '@ionic/vue';
 import {closeOutline} from "ionicons/icons";
 import SamyookLogo from "@/assets/common/sahmyook.png";
 import apiClient from "@/axios";
+import LoadingContent from "@/components/common/LoadingContent.vue";
 
 
 interface PsyTest {
@@ -15,6 +16,7 @@ interface PsyTest {
   content: string
   target: string
   time: string
+  samyook: boolean
 }
 
 interface SelectedTest extends PsyTest {
@@ -34,6 +36,7 @@ export default defineComponent({
     }
   },
   components: {
+    LoadingContent,
     Swiper,
     SwiperSlide,
     IonModal,
@@ -51,6 +54,7 @@ export default defineComponent({
       '대표적인 심리검사는 MBTI입니다',
       '심리검사 종류로는 성격 성향 검사가 있습니다'
     ])
+    const isLoading = ref(true);
 
     const activeSlideIndex = ref(0)
 
@@ -68,6 +72,7 @@ export default defineComponent({
           tests: data[key]
         }))
         activeCategory.value = testCategories.value[0].name
+        isLoading.value = false;
       }catch (error) {
         console.error('Failed to fetch psytest :', error)
         alert('Failed to fetch psytest')
@@ -160,7 +165,8 @@ export default defineComponent({
       fetchPsyTests,
       testCategories,
       activeCategory,
-      SamyookLogo
+      SamyookLogo,
+      isLoading
     }
   },
   data() {
@@ -174,7 +180,8 @@ export default defineComponent({
 <!-- 상담센터 심리검사 페이지 -->
 <template>
   <ion-page>
-    <ion-content :scroll-y="false" :fullscreen="false">
+    <LoadingContent v-show="isLoading"></LoadingContent>
+    <ion-content v-show="!isLoading" :scroll-y="false" :fullscreen="false">
       <!-- 심리검사 모달 버튼  -->
       <div class="info-button">
         <div class="info-icon" @click="openModal1">i</div>
@@ -236,7 +243,9 @@ export default defineComponent({
           </div>
 
           <div v-for="(pair, pairIndex) in getTestPairs(category.tests)" :key="pairIndex" class="test-pair" :data-category="category.name">
-            <div v-for="test in pair" :key="test.psy_test_no" class="test-item" @click="openModal2(test,category.name)">
+            <div v-for="test in pair" :key="test.psy_test_no"
+                 :class="{ 'samyook-active': test.samyook }"
+                 class="test-item" @click="openModal2(test,category.name)">
               <div class="test-title">{{ wrapText(test.title, 5) }}</div>
             </div>
             <div v-if="pair.length === 1" class="test-item-placeholder"></div> <!-- 빈 공간을 위한 요소 추가 -->
@@ -410,6 +419,7 @@ ion-content{
 }
 
 .test-item {
+  position: relative; /* 가상 요소의 기준이 되는 부모 요소 설정 */
   border: 1.6vw solid #548263;
   border-radius: 10px;
   margin: 10px;
@@ -425,8 +435,23 @@ ion-content{
   padding: 1vh;
   white-space: pre-line;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1; /* 다른 내용이 가상 요소 위에 표시되도록 설정 */
 }
 
+.samyook-active::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url("../../assets/common/sahmyook.png");
+  background-size: cover;
+  background-position: center;
+  opacity: 0.2;
+  border-radius: 10px;
+  z-index: -1;
+}
 .test-item-placeholder {
   margin: 10px;
   width: 45%;

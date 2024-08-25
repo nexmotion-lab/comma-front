@@ -16,11 +16,17 @@ import {selectedTab, selectTab } from "@/utils/tabs";
 import {useStore} from "vuex";
 import {onBeforeRouteLeave, useRoute} from "vue-router";
 import BaseBottomBar from "@/components/common/BaseBottomBar.vue";
+import {bgm, diaryBgm} from "@/main";
 
 const store = useStore();
 const route = useRoute()
 const getCurrentDate = () => {
-  const date = new Date();
+  const date = new Date(new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Asia/Seoul',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).format(new Date()));
   const year = date.getFullYear();
   const month = ('0' + (date.getMonth() + 1)).slice(-2);
   const day = ('0' + date.getDate()).slice(-2);
@@ -43,11 +49,19 @@ const isSetCoreEmotionTag = computed(() => {
 onIonViewWillEnter(() => {
   const character = route.query.character;
   store.dispatch('setDiaryChar', character);
+
+  if (store.state.bgmPlaying) {
+    diaryBgm.play();
+    bgm.pause();
+  }
 })
 
 onIonViewWillLeave(() => {
   store.dispatch('resetDiary');
-
+  if (store.state.bgmPlaying) {
+    diaryBgm.pause();
+    bgm.play();
+  }
 })
 
 onBeforeRouteLeave((to, from, next) => {

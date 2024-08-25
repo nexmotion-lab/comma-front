@@ -27,6 +27,7 @@ export default defineComponent({
 
         if (event.url.startsWith('comma://home')) {
           browser.close()
+
           const response = await apiClient.get('/token/resend/', {withCredentials: true});
           if (response.data) {
             console.log("재전송된 토큰",response.data)
@@ -69,12 +70,6 @@ export default defineComponent({
       </button>
       <button @click="handleSocialLogin($event, 'kakao')" class="social-buttons" id="kakao-connect">
         <span>카카오 로그인</span>
-      </button>
-      <button
-        @click="handleSocialLogin($event, 'google')"
-        class="social-buttons"
-        id="google-connect">
-        <span>Google 로그인</span>
       </button>
     </div>
     <footer><b>Version</b> 1.0</footer>

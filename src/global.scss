@@ -3,6 +3,9 @@
     border-radius: 20px;
     border: 10px solid #A3E2B8FF;
   }
+  .alert-message {
+    text-align: center;
+  }
   .alert-head {
     text-align: center;
   }
@@ -83,4 +86,11 @@
   --height: 45%;
   --border-radius: 10px;
   --box-shadow: 0 0 0 9px #A3E2B8, 0 0 0 20px #E6FFF2;
+}
+
+@font-face {
+  font-family: 'DiaryFont';
+  src: url('/src/assets/diary/font/GamjaFlower-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
 }

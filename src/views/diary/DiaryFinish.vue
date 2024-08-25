@@ -20,10 +20,12 @@ import { App } from '@capacitor/app'
 import apiClient from "@/axios";
 import DiaryDetail from "@/components/diary/DiaryDetail.vue";
 import {Diary} from "@/views/diary/DiaryList.vue";
+import SpeechBubble from "@/components/icons/SpeechBubble.vue";
 
 export default defineComponent({
   name: 'SelectCharacter',
   components: {
+    SpeechBubble,
     BaseHeader,
     'ion-page':IonPage,
     'BaseButton': BaseButton,
@@ -96,12 +98,9 @@ export default defineComponent({
     <BaseHeader></BaseHeader>
     <ion-content scroll-y="false" class="background">
       <div class="content-container">
-        <div class="user-container">
+        <div></div>
 
-        </div>
-
-
-        <ion-card class="speech-bubble"><ion-card-content class="text">우리 꽤 친해진 것 같은데~ 너에 대해 알게 돼서 행복해</ion-card-content></ion-card>
+        <speech-bubble style="padding-top: 2vh">우리 꽤 친해진 것 같은데~ 너에 대해 알게 돼서 행복해</speech-bubble>
         <div class="img-container">
           <ion-img class="img" style="height: 28vh" :src="dotoImg" alt="도토 이미지" />
           <ion-img class="img" :src="doreImg" alt="도레 이미지" />
@@ -162,7 +161,7 @@ ion-content{
   justify-content: space-between;
   background-color: white;
   text-align: center;
-  margin: 3vh 5vw;
+  margin: 6vh 5vw;
   border-radius: 80px;
   height: 20vh;
 
@@ -181,6 +180,7 @@ ion-content{
 
 .img-container {
   display:flex;
+
   margin-right: 0.5vw;
   margin-left: 0.5vw;
   margin-top: 5vh;
@@ -192,7 +192,6 @@ ion-content{
 }
 
 .btn-wrap{
-  margin-top: 3vh;
   display: flex;
   justify-content: center;
   gap: 9vw;

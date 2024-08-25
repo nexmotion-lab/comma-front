@@ -47,7 +47,7 @@ const sortedYValues = computed(() => {
 
 const isSelected = (tag: EmotionTag) => {
   return computed(() => {
-    return store.state.diary.selectedEmotionTags.some((selectedTag: EmotionTag) => selectedTag.emotion_tag_no === tag.emotion_tag_no);
+    return store.state.diary.selectedEmotionTags.some((selectedTag: EmotionTag) => selectedTag.emotionTagNo === tag.emotionTagNo);
   });
 };
 

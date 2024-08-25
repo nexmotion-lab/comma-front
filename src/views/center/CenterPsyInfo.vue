@@ -11,6 +11,7 @@ import psyInfoNuguri4 from "@/assets/center/psyInfo_nuguri4.png";
 import psyInfoNuguri5 from "@/assets/center/psyInfo_nuguri5.png";
 import psyInfoNuguri6 from "@/assets/center/psyInfo_nuguri6.png";
 import apiClient from "@/axios";
+import LoadingContent from "@/components/common/LoadingContent.vue";
 interface PsyInfo {
   psy_info_no: number
   title: string
@@ -22,6 +23,7 @@ interface PsyInfo {
 export default defineComponent({
   name: 'CenterPsyInfo',
   components: {
+    LoadingContent,
     NuguriBox,
     IonPage, IonCard
   },
@@ -35,6 +37,7 @@ export default defineComponent({
       psyInfoNuguri5,
       psyInfoNuguri6
     ]
+    const isLoading = ref(true);
 
     const testPairs = computed(() => {
       const pairs = []
@@ -56,7 +59,7 @@ export default defineComponent({
           ...info,
           randomImage: getRandomImage() // 랜덤 이미지 추가
         }))
-        console.log(psyInfos.value)
+        isLoading.value = false;
       } catch (error) {
         console.error('Failed to fetch psyinfo:', error)
         alert('Failed to fetch psyinfo')
@@ -78,7 +81,7 @@ export default defineComponent({
     return {
       psyInfos,
       navigateToDetail,
-      testPairs
+      testPairs, isLoading
     }
   },
   data() {
@@ -93,7 +96,8 @@ export default defineComponent({
 <!-- 상담센터 상담 정보 리스트 페이지 -->
 <template>
   <ion-page>
-    <ion-content style="--background: var(--background-color)">
+    <LoadingContent v-show="isLoading"></LoadingContent>
+    <ion-content v-show="!isLoading" style="--background: var(--background-color)">
       <!-- psyInfo start -->
       <ion-card class="content-wrapper">
         <div class="psyInfo-list" v-if="testPairs.length > 0">

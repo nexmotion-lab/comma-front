@@ -16,25 +16,7 @@
 
       <meta name="viewport" id="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
 
-      <script>
-          var pageInPortraitMode;
 
-          window.addEventListener("resize", windowSizeChanged);
-
-          addEventListener("load", function() {
-              console.log("test1")
-              pageInPortraitMode = window.innerHeight > window.innerWidth;
-              document.getElementById("viewport").setAttribute("content", "width=" + window.innerWidth + ", height=" + window.innerHeight + ", initial-scale=1.0, maximum-scale=1.0, user-scalable=0");
-          })
-
-          function windowSizeChanged() {
-              console.log(test2)
-              if (((pageInPortraitMode === true) && (window.innerHeight < window.innerWidth)) || ((pageInPortraitMode === false) && (window.innerHeight > window.innerWidth))) {
-                  pageInPortraitMode = window.innerHeight > window.innerWidth;
-                  document.getElementById("viewport").setAttribute("content", "width=" + window.innerWidth + ", height=" + window.innerHeight + ", initial-scale=1.0, maximum-scale=1.0, user-scalable=0");
-              }
-          }
-      </script>
 
     <!-- add to homescreen for ios -->
     <meta name="apple-mobile-web-app-capable" content="yes" />

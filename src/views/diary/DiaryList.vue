@@ -38,6 +38,7 @@ import DiaryDetail from "@/components/diary/DiaryDetail.vue";
 import BaseBottomBar from "@/components/common/BaseBottomBar.vue";
 import router from "@/router";
 import {useRoute} from "vue-router";
+import LoadingContent from "@/components/common/LoadingContent.vue";
 
 
 const getFormattedDateDot = (date) => {
@@ -56,11 +57,16 @@ const getFormattedDateMinus = (date) => {
 
 const getCurrentAndPreviousMonthDate = () => {
   const currentDate = new Date();
-  const formattedCurrentDate = getFormattedDateDot(currentDate);
+  const koreaCurrentDate = new Date(currentDate.toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
+
+  console.log(koreaCurrentDate)
+  const formattedCurrentDate = getFormattedDateDot(koreaCurrentDate);
 
   const previousMonthDate = new Date();
-  previousMonthDate.setMonth(previousMonthDate.getMonth() - 1);
-  const formattedPreviousMonthDate = getFormattedDateDot(previousMonthDate);
+  const koreaPreviousMonthDate = new Date(previousMonthDate.toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
+
+  koreaPreviousMonthDate.setMonth(koreaPreviousMonthDate.getMonth() - 1);
+  const formattedPreviousMonthDate = getFormattedDateDot(koreaPreviousMonthDate);
 
   return {
     currentDate: formattedCurrentDate,
@@ -89,6 +95,7 @@ const endDateModal = ref();
 const filterModal = ref();
 const startDate = ref(convertDateFormat(dates.value.startDate));
 const lastDate = ref(convertDateFormat(dates.value.lastDate));
+const isLoading = ref(true);
 
 let originalStartDate = startDate.value;
 let originalLastDate = lastDate.value;
@@ -198,14 +205,14 @@ const groupedEmotionTags = computed<Record<string, EmotionTag[]>>(() => {
 
 const isSelected = (tag: EmotionTag) => {
   return computed(() => {
-    return selectedEmotionTags.value.some((selectedTag: EmotionTag) => selectedTag.emotion_tag_no === tag.emotion_tag_no);
+    return selectedEmotionTags.value.some((selectedTag: EmotionTag) => selectedTag.emotionTagNo === tag.emotionTagNo);
   });
 };
 
 const toggleTag = async (tag: EmotionTag) => {
 
   const tagIndex = selectedEmotionTags.value.findIndex(
-      (selectedTag: EmotionTag) => selectedTag.emotion_tag_no === tag.emotion_tag_no
+      (selectedTag: EmotionTag) => selectedTag.emotionTagNo === tag.emotionTagNo
   );
 
   if (tagIndex === -1) {
@@ -262,6 +269,7 @@ const eventIsSelected = (tag: EventTag) => {
 
 onIonViewWillEnter(async () => {
   try {
+    console.log(dates.value.lastDate)
     await emotionQuery();
 
     const response = await apiClient.get('/api/diary/diary/eventTag', {
@@ -272,7 +280,6 @@ onIonViewWillEnter(async () => {
     await eventQuery();
 
     await getDiaries(null, 20);
-
   } catch (error) {
     console.error('Failed to fetch event tags:', error);
   }
@@ -296,9 +303,7 @@ async function emotionQuery() {
     const yearMonthString = queryYearMonth as string;
     const [year, month] = yearMonthString.split('-').map(Number);
 
-    // 해당 월의 첫 번째 날짜
     startDate.value = getFormattedDateMinus(new Date(year, month - 1, 1));
-    // 해당 월의 마지막 날짜
     lastDate.value = getFormattedDateMinus(new Date(year, month, 0));
     
     
@@ -344,19 +349,24 @@ export interface Diary {
   diaryNo: number;
   content: string;
   dateCreated: string;
-  coreEmotionTag: EmotionTag;
+  coreEmotionTag: DiaryEmotionTag;
   eventTags: EventTag[];
-  emotionTags: EmotionTag[];
+  emotionTags: DiaryEmotionTag[];
+}
+
+interface DiaryEmotionTag {
+  emotionTagNo: number;
+  name: string;
 }
 
 const lastDiaryNo = ref<number | null>(null);
-const isLoading = ref<boolean>(false);
 
 
 
 async function getDiaries(lastNo:number | null, size:number | null, event?: InfiniteScrollCustomEvent) {
 
   try {
+    isLoading.value = true;
     const response = await apiClient.get('/api/diary/diary', {
       params: {
         lastNo: lastNo,
@@ -364,7 +374,7 @@ async function getDiaries(lastNo:number | null, size:number | null, event?: Infi
         startDate: originalStartDate,
         endDate: originalLastDate,
         eventTagIds: filterEventTags.value.map(tag => tag.eventTagNo),
-        emotionTagIds: filterEmotionTags.value.map(tag => tag.emotion_tag_no),
+        emotionTagIds: filterEmotionTags.value.map(tag => tag.emotionTagNo),
         orderByDesc: orderByDesc.value
       },
       paramsSerializer: {
@@ -378,7 +388,7 @@ async function getDiaries(lastNo:number | null, size:number | null, event?: Infi
       diaries.push(...response.data);
       lastDiaryNo.value = response.data[response.data.length - 1].diaryNo;
     }
-
+    isLoading.value = false;
     return response.data.length;
   } catch (error) {
     if (error.response) {
@@ -479,11 +489,25 @@ const openDiary = async (diaryNo: number) => {
       },
       cssClass: 'diary-modal'
     });
-    modal.present();
+
+    modal.onDidDismiss().then(({data}) => {
+      if (data && data.updatedDiary) {
+        updateDiary(data.updatedDiary);
+      }
+    })
+
+    await modal.present();
   } else {
     console.error('Diary not found');
   }
 };
+
+function updateDiary(updatedDiary) {
+  const index = diaries.findIndex(d => d.diaryNo === updatedDiary.diaryNo);
+  if (index !== -1) {
+    diaries[index] = updatedDiary;
+  }
+}
 
 watch([searchQuery, eventTags], filterTags)
 
@@ -491,8 +515,8 @@ watch([searchQuery, eventTags], filterTags)
 
 <template>
   <ion-page>
+    <BaseHeader></BaseHeader>
     <ion-content scroll-y="false" id="main">
-      <BaseHeader></BaseHeader>
       <div class="search-container">
       <ion-item class="filter-bar">
         <ion-icon aria-hidden="true" :icon="searchCircleOutline" slot="start" class="search-icon"></ion-icon>
@@ -509,7 +533,8 @@ watch([searchQuery, eventTags], filterTags)
       </ion-item>
       </div>
       <div class="list-container">
-        <ion-content role="feed" class="list-content">
+        <LoadingContent v-show="isLoading"></LoadingContent>
+        <ion-content v-show="!isLoading" role="feed" class="list-content">
       <ion-list class="list-list">
         <ion-item role="article" v-for="diary in diaries" :key="diary.diaryNo"
                   class="list-item" lines="none" @click="openDiary(diary.diaryNo)">
@@ -531,8 +556,8 @@ watch([searchQuery, eventTags], filterTags)
         </ion-infinite-scroll>
         </ion-content>
       </div>
-      <BaseBottomBar></BaseBottomBar>
     </ion-content>
+    <BaseBottomBar></BaseBottomBar>
     <!-- Start Date Modal -->
     <ion-modal ref="startDateModal" trigger="startDateLabel" class="date-modal">
       <ion-content class="date-modal-content" scroll-y="false">
@@ -665,7 +690,7 @@ watch([searchQuery, eventTags], filterTags)
   flex-direction: column;
   align-items: center;
   overflow-y: auto;
-  height: 70%;
+  height: 80%;
 }
 
 .list-list {
@@ -814,7 +839,7 @@ ion-datetime::part(wheel-item) {
 }
 
 .filter-modal {
-  --height: 80%;
+  --height: 70%;
   --border-radius: 40px;
   --width: 90%;
   --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);

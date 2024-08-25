@@ -18,6 +18,7 @@ export default defineComponent({
     margin-left: 30px;
     margin-right: 30px;
     border-radius: 1.5rem;
+    border: 0.8vw solid darkgray;
   }
   ion-card-content {
     padding-top: 1.5rem;

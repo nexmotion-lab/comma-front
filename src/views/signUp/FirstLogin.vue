@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import {IonPage, IonContent, IonButton, IonLabel, useIonRouter, onIonViewWillEnter} from "@ionic/vue";
 import mainIcon from "@/assets/main_icon.png"
-import {useRouter} from "vue-router";
-import * as url from "url";
+
 import {LocalNotifications} from "@capacitor/local-notifications";
 import store from "@/store";
 
@@ -22,7 +21,7 @@ onIonViewWillEnter(async () => {
         body: '오늘 하루는 어땠어? 가',
         schedule: {
           every: 'day',
-          at: new Date(new Date().setHours(22, 0, 0, 0)), // 저녁 10시
+          at: new Date(new Date().setHours(22, 0, 0, 0)),
           allowWhileIdle: true,
         },
         sound: undefined
@@ -57,7 +56,6 @@ onIonViewWillEnter(async () => {
       },
     ],
   });
-  console.log('New notifications scheduled');
   console.log((await LocalNotifications.getPending()).notifications)
 
 })

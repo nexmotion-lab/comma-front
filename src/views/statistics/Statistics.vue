@@ -91,7 +91,8 @@
     <!--  header 설정 버튼 부분 end  -->
 
     <!--    감정 지도 통계 content 부분 start   -->
-    <ion-card class="home">
+      <LoadingContent v-show="isLoading" style="--loading-height: 80vh"></LoadingContent>
+    <ion-card v-show="!isLoading" class="home">
       <ion-card-header class="content-header">
         <ion-card-title id="open-date-modal" @click="showDateModal">{{ selectedDate }} 감정지도</ion-card-title>
       </ion-card-header>
@@ -162,16 +163,20 @@ import {EmotionTag} from "@/store";
 import apiClient from "@/axios";
 import DoreImg from "@/assets/statistics/statistics_dore.png"
 import BaseHeader from "@/components/common/BaseHeader.vue";
+import LoadingContent from "@/components/common/LoadingContent.vue";
 export default defineComponent({
   name: "StatisticMain",
   components: {
+    LoadingContent,
     BaseHeader,
     IonPage, IonHeader, IonCard,  IonModal, IonImg, IonList, IonItem, IonCardTitle,IonCardHeader, IonButton, IonDatetime,IonToolbar, IonContent, IonFooter,
     EmotionChart,
     BaseBottomBar,
   },
 
+
   setup() {
+    const isLoading = ref(true);
     const router = useRouter();
     const store = useStore();
     const dateModal = ref<any>();
@@ -221,6 +226,7 @@ export default defineComponent({
 
     const fetchEmotions = async () => {
       try {
+        isLoading.value = true;
         const yearMonth = `${selectedYear.value}-${selectedMonth.value}`;
         const response = await apiClient.get('/api/diary/statistics/emotion', {
           params: {
@@ -285,6 +291,7 @@ export default defineComponent({
       } catch (error) {
         console.error('Error fetching emotions:', error);
       }
+      isLoading.value = false;
     };
 
     const fetchEvents = async () => {
@@ -306,7 +313,6 @@ export default defineComponent({
           const color = '#A3E2B8'; // 기본 색상 설정 또는 데이터에서 가져오기
           return { name, count, color };
         });
-        console.log(fetchedEvents);
         eventData.value = fetchedEvents;
       } catch (error) {
         console.error('Error fetching events:', error);
@@ -361,7 +367,7 @@ export default defineComponent({
     const goToDiaryEmotion = (emotion: EmotionTag) => {
       dismissEmotionsListModal();
       router.push({ path: '/diary/list', query:
-            { emotionTag: emotion.emotion_tag_no,
+            { emotionTag: emotion.emotionTagNo,
               yearMonth: selectedYear.value + '-' + selectedMonth.value
             }
       })
@@ -403,7 +409,7 @@ export default defineComponent({
       topEmotions,
       goToDiaryEmotion,
       goToDiaryEvent,
-      DoreImg,
+      DoreImg, isLoading
     };
   },
 });

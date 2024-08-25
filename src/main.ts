@@ -25,24 +25,28 @@ import '@ionic/vue/css/palettes/dark.system.css';
 
 /* Theme variables */
 import './theme/variables.css';
-import './registerServiceWorker.js';
-import {Preferences} from "@capacitor/preferences";
-import bgmFile from '@/assets/bgm.mp3'
+import bgmFile from '@/assets/bgm/main.mp3'
+import bgmDiary from '@/assets/bgm/diary.mp3'
+import axios, {setTokens} from "@/axios";
+import {Browser} from "@capacitor/browser";
 
-const bgm = new Audio(bgmFile);
+
+export const diaryBgm = new Audio(bgmDiary)
+export const bgm = new Audio(bgmFile);
 bgm.loop = true;
+diaryBgm.loop = true;
 
 if (store.state.bgmPlaying) {
-  bgm.play();
+    bgm.play();
 }
 
 store.watch(
     (state) => state.bgmPlaying,
     (newVal) => {
       if (newVal) {
-        bgm.play();
+          bgm.play();
       } else {
-        bgm.pause();
+          bgm.pause();
       }
     }
 )
@@ -54,6 +58,8 @@ const app = createApp(App)
     .component('ion-content', IonContent)
 
     .use(store);
+
+
 
 router.isReady().then(() => {
   app.use(store);

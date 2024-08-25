@@ -95,12 +95,6 @@ import {Preferences} from "@capacitor/preferences";
 export default defineComponent({
   components: { IonModal, modalController },
   name: 'ModalComponent',
-  props: {
-    isVisible: {
-      type: Boolean,
-      required: true
-    }
-  },
   data() {
     return {
       alarmPermission: computed({

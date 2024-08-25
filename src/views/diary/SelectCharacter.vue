@@ -9,10 +9,12 @@ import dotoImg from "@/assets/diary/select_doto.png";
 import doreImg from "@/assets/diary/select_dore.png";
 import BaseHeader from "@/components/common/BaseHeader.vue";
 import ModalComponent from "@/components/home/SettingModal.vue";
+import SpeechBubble from "@/components/icons/SpeechBubble.vue";
 
 export default defineComponent({
   name: 'SelectCharacter',
   components: {
+    'speech-bubble': SpeechBubble,
     ModalComponent,
     IonPage,IonContent, IonCard, IonFooter,
     BaseHeader,
@@ -42,17 +44,14 @@ export default defineComponent({
     <BaseHeader></BaseHeader>
     <ion-content scroll-y="false" class="background">
       <div class="content-container">
-        <div class="user-container">
-
-        </div>
-        <ion-card class="speech-bubble"><ion-card-content class="text">누구랑 일기 쓸래?</ion-card-content></ion-card>
+        <speech-bubble style="margin-top: 5vh">누구랑 일기 쓸래?</speech-bubble>
         <div class="img-container">
           <ion-img class="img" :src="dotoImg" alt="도토 이미지" />
           <ion-img class="img" :src="doreImg" alt="도레 이미지" />
         </div>
         <div class="btn-wrap">
-          <BaseButton @click="$router.push({path: '/diary/create', query: { character: 'doto' }})">도토</BaseButton>
-          <BaseButton @click="$router.push({path: '/diary/create', query: { character: 'dore' }})">도레</BaseButton>
+          <BaseButton class="diary-finish-btn" @click="$router.push({path: '/diary/create', query: { character: 'doto' }})">도토</BaseButton>
+          <BaseButton class="diary-finish-btn" @click="$router.push({path: '/diary/create', query: { character: 'dore' }})">도레</BaseButton>
         </div>
       </div>
     </ion-content>
@@ -62,7 +61,15 @@ export default defineComponent({
 </template>
 
 <style scoped>
-
+.diary-finish-btn {
+  width: 34vw;
+  height: 5vh;
+  font-size: 4vw;
+  --border-radius: 30px;
+  --border-color: black;
+  --border-style: solid;
+  --border-width: 1px;
+}
 
 ion-content{
   align-items: center;
@@ -94,6 +101,7 @@ ion-content{
 }
 
 .content-container {
+  padding-top: 10vh;
   display: grid;
   height: 90vh;
   grid-template-rows: 15vh 20vh 35vh;
@@ -123,6 +131,7 @@ ion-content{
   margin-right: 0.5vw;
   margin-left: 0.5vw;
   margin-top: 20px;
+  height: 30vh;
 }
 
 .img {
@@ -133,6 +142,7 @@ ion-content{
   display: flex;
   justify-content: center;
   gap: 25px;
+  padding-top: 15vh;
 }
 
 

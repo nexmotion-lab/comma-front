@@ -30,7 +30,7 @@ const selectedEmotionTags = computed(() => {
 
 const isSelected = (tag: EmotionTag) => {
   return computed(() => {
-    return store.state.diary.coreEmotionTag.emotion_tag_no === tag.emotion_tag_no;
+    return store.state.diary.coreEmotionTag.emotionTagNo === tag.emotionTagNo;
   })
 }
 
@@ -71,9 +71,9 @@ const createDiary = async () => {
 
   const response = await apiClient.post('/api/diary/diary', {
     content: diary.value.content,
-    coreEmotionTagId : diary.value.coreEmotionTag.emotion_tag_no,
+    coreEmotionTagId : diary.value.coreEmotionTag.emotionTagNo,
     eventTagIds: diary.value.selectedEventTags.map(tag => tag.eventTagNo),
-    emotionTagIds: diary.value.selectedEmotionTags.map(tag => tag.emotion_tag_no)
+    emotionTagIds: diary.value.selectedEmotionTags.map(tag => tag.emotionTagNo)
   }, {
 
 
@@ -100,7 +100,7 @@ const createDiary = async () => {
         <div class="emotion-grid-container">
           <ion-grid class="core-grid">
             <ion-row class="core-row">
-              <ion-col v-for="tag in selectedEmotionTags" :key="tag.emotion_tag_no" size="auto" class="core-col">
+              <ion-col v-for="tag in selectedEmotionTags" :key="tag.emotionTagNo" size="auto" class="core-col">
                 <ion-chip :style="{ border: `0.8vw solid ${tag.color}`,
                 backgroundColor: isSelected(tag).value ? tag.color : 'white'}"
                 @click="setEmotionTag(tag)" class="core-chip">

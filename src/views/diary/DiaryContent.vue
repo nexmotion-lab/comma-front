@@ -36,12 +36,28 @@ const switchTab2 = () => {
 const textarearef = ref<HTMLElement | null>(null);
 const adjustTextareaHeight = (keyboardHeight: number) => {
   const textarea = textarearef.value
-  console.log(textarea)
   if (textarea) {
-    console.log(textarea.style.height)
     textarea.style.height = `20vh`;
-    console.log(textarea.style.height)
+
+    setTimeout(() => {
+      textarea.scrollTo({
+        top: clickPosition.value.y,
+        behavior: 'smooth',
+      });
+    }, 100);
   }
+};
+
+const clickPosition = ref({ x: 0, y: 0 });
+
+const handleClick = (event) => {
+  const container = textarearef.value;
+  const containerRect = container.getBoundingClientRect();
+
+  const relativeX = event.clientX - containerRect.left;
+  const relativeY = event.clientY - containerRect.top;
+
+  clickPosition.value = { x: relativeX, y: relativeY };
 };
 
 const resetTextareaHeight = () => {
@@ -52,20 +68,30 @@ const resetTextareaHeight = () => {
   }
 };
 
-onIonViewWillEnter(() => {
-  Keyboard.addListener('keyboardWillShow', (info) => {
-    console.log("실행")
+const keyboardWillShowEventListener = ref(null);
+const keyboardWillHideEventListener = ref(null);
+
+onIonViewWillEnter(async () => {
+  keyboardWillShowEventListener.value = await Keyboard.addListener('keyboardWillShow', (info) => {
     adjustTextareaHeight(info.keyboardHeight);
   });
 
-  Keyboard.addListener('keyboardWillHide', () => {
+  keyboardWillHideEventListener.value = await Keyboard.addListener('keyboardWillHide', () => {
     resetTextareaHeight();
   });
-})
+
+  console.log(keyboardWillHideEventListener)
+  console.log(keyboardWillShowEventListener)
+});
 
 onIonViewWillLeave(() => {
-  Keyboard.removeAllListeners();
-})
+  if (keyboardWillShowEventListener.value) {
+    keyboardWillShowEventListener.value.remove();
+  }
+  if (keyboardWillHideEventListener.value) {
+    keyboardWillHideEventListener.value.remove();
+  }
+});
 
 </script>
 
@@ -77,9 +103,9 @@ onIonViewWillLeave(() => {
     <ion-card class="emotion-content">
       <ion-card-header class="tab-card"></ion-card-header>
       <ion-card-content class="tab-card-content">
-        <div class="emotion-grid-container" ref="textarearef">
+        <div class="emotion-grid-container" ref="textarearef" @click="handleClick">
           <ion-textarea :auto-grow="true" class="content" placeholder="최대 1000자"
-          v-model="diaryContent">
+          v-model="diaryContent" maxlength="1000">
           </ion-textarea>
         </div>
         <div class="button-container">
@@ -114,6 +140,7 @@ onIonViewWillLeave(() => {
   padding-right: 4vw;
   font-size: 5.5vw;
   --highlight-color: black;
+  font-family: 'DiaryFont', sans-serif;
 }
 
 .button-container {

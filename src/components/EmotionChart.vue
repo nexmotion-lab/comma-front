@@ -58,9 +58,18 @@ export default defineComponent({
         y: tag.yvalue,
         r: tag.count * 10, // count 값에 10을 곱하여 반영
         label: tag.name,
-        backgroundColor: tag.color,
+        backgroundColor: `rgba(${hexToRgb(tag.color)}, 0.8)`,
         id: tag.id // 감정 태그 ID 추가
       }));
+
+      function hexToRgb(hex: string): string {
+        const bigint = parseInt(hex.slice(1), 16);
+        const r = (bigint >> 16) & 255;
+        const g = (bigint >> 8) & 255;
+        const b = bigint & 255;
+
+        return `${r}, ${g}, ${b}`;
+      }
 
 
       const data = {

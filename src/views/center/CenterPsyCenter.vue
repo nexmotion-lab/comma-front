@@ -6,7 +6,8 @@ import 'swiper/css'
 import BaseButton from '@/components/common/BaseButton.vue'
 import 'vue-router/dist/vue-router'
 import {IonPage, onIonViewWillEnter} from "@ionic/vue";
-import apiClient from "@/axios";
+import apiClient, {isLogin} from "@/axios";
+import LoadingContent from "@/components/common/LoadingContent.vue";
 
 interface CenterInfo {
   psy_center_no: number
@@ -23,7 +24,9 @@ interface CenterInfo {
 
 export default defineComponent({
   name: 'CenterPsyCenter',
+  methods: {isLogin},
   components: {
+    LoadingContent,
     BaseButton,
     Swiper,
     SwiperSlide,
@@ -33,7 +36,7 @@ export default defineComponent({
     // const router = useRouter()
     const centerInfo = ref<CenterInfo[]>([]) // TypeScript를 사용하여 데이터 타입을 정의
     const activeSlideIndex = ref(0)
-
+    const isLoading = ref(true);
     // Swiper에서 슬라이드 변경 이벤트를 처리하는 함수
     const onSlideChange = (swiper: any) => {
       activeSlideIndex.value = swiper.realIndex
@@ -45,7 +48,7 @@ export default defineComponent({
             '/api/psy/psycenter/'
         )
         centerInfo.value = response.data // API 응답을 직접 할당
-        console.log(centerInfo.value)
+        isLoading.value = false;
       } catch (error) {
         console.error('Failed to fetch center info:', error)
       }
@@ -70,14 +73,15 @@ export default defineComponent({
       }
     }
 
-    return { centerInfo, swiperOptions, activeSlideIndex, onSlideChange, goApply }
+    return { centerInfo, swiperOptions, activeSlideIndex, onSlideChange, goApply, isLoading }
   }
 })
 </script>
 <!-- 상담센터 센터 정보 페이지 -->
 <template>
   <ion-page>
-    <ion-content :scroll-y="false">
+    <LoadingContent v-show="isLoading"></LoadingContent>
+    <ion-content v-show="!isLoading" :scroll-y="false">
       <!-- centerInfo start -->
       <div v-if="centerInfo.length === 0">
       </div>

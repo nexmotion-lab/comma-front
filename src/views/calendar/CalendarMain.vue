@@ -25,7 +25,8 @@
         </ion-modal>
       </ion-card-header>
       <ion-card-content>
-        <ion-grid>
+        <LoadingContent v-show="isLoading" style="--background-color: white; --loading-height: 70vh;"></LoadingContent>
+        <ion-grid v-show="!isLoading">
           <ion-row>
             <ion-col v-for="day in daysOfWeek" :key="day" class="day-header">
               {{ day }}
@@ -89,7 +90,7 @@ import {
   IonRow,
   IonCol,
   IonPage,
-  IonFooter, IonToolbar, IonContent, modalController,
+  IonFooter, IonToolbar, IonContent, modalController, onIonViewWillEnter,
 } from '@ionic/vue';
 import { ellipse } from 'ionicons/icons';
 import axios from 'axios';
@@ -100,13 +101,14 @@ import {useStore} from 'vuex';
 import apiClient from "@/axios";
 import DiaryDetail from "@/components/diary/DiaryDetail.vue";
 import {Diary} from "@/views/diary/DiaryList.vue";
+import LoadingContent from "@/components/common/LoadingContent.vue";
 
 const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
 const selectedDate = ref(new Date());
 
 const store = useStore()
 
-
+const isLoading = ref(true);
 
 
 interface CalendarDate {
@@ -149,6 +151,7 @@ type CalendarWeek = CalendarDate[];
 const calendar = ref<CalendarWeek[]>([]);
 
 async function generateCalendar(year: number, month: number) {
+  isLoading.value = true;
   const startDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
@@ -217,6 +220,7 @@ function chunkArray<T>(arr: T[], size: number): T[][] {
   for (let i = 0; i < arr.length; i += size) {
     res.push(arr.slice(i, i + size));
   }
+  isLoading.value = false;
   return res;
 }
 
@@ -253,7 +257,7 @@ const openDiary = async (date: Date) => {
       },
       cssClass: 'diary-modal'
     });
-    modal.present();
+    await modal.present();
   }
 
 };
@@ -270,10 +274,16 @@ function getEmotionColor(emotionTagNo: number | null): string {
   return store.getters.getEmotionColor(emotionTagNo);
 }
 
+onIonViewWillEnter(async () => {
 
-generateCalendar(selectedDate.value.getFullYear(), selectedDate.value.getMonth()).then(data => {
-  calendar.value = data;
-});
+  await generateCalendar(selectedDate.value.getFullYear(), selectedDate.value.getMonth()).then(data => {
+    calendar.value = data;
+  });
+
+})
+
+
+
 
 </script>
 
