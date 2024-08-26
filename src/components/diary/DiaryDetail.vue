@@ -454,7 +454,7 @@ async function contentKeyboardEventAdd() {
       const contentLabel = document.querySelector('#content-label');
       const content = document.querySelector('#content');
 
-      contentLabel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      contentLabel.scrollIntoView({ behavior: 'instant', block: 'start' });
 
       setTimeout(() => {
         content.style.maxHeight = '20vh';

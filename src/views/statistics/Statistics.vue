@@ -183,7 +183,7 @@ export default defineComponent({
     const eventsListModal = ref<any>(false);
     const emotionsListModal = ref<any>(null)
     const minDate = ref("2020-01");
-    const maxDate = ref("2025-12");
+    const maxDate = ref("2035-12");
     const now = new Date();
     const selectedYear = ref(String(now.getFullYear()));
     const selectedMonth = ref(String(now.getMonth() + 1).padStart(2, '0'));
@@ -416,13 +416,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
-SettingModal{
-  --width: 90%;
-  --height: fit-content;
-  --border-radius: 10px;
-  --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
-  --background: white;
-}
+
 
 .date-modal-card {
   display: flex;
@@ -569,6 +563,7 @@ ion-modal#emotions-list-modal, ion-modal#events-list-modal {
 .home {
   text-align: center;
   padding: 1vh;
+  padding-bottom: 30vh;
   margin: 0.5vh 1.5vh;
   background-color: #ffffff;
   border-radius: 2vh;

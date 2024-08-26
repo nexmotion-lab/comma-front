@@ -2,7 +2,7 @@
   <ion-page>
   <BaseHeader></BaseHeader>
   <BaseView/>
-  <ion-content class="custom-content">
+  <ion-content class="custom-content" scroll-y="false">
     <ion-card class="ion-card">
       <ion-card-header class="ion-header">
         <ion-label id="calendarLabel" class="select-date">
@@ -24,7 +24,7 @@
           </ion-footer>
         </ion-modal>
       </ion-card-header>
-      <ion-card-content>
+      <ion-card-content style="padding-bottom: 30vh;">
         <LoadingContent v-show="isLoading" style="--background-color: white; --loading-height: 70vh;"></LoadingContent>
         <ion-grid v-show="!isLoading">
           <ion-row>
@@ -234,11 +234,10 @@ const diary = ref<Diary[]>([])
 const openDiary = async (date: Date) => {
 
   const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
-  const day = String(date.getDate()).padStart(2, '0'); // 일자
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
 
   const formattedDate = `${year}-${month}-${day}`;
-  console.log(formattedDate); // 변환된 날짜 출력
 
   const response = await apiClient.get<Diary[]>('/api/diary/diary', {
     params: {
@@ -265,7 +264,7 @@ const openDiary = async (date: Date) => {
 async function onDateClick(date: CalendarDate) {
   if (date.isCurrentMonth) {
 
-    openDiary(date.date);
+    await openDiary(date.date);
   }
 }
 
@@ -288,12 +287,22 @@ onIonViewWillEnter(async () => {
 </script>
 
 <style scoped>
+
+ion-datetime::part(wheel-item) {
+  font-size: 7vw;
+}
+ion-datetime {
+  --wheel-fade-background-rgb: none;
+}
+
+
 .date-modal {
-  --height: 40vh;
+  --height: 28%;
   --border-radius: 40px;
-  --width: 70vw;
+  --width: 90%;
   --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
   --background: var(--background-color);
+
 }
 
 .custom-content {
@@ -343,23 +352,18 @@ onIonViewWillEnter(async () => {
 
 
 
-ion-datetime {
-
-}
-
 
 .date-modal-card {
-  padding-top: 3vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
   margin: 5vw;
-  height: 70vh;
+  height: fit-content;
   border-radius: 30px;
   border-left: 3vw solid #A3E2B8FF;
   border-right: 3vw solid #A3E2B8FF;
-  border-top: 5vw solid #A3E2B8FF;
+  border-top: 3vw solid #A3E2B8FF;
 }
+
 .cancel-text {
   font-size: 6vw;
   padding-left: 13vw;
@@ -372,6 +376,7 @@ ion-datetime {
 .date-modal-content {
   --background: #DEF9EB
 }
+
 .ion-header {
   padding: 0;
 }

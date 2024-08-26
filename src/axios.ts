@@ -90,7 +90,6 @@ function isTokenExpired(token) {
     console.log(decoded.exp * 1000 < Date.now());
     return decoded.exp * 1000 < Date.now();
 }
-
 apiClient.interceptors.response.use(
     async (response) => {
         const authorizationHeader = response.headers["authorization"];
@@ -106,7 +105,6 @@ apiClient.interceptors.response.use(
             tokens.forEach((token) => {
                 token = token.trim();
 
-                // Access Token 처리 (Bearer로 시작하는 토큰)
                 if (token.startsWith("Bearer ")) {
                     const jwtToken = token.replace("Bearer ", "").trim();
                     const decodedToken = parseJwt(jwtToken);
@@ -116,7 +114,6 @@ apiClient.interceptors.response.use(
                         console.log(`add accesstoken ${newAccessToken}`);
                     }
                 }
-                // Refresh Token 처리 (Bearer 없이 그냥 오는 토큰)
                 else {
                     const jwtToken = token.trim();
                     const decodedToken = parseJwt(jwtToken);

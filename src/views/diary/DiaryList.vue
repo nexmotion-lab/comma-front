@@ -121,6 +121,7 @@ const dateConfirm = async () => {
     await alert.present();
     return;
   }
+  isLoading.value = true
   dates.value.startDate = convertDateFormatToDisplay(startDate.value);
   dates.value.lastDate = convertDateFormatToDisplay(lastDate.value);
   originalStartDate = startDate.value;
@@ -136,7 +137,8 @@ const dateConfirm = async () => {
   if (infiniteScroll) {
     infiniteScroll.disabled = false;
   }
-  getDiaries(null, 20);
+  await getDiaries(null, 20);
+  isLoading.value = false
 };
 
 const openStartDateModal = () => {
@@ -228,7 +230,8 @@ const filterCancel = () => {
   filterModal.value.$el.dismiss();
 };
 
-const filterConfirm = () => {
+const filterConfirm = async () => {
+  isLoading.value = true;
   filterEmotionTags.value = [...selectedEmotionTags.value];
   filterEventTags.value = [...selectedEventTags.value];
   filterModal.value.$el.dismiss();
@@ -238,7 +241,8 @@ const filterConfirm = () => {
   if (infiniteScroll) {
     infiniteScroll.disabled = false;
   }
-  getDiaries(null, 20);
+  await getDiaries(null, 20);
+  isLoading.value = false;
 };
 
 
@@ -269,7 +273,7 @@ const eventIsSelected = (tag: EventTag) => {
 
 onIonViewWillEnter(async () => {
   try {
-    console.log(dates.value.lastDate)
+    isLoading.value = true
     await emotionQuery();
 
     const response = await apiClient.get('/api/diary/diary/eventTag', {
@@ -280,6 +284,7 @@ onIonViewWillEnter(async () => {
     await eventQuery();
 
     await getDiaries(null, 20);
+    isLoading.value = false
   } catch (error) {
     console.error('Failed to fetch event tags:', error);
   }
@@ -298,7 +303,7 @@ async function emotionQuery() {
   const queryEmotionTag = route.query.emotionTag;
   const queryYearMonth = route.query.yearMonth;
   if (queryEmotionTag && queryYearMonth) {
-    await toggleTag(store.state.emotionTags.find(tag => tag.emotion_tag_no === parseInt(queryEmotionTag as string)));
+    await toggleTag(store.state.emotionTags.find(tag => tag.emotionTagNo === parseInt(queryEmotionTag as string)));
     filterEmotionTags.value = [...selectedEmotionTags.value];
     const yearMonthString = queryYearMonth as string;
     const [year, month] = yearMonthString.split('-').map(Number);
@@ -366,7 +371,6 @@ const lastDiaryNo = ref<number | null>(null);
 async function getDiaries(lastNo:number | null, size:number | null, event?: InfiniteScrollCustomEvent) {
 
   try {
-    isLoading.value = true;
     const response = await apiClient.get('/api/diary/diary', {
       params: {
         lastNo: lastNo,
@@ -388,7 +392,6 @@ async function getDiaries(lastNo:number | null, size:number | null, event?: Infi
       diaries.push(...response.data);
       lastDiaryNo.value = response.data[response.data.length - 1].diaryNo;
     }
-    isLoading.value = false;
     return response.data.length;
   } catch (error) {
     if (error.response) {

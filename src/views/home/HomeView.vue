@@ -2,7 +2,9 @@
  <ion-page class="custom-page">
    <LoadingContent v-show="isLoading"></LoadingContent>
    <ion-content v-show="!isLoading" scroll-y="false" style="--background: var(--background-color)">
-
+     <ion-refresher slot="fixed" @ionRefresh="handleRefresh($event)">
+       <ion-refresher-content refreshing-spinner="circles"></ion-refresher-content>
+     </ion-refresher>
      <div class="user-container">
        <div class="setting-container">
        <ion-buttons slot="start" class="settings-button">
@@ -56,10 +58,11 @@ import {
   onIonViewWillEnter,
   IonIcon,
   IonButton,
-  modalController, IonButtons, useIonRouter
+  modalController, IonButtons, useIonRouter,
+IonRefresher,
+IonRefresherContent,
 } from '@ionic/vue';
 import BaseBottomBar from "@/components/common/BaseBottomBar.vue";
-import ModalComponent from '@/components/home/SettingModal.vue';
 import ground from '@/assets/home/ground.png'
 import chart from '@/assets/home/chart.png';
 import calendar from '@/assets/home/callender.png';
@@ -90,13 +93,13 @@ export default defineComponent({
   components: {
     IonButtons,
     IonButton,
-    ModalComponent,
     BaseBottomBar,
+    IonRefresher, IonRefresherContent,
     IonPage,
     IonContent,
     IonImg,
     IonText,
-    IonChip, IonIcon, LoadingContent
+    IonChip, IonIcon, LoadingContent,
   },
   setup: function () {
     const isLoading = ref(true);
@@ -115,6 +118,12 @@ export default defineComponent({
       {id: 1, imageUrl: chart, routerLink: "/statistics"},
       {id: 2, imageUrl: calendar, routerLink: "/calendar"}
     ];
+
+    const handleRefresh = async (event) => {
+      await getInteraction();
+      await updateInfo();
+      event.target.complete();
+    };
 
     const getInteraction = async () => {
       const response = await apiClient.get('/api/diary/interaction/user');
@@ -172,7 +181,7 @@ export default defineComponent({
       nickname,
       itemList,
       groundImg, settingSharp, interactionImg, interactionText,
-      isLoading
+      isLoading, handleRefresh
     };
   }
 });

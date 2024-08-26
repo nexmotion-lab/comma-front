@@ -46,11 +46,15 @@ export default defineComponent({
 
     async function onDateClick() {
 
-      const date = new Date();
-
+      const date = new Date(new Intl.DateTimeFormat('en-US', {
+        timeZone: 'Asia/Seoul',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      }).format(new Date()));
       const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
-      const day = String(date.getDate()).padStart(2, '0'); // 일자
+      const month = ('0' + (date.getMonth() + 1)).slice(-2);
+      const day = ('0' + date.getDate()).slice(-2);
 
       const formattedDate = `${year}-${month}-${day}`;
 
@@ -71,7 +75,7 @@ export default defineComponent({
           },
           cssClass: 'diary-modal'
         });
-        modal.present();
+        await modal.present();
       }
 
     }

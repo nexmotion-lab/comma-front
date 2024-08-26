@@ -30,10 +30,9 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Home',
     component: HomeView,
     beforeEnter: async (to, from, next) => {
-      console.log("비포엔터 실행됨");
       const status = (await Network.getStatus()).connected;
       if (status) {
-        next(); // 홈 경로로 진입 허용
+        next();
       } else {
         const alert = await alertController.create({
           header: '연결 오류',
