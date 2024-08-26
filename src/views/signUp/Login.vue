@@ -20,39 +20,44 @@ export default defineComponent({
     const handleSocialLogin = async (event: Event, provider: string) => {
       event.preventDefault();
 
+      const browser = InAppBrowser.create(`https://www.comma-coders.com:8998/oauth2/authorization/${provider}`, '_blank', {
+        zoom: 'no',
+        toolbar: 'yes',
+        location: 'no',
+        usewkwebview: 'yes',
+        clearcache: 'yes',
+        clearsessioncache: 'yes'
+      });
 
+      browser.on('loadstop').subscribe(async (event) => {
+        const url = event.url;
 
-      const browser = await InAppBrowser.create(`https://www.comma-coders.com:8998/oauth2/authorization/${provider}`)
-      browser.on('loadstop').subscribe(async event => {
+        if (url.startsWith('comma://home') || url.startsWith('comma://firstLogin')) {
+          browser.close();
 
-        if (event.url.startsWith('comma://home')) {
-          browser.close()
+          const urlParams = new URL(url).searchParams;
+          const accessToken = urlParams.get('accessToken');
+          const refreshToken = urlParams.get('refreshToken');
 
-          const response = await apiClient.get('/token/resend/', {withCredentials: true});
-          if (response.data) {
-            console.log("재전송된 토큰",response.data)
-            await setTokens(response.data.accessToken, response.data.refreshToken);
-            console.log("첫 로그인 토큰 저장")
-            router.replace({name: 'Home'});
-          }
+          if (accessToken && refreshToken) {
+            await setTokens(accessToken, refreshToken);
 
-        } else if (event.url.startsWith('comma://firstLogin')) {
-          browser.close()
-          const response = await apiClient.get('/token/resend/', {withCredentials: true});
-          if (response.data) {
-            console.log("재전송된 토큰",response.data)
-            await setTokens(response.data.accessToken, response.data.refreshToken);
-            console.log("첫 로그인 토큰 저장")
-            router.replace({name: 'InitMain'});
+            if (url.startsWith('comma://firstLogin')) {
+              router.replace({name: 'InitMain'});
+            } else {
+              router.replace({name: 'Home'});
+            }
+          } else {
+            console.error("토큰이 포함되지 않았습니다.");
           }
         }
       })
-
-    };
+    }
 
     return {
       handleSocialLogin
     };
+
   }
 });
 </script>
