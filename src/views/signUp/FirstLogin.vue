@@ -17,19 +17,19 @@ onIonViewWillEnter(async () => {
     notifications: [
       {
         id: 1,
-        title: '감정일기',
-        body: '오늘 하루는 어땠어? 가',
+        title: '오늘의 쉼표, 다이어리',
+        body: '오늘 어떤 일이 있었어? 아직 일기를 작성하지 않았다면 일기작성하자!',
         schedule: {
           every: 'day',
-          at: new Date(new Date().setHours(22, 0, 0, 0)),
+          at: new Date(new Date().setHours(21, 0, 0, 0)),
           allowWhileIdle: true,
         },
         sound: undefined
       },
       {
         id: 2,
-        title: '생일 축하 알림',
-        body: '생일을 축하드립니다!',
+        title: '오늘의 쉼표, 다이어리',
+        body: '생일을 축하해! 오늘 하루 행복한 일들만 가득하길 바랄게!',
         schedule: {
           repeats: true,
           on: {
@@ -43,8 +43,8 @@ onIonViewWillEnter(async () => {
       },
       {
         id: 3,
-        title: '매월 1일 알림',
-        body: '이것은 매월 1일에 오는 알림입니다.',
+        title: '오늘의 쉼표, 다이어리',
+        body: '감정그래프가 완성됬어! 지난달 나의 감정은 어땠을지 확인해봐!',
         schedule: {
           repeats: true,
           on: {
@@ -56,7 +56,6 @@ onIonViewWillEnter(async () => {
       },
     ],
   });
-  console.log((await LocalNotifications.getPending()).notifications)
 
 })
 

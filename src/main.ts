@@ -21,14 +21,12 @@ import '@ionic/vue/css/text-transformation.css';
 import '@ionic/vue/css/flex-utils.css';
 import '@ionic/vue/css/display.css';
 
-import '@ionic/vue/css/palettes/dark.system.css';
 
 /* Theme variables */
 import './theme/variables.css';
 import bgmFile from '@/assets/bgm/main.mp3'
 import bgmDiary from '@/assets/bgm/diary.mp3'
-import axios, {setTokens} from "@/axios";
-import {Browser} from "@capacitor/browser";
+
 
 
 export const diaryBgm = new Audio(bgmDiary)
