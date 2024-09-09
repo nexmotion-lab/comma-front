@@ -64,15 +64,7 @@ const toggleTag = async (tag: EmotionTag) => {
   }
 };
 
-onIonViewWillEnter(() => {
-  requestAnimationFrame(() => {
-    const element = document.querySelector(".emotion-grid-container");
-    if (element) {
-      element.scrollLeft = 400;
-      console.log(element.scrollLeft);
-    }
-  });
-});
+
 
 const switchTab1 = () => {
   router.push({ path: '/diary/create/content', replace: true});
@@ -124,7 +116,7 @@ const chipStyle = (tag : EmotionTag) => {
         </div>
       </ion-card-content>
       <div class="button-container">
-        <ion-button @click="switchTab1" class="back-btn">
+        <ion-button @click="switchTab1" class="next-btn">
           이전
         </ion-button>
         <ion-button @click="switchTab2" class="next-btn" :disabled="!isSetCoreEmotionTag">
@@ -143,18 +135,28 @@ const chipStyle = (tag : EmotionTag) => {
 .button-container {
   display: flex;
   justify-content: space-between;
-
-}
-
-.back-btn {
-  margin-left: 5.55vw;
-  --background: green;
+  padding: 0 5vw;
 }
 
 .next-btn {
-  margin-right: 5.55vw;
-  --background: green;
+  align-self: flex-end;
+  margin-top: auto;
+  --background: white;
+  font-size: 4vw;
+  color: #000;
+  border: 0.8vw solid #A3E2B8FF;
+  --padding-end: 0.8em;
+  --padding-start: 0.8em;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  border-radius: 20px;
+  --border-radius: 20px;
+  --background-activated: #A3E2B8FF;
+  --background-hover: #A3E2B8FF;
+  --background-focused: #A3E2B8FF;
 }
+
+
 
 .tab-card {
   --background: #A3E2B8FF;
@@ -171,10 +173,13 @@ const chipStyle = (tag : EmotionTag) => {
 }
 
 .emotion-grid-container {
-  display: flex;
-  flex-direction: column;
-  overflow-x: auto;
+  display: block; /* Flexbox 대신 block으로 변경하여 레이아웃 문제 해결 */
+  overflow-x: auto; /* X축의 스크롤을 유지 */
+  white-space: nowrap; /* 한 줄로 표시되도록 설정 */
+  -webkit-overflow-scrolling: touch; /* iOS에서 부드러운 스크롤링 활성화 */
+  padding-left: 10px; /* 스크롤 시작 위치 확보를 위한 왼쪽 패딩 */
 }
+
 
 .emotion-grid {
   display: flex;
@@ -182,13 +187,13 @@ const chipStyle = (tag : EmotionTag) => {
 }
 
 .emotion-row {
-  display: flex;
-  flex-wrap: nowrap;
-  width: 100%;
-  justify-content: center;
+  display: inline-block; /* 요소를 한 줄로 표시하도록 변경 */
+  width: auto; /* 자동 너비로 설정 */
+  white-space: nowrap; /* 텍스트가 한 줄로 표시되도록 설정 */
 }
 
 .emotion-tag {
+  display: inline-block; /* Chip을 한 줄로 나열하기 위해 inline-block 사용 */
   padding: 0;
   padding-left: 2vw;
   padding-right: 2vw;
@@ -197,20 +202,6 @@ const chipStyle = (tag : EmotionTag) => {
   --background: white;
 }
 
-.emotion-grid-container::-webkit-scrollbar {
-  height: 1.5vh;
-}
-
-.emotion-grid-container::-webkit-scrollbar-track {
-  background: #A3E2B8FF;
-  border-radius: 20px;
-}
-
-.emotion-grid-container::-webkit-scrollbar-thumb {
-  background: #0c8c42;
-  border-radius: 6px;
-  pointer-events: auto;
-}
 
 
 

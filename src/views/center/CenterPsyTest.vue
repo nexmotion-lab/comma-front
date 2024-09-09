@@ -30,11 +30,6 @@ interface TestCategory{
 
 export default defineComponent({
   name: 'CenterPsyTest',
-  methods: {
-    closeOutline() {
-      return closeOutline
-    }
-  },
   components: {
     LoadingContent,
     Swiper,
@@ -46,6 +41,7 @@ export default defineComponent({
   setup() {
     const modal1 = ref<any>(null)
     const modal2 = ref<any>(null)
+    const textInput = ref<string>('');
     const testCategories = ref<TestCategory[]>([]);
     const selectedTest = ref<SelectedTest | null>(null) // 선택된 테스트 정보를 저장할 상태 추가
     const activeCategory = ref<string>('')
@@ -67,10 +63,10 @@ export default defineComponent({
       try{
         const response = await apiClient.get('api/psy/psytest/')
         const data = response.data
-        testCategories.value = Object.keys(data).map(key =>({
-          name:key,
-          tests: data[key]
-        }))
+        testCategories.value = Object.entries(data).map(([key, value]) => ({
+          name: key,
+          tests: value as PsyTest[]
+        }));
         activeCategory.value = testCategories.value[0].name
         isLoading.value = false;
       }catch (error) {
@@ -166,12 +162,9 @@ export default defineComponent({
       testCategories,
       activeCategory,
       SamyookLogo,
-      isLoading
-    }
-  },
-  data() {
-    return {
-      textInput: '' // 입력된 텍스트를 저장할 데이터 변수
+      isLoading,
+      textInput,
+      closeOutline
     }
   }
 })
@@ -196,7 +189,7 @@ export default defineComponent({
                 <h2><strong>Info.</strong></h2>
               </ion-label>
               <ion-icon
-                  :icon="closeOutline()"
+                  :icon="closeOutline"
                   @click="dismiss1"
                   part="iconX"
               ></ion-icon>

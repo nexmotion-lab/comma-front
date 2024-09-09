@@ -1,10 +1,11 @@
 <template>
  <ion-page class="custom-page">
    <LoadingContent v-show="isLoading"></LoadingContent>
-   <ion-content v-show="!isLoading" scroll-y="false" style="--background: var(--background-color)">
+   <ion-content  v-show="!isLoading" scroll-y="false" style="--background: var(--background-color)">
      <ion-refresher slot="fixed" @ionRefresh="handleRefresh($event)">
        <ion-refresher-content refreshing-spinner="circles"></ion-refresher-content>
      </ion-refresher>
+
      <div class="user-container">
        <div class="setting-container">
        <ion-buttons slot="start" class="settings-button">
@@ -24,7 +25,7 @@
      <div class="right-navbar">
        <ul class="item-list">
          <li v-for="item in itemList" :key="item.id">
-           <div @click="router().push({path: item.routerLink})">
+           <div @click="navigate(item.routerLink)">
               <ion-img :src="item.imageUrl" class="nav-img"/>
            </div>
          </li>
@@ -66,7 +67,7 @@ import BaseBottomBar from "@/components/common/BaseBottomBar.vue";
 import ground from '@/assets/home/ground.png'
 import chart from '@/assets/home/chart.png';
 import calendar from '@/assets/home/callender.png';
-import {settingsSharp} from "ionicons/icons";
+import {navigate, settingsSharp} from "ionicons/icons";
 
 import {ref} from "vue";
 import SettingModal from "@/components/SettingModal.vue";
@@ -85,11 +86,6 @@ interface ListItem {
 
 export default defineComponent({
   name: 'MyComponent',
-  methods: {
-    router() {
-      return router
-    }
-  },
   components: {
     IonButtons,
     IonButton,
@@ -166,6 +162,11 @@ export default defineComponent({
       isLoading.value = false;
     });
 
+    const navigate = (path: string) => {
+      router.push({ path });
+    }
+
+
     const openModal = async () => {
       const modal = await modalController.create({
         component: SettingModal,
@@ -181,7 +182,8 @@ export default defineComponent({
       nickname,
       itemList,
       groundImg, settingSharp, interactionImg, interactionText,
-      isLoading, handleRefresh
+      isLoading, handleRefresh, navigate
+
     };
   }
 });
@@ -202,12 +204,20 @@ ion-content{
   align-items: center;
 }
 
+.ios .user-container {
+  margin-left: 3vw;
+}
+
 .user-container {
   position: relative;
   display: inline-flex;
   align-items: center;
   top: 20px;
   left: 5px;
+}
+
+.ios ion-content {
+  --padding-top: 5vh
 }
 
 .nickname{
@@ -233,7 +243,7 @@ ion-content{
 .right-navbar {
   position: absolute;
   left: 75%;
-  top: 2%;
+  top: 5%;
 }
 
 .item-list {

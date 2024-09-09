@@ -94,8 +94,6 @@ apiClient.interceptors.response.use(
     async (response) => {
         const authorizationHeader = response.headers["authorization"];
 
-        console.log(response.headers, "헤더값");
-
         if (authorizationHeader) {
             let newAccessToken = "";
             let newRefreshToken = "";
@@ -125,7 +123,6 @@ apiClient.interceptors.response.use(
                 }
             });
 
-            // 토큰이 모두 있는 경우 저장
             if (newAccessToken && newRefreshToken) {
                 await setTokens(newAccessToken, newRefreshToken);
             }
@@ -138,7 +135,7 @@ apiClient.interceptors.response.use(
             const status = error.response.status;
             const errorData = error.response.data;
 
-            if (error.response.headers["X-Redirect"] === "login") {
+            if (error.response.headers["x-redirect"] === "login") {
                 router.replace({ name: "Login" });
             }
 

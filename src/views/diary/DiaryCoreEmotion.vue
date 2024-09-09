@@ -15,12 +15,10 @@ import {
 } from "@ionic/vue";
 import {useStore} from "vuex";
 import {EmotionTag} from "@/store";
-import {useIonRouter} from "@ionic/vue";
-import {selectTab} from "@/utils/tabs";
+import router from "@/router";
 import apiClient from "@/axios";
 
 const store = useStore();
-const router = useIonRouter();
 
 const text = ref("선택한 감정중 어떤 감정이\n제일 기억에 남아?");
 
@@ -81,7 +79,7 @@ const createDiary = async () => {
 
   if (response.status === 200) {
     await store.dispatch("setIsDiaryWrite", true);
-    router.replace("/diary/finish")
+    await router.replace("/diary/finish")
   }
 }
 
@@ -112,10 +110,10 @@ const createDiary = async () => {
         </div>
       </ion-card-content>
       <div class="button-container">
-        <ion-button @click="switchTab" class="back-btn">
+        <ion-button @click="switchTab" class="next-btn">
           이전
         </ion-button>
-        <ion-button class="create-btn" @click="createDiary">
+        <ion-button class="next-btn" @click="createDiary">
           저장
         </ion-button>
       </div>
@@ -126,25 +124,31 @@ const createDiary = async () => {
 <style scoped>
 
 .button-container {
-  padding-top: 1.8vh;
   display: flex;
   justify-content: space-between;
-
+  padding: 1vh 5vw;
 }
-
 .create-btn {
-  margin-right: 5.55vw;
   --background: green;
 
 }
 
-.back-btn {
-  margin-left: 5.55vw;
-  --background: green;
-}
-
-.core-row {
-  justify-content: center;
+.next-btn {
+  align-self: flex-end;
+  margin-top: auto;
+  --background: white;
+  font-size: 4vw;
+  color: #000;
+  border: 0.8vw solid #A3E2B8FF;
+  --padding-end: 0.8em;
+  --padding-start: 0.8em;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  border-radius: 20px;
+  --border-radius: 20px;
+  --background-activated: #A3E2B8FF;
+  --background-hover: #A3E2B8FF;
+  --background-focused: #A3E2B8FF;
 }
 
 .core-chip {
@@ -165,18 +169,22 @@ const createDiary = async () => {
   border-radius: 30px;
   --background: white;
   height: 60vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .tab-card-content {
-  height: auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   padding: 0;
 }
 
 .emotion-grid-container {
-  display: flex;
-  flex-direction: column;
+  flex: 1;
   overflow-y: auto;
-  height: 45vh;
+  position: relative;
 }
 
 .emotion-grid-container::-webkit-scrollbar {

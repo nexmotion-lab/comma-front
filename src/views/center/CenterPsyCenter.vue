@@ -152,7 +152,7 @@ ion-content{
 .content-wrapper {
   position: relative; /* 상대적 위치 설정 */
   letter-spacing: 0.6px;
-  height: 74vh;
+  height: 70vh;
   background-color: white;
   color: black;
   border-radius: 20px;

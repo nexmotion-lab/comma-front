@@ -134,6 +134,10 @@ onBeforeRouteLeave((to, from, next) => {
 
 <style scoped>
 
+.ios ion-tab-bar {
+  --background: var(--background-color) !important;
+}
+
 .tab-card{
   height: 80vh;
   box-shadow: none;
@@ -142,6 +146,10 @@ onBeforeRouteLeave((to, from, next) => {
 
 ion-content {
   --ion-background-color: #f0fff7;
+}
+
+.ios .date-card {
+  margin-top: 5vh;
 }
 
 .date-card {

@@ -36,7 +36,7 @@
             <ion-col v-for="date in week" :key="date.date" class="day-cell" :class="{ 'bold' : date.isCurrentMonth }">
                 <span class="date">{{ date.day }}</span>
                 <svg @click="onDateClick(date)" v-if="date.emotionTagNo" :style="{ fill: getEmotionColor(date.emotionTagNo) }" xmlns="http://www.w3.org/2000/svg"
-                     width="10.000000vw" height="10.000000vw" viewBox="0 0 324.000000 320.000000"
+                      viewBox="0 0 324.000000 320.000000"
                      preserveAspectRatio="xMidYMid meet" class="svg-transform">
                   <g transform="translate(0.000000,320.000000) scale(0.100000,-0.100000)" stroke="none">
                     <path d="M1712 3124 c-164 -82 -199 -289 -70 -410 132 -125 334 -90 413 72 28

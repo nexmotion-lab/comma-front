@@ -31,7 +31,7 @@
       <ion-card class="events-modal-wrapper">
         <div class="events-modal-header">
           <ion-card class="events-bubble">
-            <p class="events-modal-date"><strong>{{ selectedYear }}</strong>년 <strong>{{ selectedMonth }}월</strong> </p>
+            <p class="events-modal-date"><strong>{{ selectedYear }}</strong>년 <strong>{{ selectedMonth }}</strong>월</p>
             <p class="emotions-modal-title">(<span class="nickname">{{nickname}}</span>)가 (<span class="keyword">{{selectedEmotion}}</span>)와 함께 자주 쓴 사건 태그야!</p>
           </ion-card>
         </div>
@@ -62,7 +62,7 @@
         <div class="emotions-modal-header">
           <ion-card class="emotions-bubble">
             <p class="emotions-modal-date"><strong>{{ selectedYear }}</strong>년 <strong>{{ selectedMonth }}월</strong> </p>
-            <p class="emotions-modal-title"><strong>({{nickname}})</strong>가 많이 선택한 감정들을 정리해봤어!</p>
+            <p class="emotions-modal-title">(<span class="nickname">{{nickname}}</span>)가 많이 선택한 감정들을 정리해봤어!</p>
           </ion-card>
         </div>
         <div class="modal-img">
@@ -636,6 +636,7 @@ ion-modal#emotions-list-modal, ion-modal#events-list-modal {
 }
 
 .more-button {
+  color:#000000;
   display: block;
   margin: 0.8vh auto;
   padding: 0.7vh;

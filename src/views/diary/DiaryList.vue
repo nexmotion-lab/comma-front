@@ -607,7 +607,7 @@ watch([searchQuery, eventTags], filterTags)
           <div v-show="isEmotionContainerVisible" class="emotion-container">
             <ion-grid class="emotion-grid">
               <ion-row v-for="(tags, group) in groupedEmotionTags" :key="group" class="emotion-row">
-                <ion-col v-for="tag in tags" :key="tag.emotion_tag_no" size="auto" class="emotion-tag-col">
+                <ion-col v-for="tag in tags" :key="tag.emotionTagNo" size="auto" class="emotion-tag-col">
                   <ion-chip :style="emotionChipStyle(tag)"
                             class="emotion-tag" @click="toggleTag(tag)">
                     {{ tag.name }}
@@ -617,7 +617,7 @@ watch([searchQuery, eventTags], filterTags)
             </ion-grid>
           </div>
           <div v-show="isEventContainerVisible" class="event-grid-container">
-            <ion-searchbar animated="true" placeholder="태그 검색" class="event-searchbar"
+            <ion-searchbar placeholder="태그 검색"
                            :debounce="200" @ionInput="handleInput($event)">
             </ion-searchbar>
             <ion-grid class="event-grid">
@@ -644,22 +644,16 @@ watch([searchQuery, eventTags], filterTags)
 
 <style scoped>
 
+.event-searchbar {
+
+}
 
 .filter-text-container {
   display: flex;
 
 }
 
-.event-searchbar {
-  width: auto;
-  padding: 0;
-  border: 0.8vw solid darkgray;
-  --background: white;
-  position: sticky;
-  top: 0;
-  z-index: 1;
 
-}
 
 .tags-container {
   display: flex;
@@ -683,6 +677,7 @@ watch([searchQuery, eventTags], filterTags)
 
 .list-day {
   font-size: 6.5vw;
+  color: #1f1f1f !important;
 }
 
 
@@ -731,6 +726,7 @@ watch([searchQuery, eventTags], filterTags)
 }
 
 .event-grid-container {
+  width: 100%;
   display: flex;
   flex-direction: column;
   overflow-y: auto;

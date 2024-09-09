@@ -53,4 +53,10 @@ export default defineComponent({
   --padding-end: 1.2em;
   margin: 1vh;
 }
+
+.ios ion-button {
+  --background-activated: #459b62;
+  --background-hover: #459b62;
+  --background-focused: #459b62;
+}
 </style>

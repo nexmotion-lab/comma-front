@@ -194,19 +194,18 @@ const switchTab = () => {
             </ion-row>
           </ion-grid>
         </div>
-        <div class="plus-icon-container">
-          <div class="ion-activatable ripple-parent circle">
-           <ion-icon :icon="addCircleOutline" class="plus-icon" @click="eventAlertCreate">
-            </ion-icon>
-            <ion-ripple-effect style="color: #0c8c42"></ion-ripple-effect>
-         </div>
-        </div>
         <div class="button-container">
+          <div class="plus-icon-container">
+            <div class="ion-activatable ripple-parent circle">
+              <ion-icon :icon="addCircleOutline" class="plus-icon" @click="eventAlertCreate">
+              </ion-icon>
+              <ion-ripple-effect style="color: #0c8c42"></ion-ripple-effect>
+            </div>
+          </div>
           <ion-button @click="switchTab" class="next-btn">
             다음
           </ion-button>
         </div>
-
       </ion-card-content>
     </ion-card>
   </ion-page>
@@ -221,17 +220,28 @@ const switchTab = () => {
 }
 
 .next-btn {
-  --background: green;
+  align-self: flex-end;
+  margin-top: auto;
+  --background: white;
+  color: #000;
+  border: 0.8vw solid #A3E2B8FF;
+  --padding-end: 0.8em;
+  --padding-start: 0.8em;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  border-radius: 20px;
+  --border-radius: 20px;
+  --background-activated: #A3E2B8FF;
+  --background-hover: #A3E2B8FF;
+  --background-focused: #A3E2B8FF;
 }
 
 .button-container {
-  position: absolute;
-  bottom: -5vh; /* ion-card의 아래쪽에서 1vh 위로 위치시킵니다 */
-  left: 0;
-  right: 0;
   display: flex;
-  justify-content: flex-end;
-  padding: 0 5.55vw; /* 버튼이 카드의 양쪽 끝에 정렬되도록 패딩 설정 */
+  justify-content: space-between;
+  flex-direction: column;
+  position: relative;
+  padding: 0 5vw;
 }
 
 .emotion-content {
@@ -239,18 +249,21 @@ const switchTab = () => {
   --background: white;
   height: 60vh;
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .tab-card-content {
-  height: auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   padding: 0;
 }
 
 .emotion-grid-container {
-  display: flex;
-  flex-direction: column;
+  height: 55%;
   overflow-y: auto;
-  height: 37vh;
+  position: relative;
 }
 
 .event-chip {
@@ -265,8 +278,12 @@ const switchTab = () => {
 }
 
 .plus-icon-container {
-  padding-left: 38vw;
-
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center the icon horizontally */
+  position: relative; /* Change to absolute for positioning within the container */
+  padding-bottom: 1vh;
+  margin-top: auto;
 }
 
 .event-row {

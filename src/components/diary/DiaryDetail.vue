@@ -451,27 +451,18 @@ async function eventKeyboardEventAdd() {
 async function contentKeyboardEventAdd() {
   contentKeyboardWillShowEventListener.value = await Keyboard.addListener('keyboardWillShow', (info) => {
     nextTick(() => {
-      const contentLabel = document.querySelector('#content-label');
       const content = document.querySelector('#content');
 
-      contentLabel.scrollIntoView({ behavior: 'instant', block: 'start' });
-
       setTimeout(() => {
-        content.style.maxHeight = '20vh';
         content.scrollTo({
           top: clickPosition.value.y,
           behavior: 'smooth',
         });
-      }, 1000);
+      }, 100);
     })
   })
 
-  contentKeyboardWillHideEventListener.value = await Keyboard.addListener('keyboardWillHide', (info) => {
-    nextTick(() => {
-      const content = document.querySelector('#content');
-      content.style.maxHeight = 'none';
-    })
-  })
+
 }
 const clickPosition = ref({ x: 0, y: 0 });
 
@@ -522,24 +513,26 @@ const modalBack = () => modalController.dismiss();
               오늘 하루는 어땠어?
             </ion-label>
           </ion-item>
-          <ion-item class="diary-item">
+          <ion-item class="diary-item" style="justify-content: flex-start">
             <ion-label v-if="!emotionTagPatchActive" class="item-label-right" slot="end">
               {{ localDiary.emotionTags.map(tag => `#${tag.name}`).join('  ') }}
               <ion-icon class="path-icon" :icon="createOutline" @click="clickEmotionTagPatch"></ion-icon>
             </ion-label>
             <ion-card v-if="emotionTagPatchActive" class="item-label-patch-right" slot="end">
-              <div class="emotion-grid-container">
-                <ion-grid class="emotion-grid" >
-                  <ion-row v-for="y in sortedYValues" :key="y" class="emotion-row">
-                    <ion-col v-for="tag in groupedEmotionTags[y]" :key="tag.xvalue" size="auto" class="emotion-tag-col">
-                      <ion-chip :style="chipStyle(tag)"
-                                class="emotion-tag" @click="toggleTag(tag)">
-                        {{ tag.name }}
-                      </ion-chip>
-                    </ion-col>
-                  </ion-row>
-                </ion-grid>
-              </div>
+              <ion-card-content style="height: auto">
+                <div class="emotion-grid-container">
+                  <ion-grid class="emotion-grid" >
+                    <ion-row v-for="y in sortedYValues" :key="y" class="emotion-row">
+                      <ion-col v-for="tag in groupedEmotionTags[y]" :key="tag.xvalue" size="auto" class="emotion-tag-col">
+                        <ion-chip :style="chipStyle(tag)"
+                                  class="emotion-tag" @click="toggleTag(tag)">
+                          {{ tag.name }}
+                        </ion-chip>
+                      </ion-col>
+                    </ion-row>
+                  </ion-grid>
+                </div>
+              </ion-card-content>
               <div class="patch-button-container">
                 <ion-button @click="cancelEmotionPatch()" class="patch-button">취소</ion-button>
                 <ion-button @click="confirmEmotionPatch()" class="patch-button">수정</ion-button>
@@ -570,8 +563,10 @@ const modalBack = () => modalController.dismiss();
                   </ion-col>
                 </ion-row>
               </ion-grid>
-              <ion-searchbar maxlength="10" id="search-bar" animated="true" placeholder="추가할 태그 검색" class="event-searchbar"
-                             :debounce="1000" @ionInput="handleInput($event)" :value="searchQuery" @keydown="handleKeyDown">
+              <ion-searchbar maxlength="10" id="search-bar" placeholder="추가할 태그 검색"
+                             :debounce="1000" @ionInput="handleInput($event)"
+                             style="--background: white; padding: 0; z-index: 3"
+                             :value="searchQuery" @keydown="handleKeyDown">
               </ion-searchbar>
               <ion-card class="event-card">
                 <ion-list :inset="true" class="event-list" style="margin-top: 2%">
@@ -680,8 +675,9 @@ ion-label strong {
 
 
 .event-card {
+  border: 0;
   position: relative;
-  top: -30px;
+  top: -50px;
   z-index: 2;
   --background: white;
   border-bottom-left-radius: 20px;
@@ -729,11 +725,13 @@ ion-label strong {
 
 
 .emotion-grid-container {
-  display: flex;
-  flex-direction: column;
-  overflow-x: auto;
-  max-width: 100%;
+  display: block; /* Flexbox 대신 block으로 변경하여 레이아웃 문제 해결 */
+  overflow-x: auto; /* X축의 스크롤을 유지 */
+  white-space: nowrap; /* 한 줄로 표시되도록 설정 */
+  -webkit-overflow-scrolling: touch; /* iOS에서 부드러운 스크롤링 활성화 */
+  padding-left: 10px; /* 스크롤 시작 위치 확보를 위한 왼쪽 패딩 */
 }
+
 
 .emotion-grid {
   display: flex;
@@ -741,13 +739,13 @@ ion-label strong {
 }
 
 .emotion-row {
-  display: flex;
-  flex-wrap: nowrap;
-  width: 100%;
-  justify-content: center;
+  display: inline-block; /* 요소를 한 줄로 표시하도록 변경 */
+  width: auto; /* 자동 너비로 설정 */
+  white-space: nowrap; /* 텍스트가 한 줄로 표시되도록 설정 */
 }
 
 .emotion-tag {
+  display: inline-block; /* Chip을 한 줄로 나열하기 위해 inline-block 사용 */
   padding: 0;
   padding-left: 2vw;
   padding-right: 2vw;
@@ -832,7 +830,7 @@ ion-label strong {
   flex-direction: column;
   box-shadow: none;
   font-size: 4vw;
-  width: auto;
+  width: 100%;
   display: flex;
   align-items: center;
   text-align: center;
@@ -841,6 +839,7 @@ ion-label strong {
   border-top-left-radius: 20px;
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
+  --border-radius: 20px 0 20px 20px;
   background: #DEF9EB;
   min-height: 80%;
   margin: 0;

@@ -22,14 +22,14 @@ export default defineComponent({
 
       const browser = InAppBrowser.create(`https://www.comma-coders.com:8998/oauth2/authorization/${provider}`, '_blank', {
         zoom: 'no',
-        toolbar: 'yes',
+        toolbar: 'no',
         location: 'no',
         usewkwebview: 'yes',
         clearcache: 'yes',
         clearsessioncache: 'yes'
       });
 
-      browser.on('loadstop').subscribe(async (event) => {
+      browser.on('loadstart').subscribe(async (event) => {
         const url = event.url;
 
         if (url.startsWith('comma://home') || url.startsWith('comma://firstLogin')) {

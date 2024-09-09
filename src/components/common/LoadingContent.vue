@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {IonContent} from "@ionic/vue";
+import {IonContent, IonSpinner} from "@ionic/vue";
 </script>
 
 <template>

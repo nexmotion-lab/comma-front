@@ -6,21 +6,21 @@
           <ion-icon :icon="settingsSharp"></ion-icon>
         </ion-button>
       </ion-buttons>
+      <ion-fab vertical="center" horizontal="end" class="centered-fab">
+        <ion-fab-button class="fab-button-list">
+          <ion-icon :icon="chevronBackCircle" class="custom-color"></ion-icon>
+        </ion-fab-button>
+        <ion-fab-list side="start" class="custom-fab-list">
+          <ion-fab-button class="fab-button" size="large" @click="router.replace({path:'/calendar'})">
+            <img src="/src/assets/calendar_btn.png" alt="Document Icon" class="fab-icon" />
+          </ion-fab-button>
+          <ion-fab-button class="fab-button" size="large">
+            <img src="/src/assets/statistics_btn.png" alt="Color Palette Icon" class="fab-icon"
+                 @click="router.replace({path:'/statistics'})"/>
+          </ion-fab-button>
+        </ion-fab-list>
+      </ion-fab>
     </ion-toolbar>
-    <ion-fab vertical="center" horizontal="end" class="centered-fab">
-      <ion-fab-button class="fab-button-list">
-        <ion-icon :icon="chevronBackCircle" class="custom-color"></ion-icon>
-      </ion-fab-button>
-      <ion-fab-list side="start" class="custom-fab-list">
-        <ion-fab-button class="fab-button" size="large" @click="router.replace({path:'/calendar'})">
-          <img src="/src/assets/calendar_btn.png" alt="Document Icon" class="fab-icon" />
-        </ion-fab-button>
-        <ion-fab-button class="fab-button" size="large">
-          <img src="/src/assets/statistics_btn.png" alt="Color Palette Icon" class="fab-icon"
-               @click="router.replace({path:'/statistics'})"/>
-        </ion-fab-button>
-      </ion-fab-list>
-    </ion-fab>
   </ion-header>
 </template>
 
@@ -52,7 +52,7 @@ export default defineComponent({
         cssClass: 'setting-modal'
       });
 
-      modal.present();
+      await modal.present();
 
     };
 
@@ -62,6 +62,11 @@ export default defineComponent({
 </script>
 
 <style scoped>
+
+.ios ion-header {
+  padding-top: 5vh;
+  background-color: var(--background-color);
+}
 
 ion-toolbar {
   --background: var(--background-color);

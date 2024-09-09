@@ -5,6 +5,9 @@ const config: CapacitorConfig = {
   appName: 'COMMA',
   webDir: 'dist',
   plugins: {
+    Keyboard: {
+      resize: 'none'
+    },
     LocalNotifications: {
       smallIcon: "alarm_icon",
     }

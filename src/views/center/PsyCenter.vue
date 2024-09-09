@@ -34,6 +34,8 @@ const isCurrentRoute = (routeName: string) => {
 </template>
 
 <style scoped>
+
+
 .header {
   background: var(--background-color);
   height: 10%;
@@ -45,6 +47,11 @@ const isCurrentRoute = (routeName: string) => {
   margin-bottom:20%;
 }
 
+.ios .header {
+  padding-top: 8vh;
+  padding-bottom: 8vh;
+}
+
 .nav-bar {
   display: flex;
   justify-content: center; /* 수평 가운데 정렬 */
@@ -52,7 +59,7 @@ const isCurrentRoute = (routeName: string) => {
 }
 
 ion-router-outlet{
-  margin-top: 20%;
+  margin-top: 27%;
 }
 
 base-bottom-bar{

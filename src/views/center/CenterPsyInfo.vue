@@ -38,6 +38,7 @@ export default defineComponent({
       psyInfoNuguri6
     ]
     const isLoading = ref(true);
+    const textInput = ref('');
 
     const testPairs = computed(() => {
       const pairs = []
@@ -81,14 +82,9 @@ export default defineComponent({
     return {
       psyInfos,
       navigateToDetail,
-      testPairs, isLoading
+      testPairs, isLoading, textInput
     }
   },
-  data() {
-    return {
-      textInput: ''
-    }
-  }
 })
 
 </script>

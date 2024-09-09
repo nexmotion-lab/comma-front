@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import DiaryInformation from "@/components/diary/DiaryInformation.vue";
-import {computed, ref} from "vue";
+import {computed, nextTick, onMounted, onUnmounted, ref} from "vue";
 import {useStore} from "vuex";
 import {
   IonCard,
@@ -12,8 +12,8 @@ import {
   IonButton, onIonViewWillEnter, onIonViewWillLeave
 } from "@ionic/vue";
 import router from "@/router";
-import {selectTab} from "@/utils/tabs";
 import {Keyboard} from "@capacitor/keyboard";
+import {PluginListenerHandle} from "@capacitor/core";
 
 const store = useStore();
 const diaryContent = computed({
@@ -24,6 +24,7 @@ const diaryContent = computed({
 
 const text = ref("\"감정\"을 떠올리며\n우리 내려가보자:)");
 
+
 const switchTab1 = () => {
   router.push({ path: '/diary/create/event', replace: true});
 }
@@ -33,65 +34,6 @@ const switchTab2 = () => {
 
 }
 
-const textarearef = ref<HTMLElement | null>(null);
-const adjustTextareaHeight = (keyboardHeight: number) => {
-  const textarea = textarearef.value
-  if (textarea) {
-    textarea.style.height = `20vh`;
-
-    setTimeout(() => {
-      textarea.scrollTo({
-        top: clickPosition.value.y,
-        behavior: 'smooth',
-      });
-    }, 100);
-  }
-};
-
-const clickPosition = ref({ x: 0, y: 0 });
-
-const handleClick = (event) => {
-  const container = textarearef.value;
-  const containerRect = container.getBoundingClientRect();
-
-  const relativeX = event.clientX - containerRect.left;
-  const relativeY = event.clientY - containerRect.top;
-
-  clickPosition.value = { x: relativeX, y: relativeY };
-};
-
-const resetTextareaHeight = () => {
-  const textarea = textarearef.value
-
-  if (textarea) {
-    textarea.style.height = '45vh';
-  }
-};
-
-const keyboardWillShowEventListener = ref(null);
-const keyboardWillHideEventListener = ref(null);
-
-onIonViewWillEnter(async () => {
-  keyboardWillShowEventListener.value = await Keyboard.addListener('keyboardWillShow', (info) => {
-    adjustTextareaHeight(info.keyboardHeight);
-  });
-
-  keyboardWillHideEventListener.value = await Keyboard.addListener('keyboardWillHide', () => {
-    resetTextareaHeight();
-  });
-
-  console.log(keyboardWillHideEventListener)
-  console.log(keyboardWillShowEventListener)
-});
-
-onIonViewWillLeave(() => {
-  if (keyboardWillShowEventListener.value) {
-    keyboardWillShowEventListener.value.remove();
-  }
-  if (keyboardWillHideEventListener.value) {
-    keyboardWillHideEventListener.value.remove();
-  }
-});
 
 </script>
 
@@ -103,13 +45,13 @@ onIonViewWillLeave(() => {
     <ion-card class="emotion-content">
       <ion-card-header class="tab-card"></ion-card-header>
       <ion-card-content class="tab-card-content">
-        <div class="emotion-grid-container" ref="textarearef" @click="handleClick">
+        <div class="emotion-grid-container" ref="containerRef" >
           <ion-textarea :auto-grow="true" class="content" placeholder="최대 1000자"
           v-model="diaryContent" maxlength="1000">
           </ion-textarea>
         </div>
         <div class="button-container">
-          <ion-button @click="switchTab1" class="back-btn">
+          <ion-button @click="switchTab1" class="next-btn">
             이전
           </ion-button>
           <ion-button @click="switchTab2" class="next-btn">
@@ -124,15 +66,11 @@ onIonViewWillLeave(() => {
 <style scoped>
 
 
-
 .button-container {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -8vh;
   display: flex;
   justify-content: space-between;
-  padding: 0 5.55vw; /* 버튼이 카드의 양쪽 끝에 정렬되도록 패딩 설정 */
+  margin-top: 2vh;
+  padding: 0 5vw;
 }
 
 .content {
@@ -141,21 +79,28 @@ onIonViewWillLeave(() => {
   font-size: 5.5vw;
   --highlight-color: black;
   font-family: 'DiaryFont', sans-serif;
+  --padding-bottom: 30vh;
 }
 
-.button-container {
-  display: flex;
-  justify-content: space-between;
 
-}
-
-.back-btn {
-  --background: green;
-}
 
 .next-btn {
-  --background: green;
+  align-self: flex-end;
+  margin-top: auto;
+  --background: white;
+  color: #000;
+  border: .8vw solid #A3E2B8FF;
+  --padding-end: 0.8em;
+  --padding-start: 0.8em;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  border-radius: 20px;
+  --border-radius: 20px;
+  --background-activated: #A3E2B8FF;
+  --background-hover: #A3E2B8FF;
+  --background-focused: #A3E2B8FF;
 }
+
 
 
 .tab-card {
@@ -167,18 +112,21 @@ onIonViewWillLeave(() => {
   --background: white;
   height: 60vh;
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .tab-card-content {
-  height: auto;
-  padding: 0;
-}
-
-.emotion-grid-container {
+  height: 100%;
   display: flex;
   flex-direction: column;
+  padding: 0;
+}
+.emotion-grid-container {
+  flex: 1;
   overflow-y: auto;
-  height: 45vh;
+  position: relative;
+  max-height: 40vh;
 }
 
 .emotion-grid-container::-webkit-scrollbar {
