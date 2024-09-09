@@ -183,7 +183,7 @@ const switchTab = () => {
         </ion-searchbar>
         <LoadingContent v-show="isLoading" style="--background-color: white; --loading-height: 60vh"></LoadingContent>
         <div v-show="!isLoading" class="emotion-grid-container">
-          <ion-grid class="event-grid">
+          <ion-grid class="event-grid" style="padding-bottom: 10vh">
             <ion-row class="event-row">
               <ion-col v-for="tag in filteredTags" :key="tag.eventTagNo" size="auto" class="event-col">
                 <ion-chip class="event-chip" @click="toggleTag(tag)" :style="{ backgroundColor: isSelected(tag).value ? '#A3E2B8FF' : 'white' }">

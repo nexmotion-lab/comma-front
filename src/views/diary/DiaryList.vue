@@ -605,7 +605,7 @@ watch([searchQuery, eventTags], filterTags)
             <ion-label :style="{ color: isEventContainerVisible ? 'blue' : 'black' }" class="date-text" @click="showEventContainer">#사건</ion-label>
           </div>
           <div v-show="isEmotionContainerVisible" class="emotion-container">
-            <ion-grid class="emotion-grid">
+            <ion-grid class="emotion-grid" style="padding-bottom: 10vh">
               <ion-row v-for="(tags, group) in groupedEmotionTags" :key="group" class="emotion-row">
                 <ion-col v-for="tag in tags" :key="tag.emotionTagNo" size="auto" class="emotion-tag-col">
                   <ion-chip :style="emotionChipStyle(tag)"
@@ -620,7 +620,7 @@ watch([searchQuery, eventTags], filterTags)
             <ion-searchbar placeholder="태그 검색"
                            :debounce="200" @ionInput="handleInput($event)">
             </ion-searchbar>
-            <ion-grid class="event-grid">
+            <ion-grid class="event-grid" style="padding-bottom: 10vh">
               <ion-row class="event-row">
                 <ion-col v-for="tag in filteredTags" :key="tag.eventTagNo" size="auto" class="event-col">
                   <ion-chip class="event-chip" @click="eventToggleTag(tag)" :style="{ backgroundColor: eventIsSelected(tag).value ? '#A3E2B8FF' : 'white' }">

@@ -519,7 +519,7 @@ const modalBack = () => modalController.dismiss();
               <ion-icon class="path-icon" :icon="createOutline" @click="clickEmotionTagPatch"></ion-icon>
             </ion-label>
             <ion-card v-if="emotionTagPatchActive" class="item-label-patch-right" slot="end">
-              <ion-card-content style="height: auto">
+              <ion-card-content style="height: auto; width: 100%">
                 <div class="emotion-grid-container">
                   <ion-grid class="emotion-grid" >
                     <ion-row v-for="y in sortedYValues" :key="y" class="emotion-row">

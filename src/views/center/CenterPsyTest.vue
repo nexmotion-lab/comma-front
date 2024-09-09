@@ -252,7 +252,7 @@ export default defineComponent({
             <h1>{{ selectedTest.title }}</h1>
             <ion-label class="modal2-close">
               <ion-icon
-                  :icon="closeOutline()"
+                  :icon="closeOutline"
                   @click="dismiss2"
                   part="iconX2"
               ></ion-icon>
