@@ -17,6 +17,7 @@ import {useStore} from "vuex";
 import {onBeforeRouteLeave, useRoute} from "vue-router";
 import BaseBottomBar from "@/components/common/BaseBottomBar.vue";
 import {bgm, diaryBgm} from "@/main";
+import router from "@/router";
 
 const store = useStore();
 const route = useRoute()
@@ -54,6 +55,8 @@ onIonViewWillEnter(() => {
     diaryBgm.play();
     bgm.pause();
   }
+  router.push({ path: '/diary/create/event', replace: true});
+
 })
 
 onIonViewWillLeave(() => {
@@ -127,7 +130,6 @@ onBeforeRouteLeave((to, from, next) => {
           </ion-tab-bar>
         </ion-tabs>
       </ion-card>
-      <BaseBottomBar></BaseBottomBar>
     </ion-content>
   </ion-page>
 </template>

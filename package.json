@@ -29,6 +29,7 @@
     "@ionic/vue": "^8.2.6",
     "@ionic/vue-router": "^8.0.0",
     "axios": "^1.7.2",
+    "capacitor-plugin-ios-webview-configurator": "^0.4.0",
     "chart.js": "^4.4.3",
     "cordova-plugin-inappbrowser": "^6.0.0",
     "ionicons": "^7.4.0",
@@ -56,6 +57,7 @@
     "typescript": "^5.1.6",
     "vite": "~5.2.0",
     "vite-plugin-pwa": "^0.20.1",
+    "vite-plugin-remove-console": "^2.2.0",
     "vitest": "^0.34.6",
     "vue-tsc": "^1.0.24"
   },

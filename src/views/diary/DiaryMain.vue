@@ -52,7 +52,6 @@ export default defineComponent({
     </div>
   </div>
     </ion-content>
-  <BaseBottomBar></BaseBottomBar>
   </ion-page>
 </template>
 

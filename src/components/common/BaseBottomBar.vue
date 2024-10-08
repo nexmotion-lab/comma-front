@@ -5,6 +5,7 @@ import letter from '@/assets/home/letter.png'
 import house from '@/assets/home/house.png'
 import memo from '@/assets/home/memo.png'
 import {useIonRouter} from "@ionic/vue";
+import {useRoute} from "vue-router";
 export default defineComponent({
   components: {IonToolbar, IonFooter, IonImg},
   name: 'BaseBottomBar',
@@ -15,9 +16,14 @@ export default defineComponent({
   },
   setup() {
     const router = useIonRouter();
+    const route = useRoute();
 
     const navigateTo = (routeName: string) => {
-      router.replace({ path: routeName });
+      if (route.path.startsWith("/diary")) {
+        router.replace({path: routeName});
+      } else {
+        router.push({ path: routeName });
+      }
     };
 
     return {

@@ -121,7 +121,6 @@ export default defineComponent({
   margin: 3vw;
   display: flex;
   flex-direction: column; /* Flexbox로 세로 정렬 설정 */
-
 }
 .psyInfo-list {
   overflow-y: scroll; /* 세로 스크롤 활성화 */

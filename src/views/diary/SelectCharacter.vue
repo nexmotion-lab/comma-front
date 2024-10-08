@@ -55,7 +55,6 @@ export default defineComponent({
         </div>
       </div>
     </ion-content>
-      <BaseBottomBar></BaseBottomBar>
     <ModalComponent :isVisible="showModal" @close="showModal = false" />
   </ion-page>
 </template>

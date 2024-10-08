@@ -22,7 +22,7 @@ export default defineComponent({
 
       const browser = InAppBrowser.create(`https://www.comma-coders.com:8998/oauth2/authorization/${provider}`, '_blank', {
         zoom: 'no',
-        toolbar: 'no',
+        toolbar: 'yes',
         location: 'no',
         usewkwebview: 'yes',
         clearcache: 'yes',

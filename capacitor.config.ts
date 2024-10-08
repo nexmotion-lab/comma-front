@@ -1,7 +1,7 @@
 import type {CapacitorConfig} from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.example.app',
+  appId: 'com.coders.comma',
   appName: 'COMMA',
   webDir: 'dist',
   plugins: {
@@ -10,6 +10,7 @@ const config: CapacitorConfig = {
     },
     LocalNotifications: {
       smallIcon: "alarm_icon",
+
     }
   }
 };

@@ -9,18 +9,16 @@
           {{ selectDate }}
         </ion-label>
         <ion-modal ref="datemodal" trigger="calendarLabel" class="date-modal" :keep-contents-mounted="true" >
-          <ion-content class="date-modal-content">
+          <ion-content scroll-y="none" class="date-modal-content">
           <ion-card class="date-modal-card">
           <ion-datetime id="datetime" ref="datetime" :value="selectDate" locale="ko-KR"
                         presentation="month-year" @ionChange="dateChange"
                         ></ion-datetime>
           </ion-card>
           </ion-content>
-          <ion-footer>
-            <ion-toolbar>
+          <ion-footer class="modal-footer">
               <ion-label class="cancel-text" @click="dateCancel">취소</ion-label>
               <ion-label class="confirm-text" @click="dateConfirm">확인</ion-label>
-            </ion-toolbar>
           </ion-footer>
         </ion-modal>
       </ion-card-header>
@@ -64,7 +62,6 @@
       </ion-card-content>
     </ion-card>
   </ion-content>
-  <BaseBottomBar></BaseBottomBar>
   </ion-page>
 </template>
 
@@ -288,6 +285,14 @@ onIonViewWillEnter(async () => {
 
 <style scoped>
 
+.modal-footer {
+  display: flex;
+  justify-content: space-evenly;
+  padding-top: 1vh;
+  padding-bottom: 1vh;
+  background: white;
+}
+
 ion-datetime::part(wheel-item) {
   font-size: 7vw;
 }
@@ -304,6 +309,8 @@ ion-datetime {
   --background: var(--background-color);
 
 }
+
+
 
 .custom-content {
   --background: #f0fff7;
@@ -366,11 +373,9 @@ ion-datetime {
 
 .cancel-text {
   font-size: 6vw;
-  padding-left: 13vw;
 }
 .confirm-text {
   font-size: 6vw;
-  padding-left: 20vw;
 }
 
 .date-modal-content {

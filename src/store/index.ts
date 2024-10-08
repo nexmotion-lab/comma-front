@@ -1,4 +1,5 @@
 import Vuex from 'vuex';
+import {Preferences} from "@capacitor/preferences";
 
 
 export interface EmotionTag {
@@ -189,9 +190,17 @@ export default new Vuex.Store<State>({
         },
         SET_ALARM_PERMISSION(state, value: boolean) {
             state.alarmPermission = value;
+            Preferences.set({
+                key: 'alarm',
+                value: value.toString()
+            })
         },
         SET_BGM_PLAYING(state, value: boolean) {
             state.bgmPlaying = value;
+            Preferences.set({
+                key: 'bgm',
+                value: value.toString()
+            })
         },
     },
     actions: {

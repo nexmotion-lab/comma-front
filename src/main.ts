@@ -2,7 +2,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router';
 import store from './store';
-import { App as CapacitorApp } from "@capacitor/app";
+import { App as CapacitorApp} from '@capacitor/app'
 import './global.scss'
 
 
@@ -26,7 +26,7 @@ import '@ionic/vue/css/display.css';
 import './theme/variables.css';
 import bgmFile from '@/assets/bgm/main.mp3'
 import bgmDiary from '@/assets/bgm/diary.mp3'
-
+import {Preferences} from "@capacitor/preferences";
 
 
 export const diaryBgm = new Audio(bgmDiary)
@@ -38,6 +38,18 @@ if (store.state.bgmPlaying) {
     bgm.play();
 }
 
+Preferences.get({ key: 'bgm' }).then((result) => {
+    if (result.value === 'true') {  // Preferences는 값이 문자열로 저장되므로 'true'로 체크
+        store.dispatch('setBgmPlaying', true);
+    }
+})
+Preferences.get({ key: 'alarm' }).then((result) => {
+    if (result.value === 'true') {  // Preferences는 값이 문자열로 저장되므로 'true'로 체크
+        store.dispatch('setAlarmPermission', true);
+    }
+})
+
+
 store.watch(
     (state) => state.bgmPlaying,
     (newVal) => {
@@ -48,6 +60,17 @@ store.watch(
       }
     }
 )
+
+CapacitorApp.addListener('appStateChange', (state) => {
+    if (!state.isActive) {
+        bgm.pause();
+        diaryBgm.pause();
+    } else {
+        if (store.state.bgmPlaying) {
+            bgm.play();
+        }
+    }
+});
 
 const app = createApp(App)
   .use(IonicVue)

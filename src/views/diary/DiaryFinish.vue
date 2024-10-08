@@ -102,9 +102,7 @@ export default defineComponent({
     <BaseHeader></BaseHeader>
     <ion-content scroll-y="false" class="background">
       <div class="content-container">
-        <div></div>
-
-        <speech-bubble style="padding-top: 2vh">우리 꽤 친해진 것 같은데~ 너에 대해 알게 돼서 행복해</speech-bubble>
+        <speech-bubble>우리 꽤 친해진 것 같은데~ 너에 대해 알게 돼서 행복해</speech-bubble>
         <div class="img-container">
           <ion-img class="img" style="height: 28vh" :src="dotoImg" alt="도토 이미지" />
           <ion-img class="img" :src="doreImg" alt="도레 이미지" />
@@ -115,7 +113,6 @@ export default defineComponent({
         </div>
       </div>
     </ion-content>
-      <BaseBottomBar></BaseBottomBar>
   </ion-page>
 </template>
 
@@ -187,7 +184,7 @@ ion-content{
 
   margin-right: 0.5vw;
   margin-left: 0.5vw;
-  margin-top: 5vh;
+  margin-top: 10vh;
 }
 
 .img {
@@ -197,6 +194,7 @@ ion-content{
 
 .btn-wrap{
   display: flex;
+  align-items: flex-end;
   justify-content: center;
   gap: 9vw;
 }

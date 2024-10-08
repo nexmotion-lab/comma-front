@@ -131,7 +131,6 @@
     <!--  emotionsList 부분 end  -->
     </ion-content>
     <!--  감정 지도 통계 content부분 end  -->
-    <BaseBottomBar />
   </ion-page>
 </template>
 

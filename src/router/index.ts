@@ -61,7 +61,8 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/firstLogin',
     name: 'FirstLogin',
-    component: FirstLogin
+    component: FirstLogin,
+    meta: { hideBottomBar: true }
   },
   {
     path: '/calendar',
@@ -110,7 +111,8 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/login',
     name: 'Login',
-    component: Login
+    component: Login,
+    meta: { hideBottomBar: true }
   },
   {
     path: '/initMain',

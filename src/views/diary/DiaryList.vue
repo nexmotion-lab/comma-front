@@ -523,10 +523,10 @@ watch([searchQuery, eventTags], filterTags)
       <div class="search-container">
       <ion-item class="filter-bar">
         <ion-icon aria-hidden="true" :icon="searchCircleOutline" slot="start" class="search-icon"></ion-icon>
-        <ion-label class="date" id="startDateLabel" @click="openStartDateModal">
+        <ion-label style="margin-inline-end: 0" class="date" id="startDateLabel" @click="openStartDateModal">
           {{ dates.startDate }} ~
         </ion-label>
-        <ion-label class="date" id="endDateLabel" @click="openEndDateModal">
+        <ion-label style="margin-inline-end: 0; transform: translateX(-2vw)" class="date" id="endDateLabel" @click="openEndDateModal">
           {{ dates.lastDate }}
         </ion-label>
         <ion-icon :icon="filter" style="font-size: 7vw; padding-right: 1vw" id="filter"></ion-icon>
@@ -560,14 +560,12 @@ watch([searchQuery, eventTags], filterTags)
         </ion-content>
       </div>
     </ion-content>
-    <BaseBottomBar></BaseBottomBar>
     <!-- Start Date Modal -->
     <ion-modal ref="startDateModal" trigger="startDateLabel" class="date-modal">
       <ion-content class="date-modal-content" scroll-y="false">
         <ion-card class="date-modal-card">
-          <ion-label class="date-text">시작일</ion-label>
           <ion-datetime id="startDate" :value="startDate" presentation="date" :prefer-wheel="true"
-                        locale="ko-KR" @ionChange="dateChange">
+                        locale="ko-KR" @ionChange="dateChange" style="transform: translateX(-7vw)">
           </ion-datetime>
         </ion-card>
       </ion-content>
@@ -583,9 +581,9 @@ watch([searchQuery, eventTags], filterTags)
     <ion-modal ref="endDateModal" trigger="endDateLabel" class="date-modal">
       <ion-content class="date-modal-content" scroll-y="false">
         <ion-card class="date-modal-card">
-          <ion-label class="date-text">종료일</ion-label>
           <ion-datetime id="lastDate" :value="lastDate" @ionChange="dateChange"
-                        locale="ko-KR" presentation="date" :prefer-wheel="true">
+                        locale="ko-KR" presentation="date" :prefer-wheel="true"
+                        style="transform: translateX(-7vw)">
           </ion-datetime>
         </ion-card>
       </ion-content>
@@ -847,17 +845,16 @@ ion-datetime::part(wheel-item) {
 .date-modal-card {
   display: flex;
   flex-direction: column;
-  align-items: center;
   margin: 5vw;
-  height: 70vh;
+  height: fit-content;
   border-radius: 30px;
   border-left: 3vw solid #A3E2B8FF;
   border-right: 3vw solid #A3E2B8FF;
-  border-top: 5vw solid #A3E2B8FF;
+  border-top: 3vw solid #A3E2B8FF;
 }
 
 .date-modal {
-  --height: 45%;
+  --height: 28%;
   --border-radius: 40px;
   --width: 90%;
   --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);

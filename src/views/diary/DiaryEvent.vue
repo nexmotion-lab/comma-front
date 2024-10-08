@@ -178,7 +178,7 @@ const switchTab = () => {
     <ion-card class="emotion-content">
       <ion-card-header class="tab-card"></ion-card-header>
       <ion-card-content class="tab-card-content">
-        <ion-searchbar animated="true" placeholder="태그 검색" class="event-searchbar"
+        <ion-searchbar placeholder="태그 검색"
         :debounce="1000" @ionInput="handleInput($event)">
         </ion-searchbar>
         <LoadingContent v-show="isLoading" style="--background-color: white; --loading-height: 60vh"></LoadingContent>

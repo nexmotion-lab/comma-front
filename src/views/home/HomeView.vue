@@ -33,8 +33,8 @@
      </div>
 
      <!-- 메인 컨텐츠 영역 -->
-     <div class="main-content-wrapper">
-       <div class="speech-bubble shadow">
+     <div class="main-content-wrapper" >
+       <div class="speech-bubble shadow" @click="getInteraction">
          <div class="speech-bubble-description">
            <p v-html="interactionText"></p>
          </div>
@@ -75,6 +75,8 @@ import apiClient, {isLogin} from "@/axios";
 import {useStore} from "vuex";
 import LoadingContent from "@/components/common/LoadingContent.vue";
 import router from "@/router";
+import {Preferences} from "@capacitor/preferences";
+import store from "@/store";
 
 
 
@@ -151,6 +153,7 @@ export default defineComponent({
     }
 
     onIonViewWillEnter(async () => {
+
       isLoading.value = true;
       if (!await isLogin()) {
         console.log("라우팅")
@@ -182,7 +185,7 @@ export default defineComponent({
       nickname,
       itemList,
       groundImg, settingSharp, interactionImg, interactionText,
-      isLoading, handleRefresh, navigate
+      isLoading, handleRefresh, navigate, getInteraction
 
     };
   }

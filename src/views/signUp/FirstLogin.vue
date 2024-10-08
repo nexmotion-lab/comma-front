@@ -56,7 +56,7 @@ onIonViewWillEnter(async () => {
       },
     ],
   });
-
+  store.dispatch('setAlarmPermission', true);
 })
 
 </script>

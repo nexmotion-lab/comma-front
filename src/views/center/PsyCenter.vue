@@ -27,8 +27,7 @@ const isCurrentRoute = (routeName: string) => {
         <CenterTopButton :isActive="isCurrentRoute('CenterPsyCenter').value" @click="navigate('CenterPsyCenter')">상담센터</CenterTopButton>
       </div>
     </div>
-    <ion-router-outlet></ion-router-outlet>
-    <BaseBottomBar></BaseBottomBar>
+    <ion-router-outlet :animated="false"></ion-router-outlet>
     </ion-content>
   </ion-page>
 </template>
